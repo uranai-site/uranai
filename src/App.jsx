@@ -52,7 +52,7 @@ const STYLES = `
       radial-gradient(2px 2px at 50% 50%, rgba(167,139,250,0.4), transparent);
   }
 
-  /* ブラチE��ホ�Eル */
+  /* ブラックホール */
   .blackhole {
     position:fixed; top:-120px; left:50%; transform:translateX(-50%);
     width:320px; height:320px; pointer-events:none; z-index:0;
@@ -111,7 +111,7 @@ const STYLES = `
   }
   .header-title span { color:var(--cyan); text-shadow:0 0 20px var(--cyan); }
 
-  /* カーチE*/
+  /* カード */
   .card {
     background:var(--surface);
     border:1px solid var(--border2);
@@ -162,10 +162,10 @@ const STYLES = `
   .gacha-btn:active { transform:translateY(2px); box-shadow:0 0 10px rgba(120,0,255,0.3), 0 1px 0 #2a0088; }
   .gacha-btn:disabled { background:rgba(50,50,80,0.5); border-color:var(--dim); box-shadow:none; cursor:not-allowed; transform:none; }
 
-  /* ローチE��ング */
+  /* ローディング */
   .gacha-machine { padding:40px 20px; text-align:center; animation:fadeIn 0.4s ease; }
 
-  /* スピ�Eチバブル */
+  /* スピーチバブル */
   .speech-bubble {
     flex:1; background:rgba(10,10,40,0.9);
     border:1px solid var(--border2);
@@ -179,7 +179,7 @@ const STYLES = `
 
   .god-area { display:flex; align-items:flex-end; gap:16px; margin-bottom:20px; position:relative; animation:fadeIn 0.5s ease both; }
 
-  /* 結果カーチE*/
+  /* 結果カード */
   .score-card {
     background:var(--surface2);
     border:1px solid var(--border2);
@@ -208,13 +208,13 @@ const STYLES = `
   .score-text { font-size:13px; line-height:2; color:#f0eeff; text-align:left; }
   .score-advice { margin-top:12px; padding:12px 14px; background:rgba(245,197,24,0.05); border-radius:8px; border-left:2px solid var(--gold); font-size:12px; line-height:1.9; color:#c0a040; text-align:left; }
 
-  /* ラチE��ー */
+  /* ラッキー */
   .lucky-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin-top:14px; }
   .lucky-item { background:rgba(100,0,255,0.1); border:1px solid var(--border); border-radius:8px; padding:8px 4px; text-align:center; }
   .lucky-key { font-size:8px; color:var(--dim); margin-bottom:3px; font-family:'Orbitron',monospace; }
   .lucky-val { font-size:12px; color:var(--cyan); font-weight:900; }
 
-  /* 吁E��ぁE*/
+  /* 各占い */
   .result-card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:14px 16px; margin-bottom:8px; }
   .result-card.good { border-color:rgba(0,255,136,0.4); }
   .result-card.mid { border-color:rgba(245,197,24,0.4); }
@@ -237,7 +237,7 @@ const STYLES = `
   .result-text { font-size:12px; line-height:2; color:#d0c8f0; }
   .result-advice { margin-top:8px; padding:8px 12px; background:rgba(245,197,24,0.05); border-radius:6px; border-left:2px solid var(--gold); font-size:11px; line-height:1.8; color:#c0a040; }
 
-  /* グラチE*/
+  /* グラフ */
   .graph-card { background:var(--surface); border:1px solid var(--border2); border-radius:16px; padding:20px; margin-bottom:12px; box-shadow:0 0 20px rgba(100,0,255,0.1); }
   .graph-title { font-family:'Orbitron',monospace; font-size:12px; letter-spacing:3px; color:var(--cyan); margin-bottom:16px; display:flex; align-items:center; gap:8px; }
   .graph-title::after { content:''; flex:1; height:1px; background:linear-gradient(90deg,var(--border2),transparent); }
@@ -245,7 +245,7 @@ const STYLES = `
   /* エラー */
   .error-box { background:rgba(255,68,85,0.1); border:1px solid rgba(255,68,85,0.4); border-radius:12px; padding:20px; margin-bottom:16px; color:var(--bad); font-size:13px; line-height:1.8; text-align:center; }
 
-  /* リセチE�� */
+  /* リセット */
   .reset-btn { display:block; margin:24px auto 0; background:transparent; border:1px solid var(--border2); border-radius:50px; color:var(--subtext); font-family:'Orbitron',monospace; font-size:10px; letter-spacing:3px; padding:10px 28px; cursor:pointer; transition:all 0.2s; }
   .reset-btn:hover { border-color:var(--cyan); color:var(--cyan); box-shadow:0 0 10px rgba(0,245,255,0.2); }
 
@@ -269,7 +269,8 @@ const PARTICLES = [];
 function CompatibilityGraph({results, form}) {
   if(!results) return null;
 
-  // 吁E��ぁE�E相性スコアを計箁E  const calcKyuseiCompat = (y1, y2) => {
+  // 各占いの相性スコアを計算
+  const calcKyuseiCompat = (y1, y2) => {
     const getKyusei = (y) => {
       let s = Number(y);
       while(s>9) s = String(s).split("").reduce((a,c)=>a+Number(c),0);
@@ -286,20 +287,20 @@ function CompatibilityGraph({results, form}) {
   const calcZodiacCompat = (m1,d1,m2,d2) => {
     const getSign = (m,d) => {
       const mn=Number(m),dn=Number(d);
-      if((mn===3&&dn>=21)||(mn===4&&dn<=19)) return "牡羁E;
-      if((mn===4&&dn>=20)||(mn===5&&dn<=20)) return "牡牁E;
-      if((mn===5&&dn>=21)||(mn===6&&dn<=21)) return "双孁E;
+      if((mn===3&&dn>=21)||(mn===4&&dn<=19)) return "牡羊";
+      if((mn===4&&dn>=20)||(mn===5&&dn<=20)) return "牡牛";
+      if((mn===5&&dn>=21)||(mn===6&&dn<=21)) return "双子";
       if((mn===6&&dn>=22)||(mn===7&&dn<=22)) return "蟹";
-      if((mn===7&&dn>=23)||(mn===8&&dn<=22)) return "獁E��E;
+      if((mn===7&&dn>=23)||(mn===8&&dn<=22)) return "獅子";
       if((mn===8&&dn>=23)||(mn===9&&dn<=22)) return "乙女";
       if((mn===9&&dn>=23)||(mn===10&&dn<=23)) return "天秤";
-      if((mn===10&&dn>=24)||(mn===11&&dn<=22)) return "蠁E;
-      if((mn===11&&dn>=23)||(mn===12&&dn<=21)) return "封E��";
-      if((mn===12&&dn>=22)||(mn===1&&dn<=19)) return "山羁E;
+      if((mn===10&&dn>=24)||(mn===11&&dn<=22)) return "蠍";
+      if((mn===11&&dn>=23)||(mn===12&&dn<=21)) return "射手";
+      if((mn===12&&dn>=22)||(mn===1&&dn<=19)) return "山羊";
       if((mn===1&&dn>=20)||(mn===2&&dn<=18)) return "水瓶";
-      return "魁E;
+      return "魚";
     };
-    const compat = {"牡羁E:["獁E��E,"封E��","双孁E,"水瓶"],"牡牁E:["乙女","山羁E,"蟹","魁E],"双孁E:["天秤","水瓶","牡羁E,"獁E��E],"蟹":["蠁E,"魁E,"牡牁E,"乙女"],"獁E��E:["牡羁E,"封E��","双孁E,"天秤"],"乙女":["牡牁E,"山羁E,"蟹","蠁E],"天秤":["双孁E,"水瓶","獁E��E,"封E��"],"蠁E:["蟹","魁E,"乙女","山羁E],"封E��":["牡羁E,"獁E��E,"天秤","水瓶"],"山羁E:["牡牁E,"乙女","蠁E,"魁E],"水瓶":["双孁E,"天秤","牡羁E,"封E��"],"魁E:["蟹","蠁E,"牡牁E,"山羁E]};
+    const compat = {"牡羊":["獅子","射手","双子","水瓶"],"牡牛":["乙女","山羊","蟹","魚"],"双子":["天秤","水瓶","牡羊","獅子"],"蟹":["蠍","魚","牡牛","乙女"],"獅子":["牡羊","射手","双子","天秤"],"乙女":["牡牛","山羊","蟹","蠍"],"天秤":["双子","水瓶","獅子","射手"],"蠍":["蟹","魚","乙女","山羊"],"射手":["牡羊","獅子","天秤","水瓶"],"山羊":["牡牛","乙女","蠍","魚"],"水瓶":["双子","天秤","牡羊","射手"],"魚":["蟹","蠍","牡牛","山羊"]};
     const s1=getSign(m1,d1), s2=getSign(m2,d2);
     if(compat[s1]?.includes(s2)) return 88;
     if(s1===s2) return 55;
@@ -307,14 +308,14 @@ function CompatibilityGraph({results, form}) {
   };
 
   const calcSeimeiCompat = (ln1,fn1,ln2,fn2) => {
-    const KANJI = {"一":1,"亁E:2,"人":2,"丁E:3,"山":3,"囁E:4,"亁E:5,"六":6,"丁E:7,"八":8,"乁E:9,"十E:2,"釁E:8,"巁E:3,"壮":6,"大":3,"花":7,"孁E:3,"太":4,"郁E:9,"田":5,"中":4,"羁E:9,"釁E:7,"男":7};
+    const KANJI = {"一":1,"二":2,"人":2,"三":3,"山":3,"四":4,"五":5,"六":6,"七":7,"八":8,"九":9,"十":2,"金":8,"川":3,"壮":6,"大":3,"花":7,"子":3,"太":4,"郎":9,"田":5,"中":4,"美":9,"里":7,"男":7};
     const getEl = (name) => {
       const k = name.split("").reduce((a,c)=>a+(KANJI[c]||5),0) % 10;
       if(k===1||k===2) return "木"; if(k===3||k===4) return "火";
-      if(k===5||k===6) return "圁E; if(k===7||k===8) return "釁E;
+      if(k===5||k===6) return "土"; if(k===7||k===8) return "金";
       return "水";
     };
-    const SOUSHOU = {木:["水","火"],火:["木","圁E],圁E["火","釁E],釁E["圁E,"水"],水:["釁E,"木"]};
+    const SOUSHOU = {木:["水","火"],火:["木","土"],土:["火","金"],金:["土","水"],水:["金","木"]};
     const e1=getEl(ln1+fn1), e2=getEl(ln2+fn2);
     if(SOUSHOU[e1]?.includes(e2)||SOUSHOU[e2]?.includes(e1)) return 85;
     if(e1===e2) return 60;
@@ -330,10 +331,10 @@ function CompatibilityGraph({results, form}) {
   };
 
   const scores = [
-    {label:"姓名判断", score: calcSeimeiCompat(form.lastName,form.firstName,form.lastName2,form.firstName2), icon:"孁E},
-    {label:"九星気学", score: calcKyuseiCompat(form.birthYear, form.birthYear2), icon:"氁E},
-    {label:"西洋占星衁E, score: calcZodiacCompat(form.birthMonth,form.birthDay,form.birthMonth2,form.birthDay2), icon:"昁E},
-    {label:"血液垁E, score: calcBloodCompat(form.bloodType, form.bloodType2), icon:"血"},
+    {label:"姓名判断", score: calcSeimeiCompat(form.lastName,form.firstName,form.lastName2,form.firstName2), icon:"字"},
+    {label:"九星気学", score: calcKyuseiCompat(form.birthYear, form.birthYear2), icon:"気"},
+    {label:"西洋占星術", score: calcZodiacCompat(form.birthMonth,form.birthDay,form.birthMonth2,form.birthDay2), icon:"星"},
+    {label:"血液型", score: calcBloodCompat(form.bloodType, form.bloodType2), icon:"血"},
     {label:"総合相性", score: results.compatibility?.score||50, icon:"❤"},
   ];
 
@@ -368,10 +369,10 @@ function CompatibilityGraph({results, form}) {
         <div style={{flex:1,height:1,background:"linear-gradient(90deg,#e9d5ff,transparent)"}}/>
       </div>
       <div style={{fontSize:11,color:"#9ca3af",marginBottom:12,textAlign:"center"}}>
-        {form.lastName}{form.firstName}  ÁE {form.lastName2}{form.firstName2}
+        {form.lastName}{form.firstName}  ×  {form.lastName2}{form.firstName2}
       </div>
 
-      {/* レーダーチャーチE*/}
+      {/* レーダーチャート */}
       <div style={{display:"flex",justifyContent:"center"}}>
         <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} style={{width:"100%",maxWidth:280,height:"auto"}}>
           <defs>
@@ -381,13 +382,13 @@ function CompatibilityGraph({results, form}) {
             </linearGradient>
           </defs>
 
-          {/* グリチE�� */}
+          {/* グリッド */}
           {[0.25,0.5,0.75,1].map((ratio,i)=>(
             <polygon key={i} points={gridPts(ratio)} fill="none"
               stroke={ratio===1?"#d1d5db":"#e5e7eb"} strokeWidth={ratio===1?1:0.5}/>
           ))}
 
-          {/* 軸緁E*/}
+          {/* 軸線 */}
           {scores.map((_,i)=>{
             const angle=(i/n)*Math.PI*2-Math.PI/2;
             return <line key={i} x1={cx} y1={cy}
@@ -395,10 +396,10 @@ function CompatibilityGraph({results, form}) {
               stroke="#e5e7eb" strokeWidth="0.8"/>;
           })}
 
-          {/* チE�Eタエリア */}
+          {/* データエリア */}
           <polygon points={polyPts} fill="url(#radarFill)" stroke="#8b5cf6" strokeWidth="2"/>
 
-          {/* チE�EタポインチE*/}
+          {/* データポイント */}
           {points.map((p,i)=>(
             <circle key={i} cx={p.x.toFixed(1)} cy={p.y.toFixed(1)} r="5"
               fill={scores[i].score>=70?"#a78bfa":scores[i].score>=50?"#fbbf24":"#f87171"}
@@ -466,7 +467,7 @@ function GodChar({mood='normal', size=100}) {
         </radialGradient>
       </defs>
 
-      {/* アンチE�� */}
+      {/* アンテナ */}
       <line x1="45" y1="12" x2="45" y2="2" stroke="#a78bfa" strokeWidth="2.5"/>
       <circle cx="45" cy="1" r="4" fill="#a78bfa">
         <animate attributeName="r" values="3;6;3" dur="1.5s" repeatCount="indefinite"/>
@@ -495,7 +496,7 @@ function GodChar({mood='normal', size=100}) {
         : <path d="M32 48 Q45 56 58 48" fill="none" stroke={eyeColor} strokeWidth="2" strokeLinecap="round"/>
       }
 
-      {/* 胴佁E*/}
+      {/* 胴体 */}
       <rect x="13" y="63" width="64" height="50" rx="12" fill="url(#rbg2)" stroke="#7c3aed" strokeWidth="1.5"/>
 
       {/* 胸パネル */}
@@ -505,13 +506,13 @@ function GodChar({mood='normal', size=100}) {
       </circle>
       <circle cx="45" cy="84" r="4" fill={eyeColor} opacity="0.7"/>
 
-      {/* 腁E*/}
+      {/* 腕 */}
       <rect x="0" y="65" width="13" height="38" rx="6" fill="url(#rbg1)" stroke="#7c3aed" strokeWidth="1"/>
       <rect x="77" y="65" width="13" height="38" rx="6" fill="url(#rbg1)" stroke="#7c3aed" strokeWidth="1"/>
       <circle cx="6" cy="107" r="7" fill="url(#rbg2)" stroke={eyeColor} strokeWidth="1"/>
       <circle cx="84" cy="107" r="7" fill="url(#rbg2)" stroke={eyeColor} strokeWidth="1"/>
 
-      {/* excited時�Eキラキラ */}
+      {/* excited時のキラキラ */}
       {mood==='excited'&&<>
         <circle cx="10" cy="20" r="2" fill="#f5c518"><animate attributeName="opacity" values="0;1;0" dur="0.8s" repeatCount="indefinite"/></circle>
         <circle cx="80" cy="30" r="2" fill="#00f5ff"><animate attributeName="opacity" values="0;1;0" dur="1s" repeatCount="indefinite" begin="0.3s"/></circle>
@@ -524,9 +525,11 @@ function GodChar({mood='normal', size=100}) {
 
 function SoulmateCard({sc}) {
   // 九星の相性
-  const kyuseiNames = {1:"一白水昁E,2:"二黒土昁E,3:"三碧木昁E,4:"四緑木昁E,5:"五黁E��昁E,6:"六白金星",7:"丁E��金星",8:"八白土星",9:"九紫火昁E};
+  const kyuseiNames = {1:"一白水星",2:"二黒土星",3:"三碧木星",4:"四緑木星",5:"五黄土星",6:"六白金星",7:"七赤金星",8:"八白土星",9:"九紫火星"};
 
-  // 血液型�E相性�E�民間統計�E離婚率チE�Eタ基準！E  // 離婚率が低い�E�相性が良ぁE��E��合わぁE  const bloodCompat = {
+  // 血液型の相性（民間統計・離婚率データ基準）
+  // 離婚率が低い＝相性が良い組み合わせ
+  const bloodCompat = {
     A:  {best:["A","O"],  good:["AB"],  bad:["B"]},
     B:  {best:["B","O"],  good:["A"],   bad:["AB"]},
     O:  {best:["A","AB"], good:["B"],   bad:["O"]},  // O×Oは離婚率高め
@@ -540,41 +543,44 @@ function SoulmateCard({sc}) {
     6:[1,5,7], 7:[1,5,6], 8:[1,2,3,4], 9:[2,3,4]
   };
 
-  // 西洋占星術�E相性
+  // 西洋占星術の相性
   const zodiacCompat = {
-    "牡羊座":["獁E��座","封E��座","双子座","水瓶座"],
+    "牡羊座":["獅子座","射手座","双子座","水瓶座"],
     "牡牛座":["乙女座","山羊座","蟹座","魚座"],
-    "双子座":["天秤座","水瓶座","牡羊座","獁E��座"],
+    "双子座":["天秤座","水瓶座","牡羊座","獅子座"],
     "蟹座":["蠍座","魚座","牡牛座","乙女座"],
-    "獁E��座":["牡羊座","封E��座","双子座","天秤座"],
+    "獅子座":["牡羊座","射手座","双子座","天秤座"],
     "乙女座":["牡牛座","山羊座","蟹座","蠍座"],
-    "天秤座":["双子座","水瓶座","獁E��座","封E��座"],
+    "天秤座":["双子座","水瓶座","獅子座","射手座"],
     "蠍座":["蟹座","魚座","乙女座","山羊座"],
-    "封E��座":["牡羊座","獁E��座","天秤座","水瓶座"],
+    "射手座":["牡羊座","獅子座","天秤座","水瓶座"],
     "山羊座":["牡牛座","乙女座","蠍座","魚座"],
-    "水瓶座":["双子座","天秤座","牡羊座","封E��座"],
+    "水瓶座":["双子座","天秤座","牡羊座","射手座"],
     "魚座":["蟹座","蠍座","牡牛座","山羊座"],
   };
 
-  // 五行相生（姓名判断�E�E  const gogyouCompat = {木:["水","火"],火:["木","圁E],圁E["火","釁E],釁E["圁E,"水"],水:["釁E,"木"]};
-  const gogyouNames = {木:"木�E�E・2画�E�E,火:"火�E�E・4画�E�E,圁E"土！E・6画�E�E,釁E"金！E・8画�E�E,水:"水�E�E・0画�E�E};
+  // 五行相生（姓名判断）
+  const gogyouCompat = {木:["水","火"],火:["木","土"],土:["火","金"],金:["土","水"],水:["金","木"]};
+  const gogyouNames = {木:"木（1・2画）",火:"火（3・4画）",土:"土（5・6画）",金:"金（7・8画）",水:"水（9・0画）"};
 
-  // 九星の数字取征E  let sum = Number(sc.birthYear||1990);
+  // 九星の数字取得
+  let sum = Number(sc.birthYear||1990);
   while(sum > 9) sum = String(sum).split("").reduce((a,c)=>a+Number(c),0);
   let myKyusei = 11 - sum; if(myKyusei>9)myKyusei-=9; if(myKyusei<=0)myKyusei+=9;
   const compatKyusei = kyuseiCompat[myKyusei]||[];
 
-  // 誕生日から太陽星座を直接計箁E  const getSunSign = (m, d) => {
+  // 誕生日から太陽星座を直接計算
+  const getSunSign = (m, d) => {
     const mn = Number(m), dn = Number(d);
     if((mn===3&&dn>=21)||(mn===4&&dn<=19)) return "牡羊座";
     if((mn===4&&dn>=20)||(mn===5&&dn<=20)) return "牡牛座";
     if((mn===5&&dn>=21)||(mn===6&&dn<=21)) return "双子座";
     if((mn===6&&dn>=22)||(mn===7&&dn<=22)) return "蟹座";
-    if((mn===7&&dn>=23)||(mn===8&&dn<=22)) return "獁E��座";
+    if((mn===7&&dn>=23)||(mn===8&&dn<=22)) return "獅子座";
     if((mn===8&&dn>=23)||(mn===9&&dn<=22)) return "乙女座";
     if((mn===9&&dn>=23)||(mn===10&&dn<=23)) return "天秤座";
     if((mn===10&&dn>=24)||(mn===11&&dn<=22)) return "蠍座";
-    if((mn===11&&dn>=23)||(mn===12&&dn<=21)) return "封E��座";
+    if((mn===11&&dn>=23)||(mn===12&&dn<=21)) return "射手座";
     if((mn===12&&dn>=22)||(mn===1&&dn<=19)) return "山羊座";
     if((mn===1&&dn>=20)||(mn===2&&dn<=18)) return "水瓶座";
     return "魚座";
@@ -584,21 +590,25 @@ function SoulmateCard({sc}) {
   const myElement = sc.jinElement||"水";
   const compatElement = gogyouCompat[myElement]||[];
 
-  // 確玁E��算（褁E��条件で絞り込み�E�E  const kyuseiProb = compatKyusei.length / 9;      // 九星相性
+  // 確率計算（複数条件で絞り込み）
+  const kyuseiProb = compatKyusei.length / 9;      // 九星相性
   const zodiacProb = compatZodiac.length / 12;     // 太陽星座相性
-  const moonZodiacProb = compatZodiac.length / 12; // 月星座相性�E�同じ条件�E�E  const elementProb = compatElement.length / 5;    // 人格五行相性
-  const bloodProb = 1 / 4;                         // 血液型！E種類！E  const ageProb = 0.15;                            // 同年代�E�±10歳�E�E  const prob = kyuseiProb * zodiacProb * moonZodiacProb * elementProb * bloodProb * ageProb;
+  const moonZodiacProb = compatZodiac.length / 12; // 月星座相性（同じ条件）
+  const elementProb = compatElement.length / 5;    // 人格五行相性
+  const bloodProb = 1 / 4;                         // 血液型（1種類）
+  const ageProb = 0.15;                            // 同年代（±10歳）
+  const prob = kyuseiProb * zodiacProb * moonZodiacProb * elementProb * bloodProb * ageProb;
   const japanPop = 120000000;
-  // 最封E0・最大9999で現実的な篁E��に
+  // 最小50・最大9999で現実的な範囲に
   const raw = Math.round(japanPop * prob / 2);
   const soulmates = Math.min(9999, Math.max(50, raw));
 
   const items = [
-    {icon:"⭁E,label:"九星気学",value:compatKyusei.map(s=>kyuseiNames[s]).join("・"),color:"#f59e0b"},
-    {icon:"🔭",label:"西洋占星衁E,value:compatZodiac.length>0 ? compatZodiac.slice(0,3).join("・") : "チE�Eタ取得中",color:"#6366f1"},
-    {icon:"🌿",label:"姓名判断�E�五行！E,value:compatElement.map(e=>gogyouNames[e]).join("・")+"の人格",color:"#22c55e"},
-    {icon:"🩸",label:"血液垁E,value:myBlood ? compatBlood.join("型�E")+"垁E : "血液型を入力してください",color:"#ef4444"},
-    {icon:"🎂",label:"生年月日",value:"同じ九星気学の相性年生まめE,color:"#ec4899"},
+    {icon:"⭐",label:"九星気学",value:compatKyusei.map(s=>kyuseiNames[s]).join("・"),color:"#f59e0b"},
+    {icon:"🔭",label:"西洋占星術",value:compatZodiac.length>0 ? compatZodiac.slice(0,3).join("・") : "データ取得中",color:"#6366f1"},
+    {icon:"🌿",label:"姓名判断（五行）",value:compatElement.map(e=>gogyouNames[e]).join("・")+"の人格",color:"#22c55e"},
+    {icon:"🩸",label:"血液型",value:myBlood ? compatBlood.join("型・")+"型" : "血液型を入力してください",color:"#ef4444"},
+    {icon:"🎂",label:"生年月日",value:"同じ九星気学の相性年生まれ",color:"#ec4899"},
   ];
 
   return (
@@ -607,12 +617,12 @@ function SoulmateCard({sc}) {
       <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:16}}>
         <div style={{fontSize:28}}></div>
         <div>
-          <div style={{fontFamily:"'Reggae One',cursive",fontSize:16,color:"#d97706"}}>あなた�EソウルメイチE/div>
-          <div style={{fontSize:11,color:"#9a8a6a"}}>こんな人があなた�E運命の相手じめE/div>
+          <div style={{fontFamily:"'Reggae One',cursive",fontSize:16,color:"#d97706"}}>あなたのソウルメイト</div>
+          <div style={{fontSize:11,color:"#9a8a6a"}}>こんな人があなたの運命の相手じゃ</div>
         </div>
       </div>
 
-      {/* 条件リスチE*/}
+      {/* 条件リスト */}
       <div style={{display:"flex",flexDirection:"column",gap:10,marginBottom:16}}>
         {items.map((item,i)=>(
           <div key={i} style={{display:"flex",alignItems:"flex-start",gap:10,padding:"10px 14px",background:"#fffbf0",borderRadius:10,border:`1px solid ${item.color}30`}}>
@@ -625,20 +635,21 @@ function SoulmateCard({sc}) {
         ))}
       </div>
 
-      {/* 確玁E�E人数 */}
+      {/* 確率・人数 */}
       <div style={{background:"linear-gradient(135deg,#fef9c3,#fde68a)",borderRadius:12,padding:"14px 16px",textAlign:"center"}}>
-        <div style={{fontSize:10,color:"#92400e",letterSpacing:2,marginBottom:6}}>�E�E 日本人の中であなたと運命が合ぁE��</div>
+        <div style={{fontSize:10,color:"#92400e",letterSpacing:2,marginBottom:6}}>🇯🇵 日本人の中であなたと運命が合う人</div>
         <div style={{fontFamily:"'Reggae One',cursive",fontSize:28,color:"#d97706",marginBottom:4}}>
           約{soulmates.toLocaleString()}人
         </div>
         <div style={{fontSize:11,color:"#92400e"}}>
-          日本の同年代の異性のぁE��{(prob*50*100).toFixed(4)}%�E�異性の半�Eで計算！E        </div>
+          日本の同年代の異性のうち{(prob*50*100).toFixed(4)}%（異性の半分で計算）
+        </div>
       </div>
 
-      {/* 神様コメンチE*/}
+      {/* 神様コメント */}
       <div style={{marginTop:12,padding:"10px 14px",background:"#f0f8ff",borderRadius:10,fontSize:12,color:"#4a6a8a",lineHeight:1.8,display:"flex",gap:8,alignItems:"flex-start"}}>
         <span style={{fontSize:20}}>👴</span>
-        <span>縁とは不思議なも�E。条件が合っても�E会わねば意味がなぁE��じめE��条件を知ることで、�E会いを引き寁E��る力が生まれるのじゃ、E/span>
+        <span>縁とは不思議なもの。条件が合っても出会わねば意味がない。じゃが条件を知ることで、出会いを引き寄せる力が生まれるのじゃ。</span>
       </div>
     </div>
   );
@@ -647,23 +658,10 @@ function SoulmateCard({sc}) {
 
 function ShareButtons({results, form}) {
   const score = results?.compatibility?.score || 0;
-  const getVerdict = (score, relation) => {
-    if(relation==="恋�E"||relation==="結婁E){
-      return score>=90?'💖ソウルメイト確宁E:score>=80?'💕最高�E相性':score>=70?'�E良ぁE��性':score>=55?'🌀普通�E相性':score>=40?'⚠難しい相性':'⚡試練のカチE�Eル';
-    } else if(relation==="上司部丁E){
-      return score>=90?'💖最強のコンチE:score>=80?'💕抜群の信頼関俁E:score>=70?'�E良好な関俁E:score>=55?'🌀標準的な関俁E:score>=40?'⚠摩擦が多い関俁E:'⚡深刻な相性問顁E;
-    } else if(relation==="友達"){
-      return score>=90?'💖最高�E親叁E:score>=80?'💕良ぁE��人関俁E:score>=70?'�E良好な友人':score>=55?'🌀普通�E関俁E:score>=40?'⚠距離感が難しい':'⚡合わなぁE��E��合わぁE;
-    } else if(relation==="同�E"){
-      return score>=90?'💖最強の同�E':score>=80?'💕良ぁE��ームワーク':score>=70?'�E良好な関俁E:score>=55?'🌀普通�E関俁E:score>=40?'⚠摩擦が起きやすい':'⚡難しい関俁E;
-    } else {
-      return score>=90?'💖最高�E相性':score>=80?'💕良ぁE��俁E:score>=70?'�E良好':score>=55?'🌀普送E:score>=40?'⚠難しい':'⚡試練の関俁E;
-    }
-  };
-  const verdict = getVerdict(score, form.relation);
+  const verdict = score>=90?'💖ソウルメイト確定':score>=80?'💕最高の相性':score>=70?'😊良い相性':score>=55?'🌀普通の相性':score>=40?'⚠難しい相性':'⚡試練のカップル';
   const title = results?.compatibility?.title || '';
 
-  const shareText = `【忖度なし�E相性占ぁE��\n${form.lastName}${form.firstName} ÁE${form.lastName2}${form.firstName2}�E�E{form.relation}�E�\n\n相性スコア�E�E{score}点\n${verdict}\n、E{title}」\n\n相手�E性格わかるから勝機があがる！\nAIÁE000年の占術で鑑定`;
+  const shareText = `【忖度なしの相性占い】\n${form.lastName}${form.firstName} × ${form.lastName2}${form.firstName2}（${form.relation}）\n\n相性スコア：${score}点\n${verdict}\n「${title}」\n\n相手の性格わかるから勝機があがる！\nAI×5000年の占術で鑑定`;
 
   const shareUrl = typeof window !== 'undefined' ? window.location.href : '';
 
@@ -680,7 +678,7 @@ function ShareButtons({results, form}) {
   const copyLink = () => {
     const text = shareText + '\n' + shareUrl;
     if(navigator.clipboard) {
-      navigator.clipboard.writeText(text).then(()=>alert('コピ�Eしました�E�E));
+      navigator.clipboard.writeText(text).then(()=>alert('コピーしました！'));
     } else {
       const el = document.createElement('textarea');
       el.value = text;
@@ -688,13 +686,13 @@ function ShareButtons({results, form}) {
       el.select();
       document.execCommand('copy');
       document.body.removeChild(el);
-      alert('コピ�Eしました�E�E);
+      alert('コピーしました！');
     }
   };
 
   return (
     <div style={{background:"white",borderRadius:16,border:"2px solid #e9d5ff",padding:"20px",marginBottom:12,textAlign:"center"}}>
-      <div style={{fontFamily:"'Reggae One',cursive",fontSize:14,color:"#8b5cf6",marginBottom:4}}> ESHARE  E/div>
+      <div style={{fontFamily:"'Reggae One',cursive",fontSize:14,color:"#8b5cf6",marginBottom:4}}>— SHARE —</div>
       <div style={{fontSize:11,color:"#9ca3af",marginBottom:16}}>結果をシェアして友達も試してもらおう</div>
 
       {/* シェアプレビュー */}
@@ -725,7 +723,7 @@ function ShareButtons({results, form}) {
           padding:"10px 20px",fontSize:13,fontWeight:900,cursor:"pointer",
           display:"flex",alignItems:"center",gap:6,fontFamily:"'M PLUS Rounded 1c',sans-serif"
         }}>
-          🔗 リンクコピ�E
+          🔗 リンクコピー
         </button>
       </div>
     </div>
@@ -734,12 +732,12 @@ function ShareButtons({results, form}) {
 
 const FORTUNE_KEYS = ["seimei","shichu","kyusei","seiyo"];
 const FORTUNE_META = {
-  seimei:{icon:"孁E,label:"姓名判断"},
+  seimei:{icon:"字",label:"姓名判断"},
   shichu:{icon:"命",label:"四柱推命"},
-  kyusei:{icon:"氁E,label:"九星気学"},
-  seiyo:{icon:"昁E,label:"西洋占星衁E},
+  kyusei:{icon:"気",label:"九星気学"},
+  seiyo:{icon:"星",label:"西洋占星術"},
 };
-const starLabel = s=>s>=90?"☁E�E☁E�E☁E:s>=75?"☁E�E☁E�E☁E:s>=60?"☁E�E☁E�E☁E:s>=40?"☁E�E☁E�E☁E:"☁E�E☁E�E☁E;
+const starLabel = s=>s>=90?"★★★★★":s>=75?"★★★★☆":s>=60?"★★★☆☆":s>=40?"★★☆☆☆":"★☆☆☆☆";
 
 function DetailToggle({results}) {
   const [open, setOpen] = useState(false);
@@ -752,7 +750,7 @@ function DetailToggle({results}) {
         onMouseOut={e=>e.currentTarget.style.borderColor="var(--border)"}
       >
         <span style={{fontSize:"10px",opacity:0.5}}>{open?"▲":"▼"}</span>
-        吁E��術�E詳細を{open?"閉じめE:"見る"}
+        各占術の詳細を{open?"閉じる":"見る"}
       </button>
       {open&&(
         <div style={{marginTop:"10px"}}>
@@ -787,25 +785,10 @@ function DetailToggle({results}) {
 
 export default function App() {
   const today = new Date();
-
-  const getVerdict = (score, relation) => {
-    if(relation==="恋�E"||relation==="結婁E){
-      return score>=90?'💖ソウルメイト確宁E:score>=80?'💕最高�E相性':score>=70?'�E良ぁE��性':score>=55?'🌀普通�E相性':score>=40?'⚠難しい相性':'⚡試練のカチE�Eル';
-    } else if(relation==="上司部丁E){
-      return score>=90?'💖最強のコンチE:score>=80?'💕抜群の信頼関俁E:score>=70?'�E良好な関俁E:score>=55?'🌀標準的な関俁E:score>=40?'⚠摩擦が多い関俁E:'⚡深刻な相性問顁E;
-    } else if(relation==="友達"){
-      return score>=90?'💖最高�E親叁E:score>=80?'💕良ぁE��人関俁E:score>=70?'�E良好な友人':score>=55?'🌀普通�E関俁E:score>=40?'⚠距離感が難しい':'⚡合わなぁE��E��合わぁE;
-    } else if(relation==="同�E"){
-      return score>=90?'💖最強の同�E':score>=80?'💕良ぁE��ームワーク':score>=70?'�E良好な関俁E:score>=55?'🌀普通�E関俁E:score>=40?'⚠摩擦が起きやすい':'⚡難しい関俁E;
-    } else {
-      return score>=90?'💖最高�E相性':score>=80?'💕良ぁE��俁E:score>=70?'�E良好':score>=55?'🌀普送E:score>=40?'⚠難しい':'⚡試練の関俁E;
-    }
-  };
-
   const [form,setForm]=useState({
     lastName:"",firstName:"",birthYear:"",birthMonth:"",birthDay:"",bloodType:"",gender:"",
     lastName2:"",firstName2:"",birthYear2:"",birthMonth2:"",birthDay2:"",bloodType2:"",gender2:"",
-    relation:"恋�E", role:"1人目が上司", concern:"",
+    relation:"恋愛", concern:"",
     readingDate: `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`
   });
   const [loading,setLoading]=useState(false);
@@ -813,49 +796,62 @@ export default function App() {
   const [error,setError]=useState(null);
   const set=(k,v)=>setForm(f=>({...f,[k]:v}));
 
-  // ===== 本格占ぁE��算（吉凶を正確に反映�E�E====
+  // ===== 本格占い計算（吉凶を正確に反映）=====
 
-  // ===== 本格占ぁE��算！E、E00の完�E篁E���E�E====
+  // ===== 本格占い計算（0〜100の完全範囲）=====
 
-  // スコアめE、E00に正規化するユーチE��リチE��
+  // スコアを0〜100に正規化するユーティリティ
   const normalize = (val, min, max) => Math.round(((val - min) / (max - min)) * 100);
 
-  // 九星気学�E�本格実裁E  // 九星は生年の数字�E合計を1桁になるまで足し、E1から引く�E�Eは五黁E��星！E  const calcKyusei = (year) => {
+  // 九星気学：本格実装
+  // 九星は生年の数字の合計を1桁になるまで足し、11から引く（5は五黄土星）
+  const calcKyusei = (year) => {
     const y = Number(year);
-    // 本格皁E��九星計算：年の吁E��を足して1桁にしてから11から引く
+    // 本格的な九星計算：年の各桁を足して1桁にしてから11から引く
     let sum = y;
     while(sum > 9) { sum = String(sum).split("").reduce((a,c)=>a+Number(c),0); }
     let star = 11 - sum;
     if(star > 9) star -= 9;
     if(star <= 0) star += 9;
 
-    // 本場の吉�E�E�五黁E�E最凶・大凶、二黒も凶、三碧・九紫は大吁E    // 吁E��星の本来の性質に基づくスコア
+    // 本場の吉凶：五黄は最凶・大凶、二黒も凶、三碧・九紫は大吉
+    // 各九星の本来の性質に基づくスコア
     const scores = {
-      1:52, // 一白水星：流動・変化。吉凶が安定しなぁE��吁E      2:18, // 二黒土星：重・停滞。努力が報われにくい凶
-      3:88, // 三碧木星：発展�E行動力。大吁E      4:65, // 四緑木星：信用・縁。中吁E      5:0,  // 五黁E��星：最凶。破壊�E波乱丁E��E      6:82, // 六白金星�E�権威�Eリーダー。吉
-      7:70, // 丁E��金星�E�喜び・財。中吁E      8:38, // 八白土星�E�変化・蓁E��。やめE�E�E�変わり目�E�E      9:100 // 九紫火星：名誉�E頂点。大吁E    };
-    const names = {1:"一白水昁E,2:"二黒土昁E,3:"三碧木昁E,4:"四緑木昁E,5:"五黁E��昁E,6:"六白金星",7:"丁E��金星",8:"八白土星",9:"九紫火昁E};
+      1:52, // 一白水星：流動・変化。吉凶が安定しない中吉
+      2:18, // 二黒土星：重・停滞。努力が報われにくい凶
+      3:88, // 三碧木星：発展・行動力。大吉
+      4:65, // 四緑木星：信用・縁。中吉
+      5:0,  // 五黄土星：最凶。破壊・波乱万丈
+      6:82, // 六白金星：権威・リーダー。吉
+      7:70, // 七赤金星：喜び・財。中吉
+      8:38, // 八白土星：変化・蓄財。やや凶（変わり目）
+      9:100 // 九紫火星：名誉・頂点。大吉
+    };
+    const names = {1:"一白水星",2:"二黒土星",3:"三碧木星",4:"四緑木星",5:"五黄土星",6:"六白金星",7:"七赤金星",8:"八白土星",9:"九紫火星"};
     const natures = {
-      1:"水の気。流れるよぁE��環墁E��適応するが、定まらなぁE��命を持つ、E,
-      2:"土�E気。勤勉だが報われにくく、苦労が絶えなぁE��、E,
-      3:"木の気。若木のように勢ぁE��く伸びる、最も発展運が強ぁE��、E,
-      4:"木の気。縁と信用に恵まれ、人間関係で運が開ける星、E,
-      5:"土�E気�E中忁E��最も強烈な凶星。波乱と破壊を呼ぶ、E,
-      6:"金�E気。天の意志を体現するリーダーの星。強ぁE��運、E,
-      7:"金�E気。喜びと豊かさをもたらすが、享楽に流れめE��ぁE��E,
-      8:"土�E気。変革の時を示す星。苦しい変化の後に安定が来る、E,
-      9:"火の気。最高�E名誉と輝きをもたらす頂点の星、E
+      1:"水の気。流れるように環境に適応するが、定まらない運命を持つ。",
+      2:"土の気。勤勉だが報われにくく、苦労が絶えない星。",
+      3:"木の気。若木のように勢いよく伸びる、最も発展運が強い星。",
+      4:"木の気。縁と信用に恵まれ、人間関係で運が開ける星。",
+      5:"土の気の中心。最も強烈な凶星。波乱と破壊を呼ぶ。",
+      6:"金の気。天の意志を体現するリーダーの星。強い吉運。",
+      7:"金の気。喜びと豊かさをもたらすが、享楽に流れやすい。",
+      8:"土の気。変革の時を示す星。苦しい変化の後に安定が来る。",
+      9:"火の気。最高の名誉と輝きをもたらす頂点の星。"
     };
     return {score: scores[star], name: names[star], star, nature: natures[star]};
   };
 
-  // 西洋占星術：本格実裁E��エチE��ンシャルチE��グニティ�E�E  const PLANET_DATA = {"1950-01-01":"jccekf","1950-01-15":"jidfkf","1950-01-29":"kcefkf","1950-02-12":"kiffkf","1950-02-26":"lcffkf","1950-03-12":"ljgfkf","1950-03-26":"achgkf","1950-04-09":"ajigkf","1950-04-23":"bdigkf","1950-05-07":"bjjgkf","1950-05-21":"bdkgkf","1950-06-04":"cjkhlf","1950-06-18":"cdlhlf","1950-07-02":"dkahlf","1950-07-16":"debhlf","1950-07-30":"ekbilf","1950-08-13":"eecilf","1950-08-27":"fkdilf","1950-09-10":"feeilf","1950-09-24":"glejlf","1950-10-08":"gefjlf","1950-10-22":"glgjlf","1950-11-05":"hfhklf","1950-11-19":"hlhklf","1950-12-03":"ifiklf","1950-12-17":"iajklf","1950-12-31":"jfkllf","1951-01-14":"jakllf","1951-01-28":"kglllf","1951-02-11":"kaaalf","1951-02-25":"lgbalf","1951-03-11":"labalf","1951-03-25":"agcalf","1951-04-08":"abdblf","1951-04-22":"bheblf","1951-05-06":"bbeblf","1951-05-20":"bhfblf","1951-06-03":"cbgcaf","1951-06-17":"chhcaf","1951-07-01":"dchcaf","1951-07-15":"dhicaf","1951-07-29":"ecjdag","1951-08-12":"eikdag","1951-08-26":"fckdag","1951-09-09":"fildag","1951-09-23":"fcaeag","1951-10-07":"gibeag","1951-10-21":"gdbeag","1951-11-04":"hjceag","1951-11-18":"hddeag","1951-12-02":"ijefag","1951-12-16":"idefag","1951-12-30":"jjffag","1952-01-13":"jdgfag","1952-01-27":"kkhfag","1952-02-10":"kehgag","1952-02-24":"lkigag","1952-03-09":"lejgag","1952-03-23":"akkgag","1952-04-06":"aekgag","1952-04-20":"allhag","1952-05-04":"bfahag","1952-05-18":"blbhag","1952-06-01":"cfbhbg","1952-06-15":"clcibg","1952-06-29":"dfdibg","1952-07-13":"daeibg","1952-07-27":"efeibg","1952-08-10":"eafjbg","1952-08-24":"fggjbg","1952-09-07":"fahjbg","1952-09-21":"fghkbg","1952-10-05":"gbikbg","1952-10-19":"ggjkbg","1952-11-02":"hbkkbg","1952-11-16":"hhklbg","1952-11-30":"ibllbg","1952-12-14":"ihalbg","1952-12-28":"jbbabg","1953-01-11":"jhbabg","1953-01-25":"kccabg","1953-02-08":"khdabg","1953-02-22":"lcebbg","1953-03-08":"liebbg","1953-03-22":"acfbbg","1953-04-05":"aigbbg","1953-04-19":"adhcbg","1953-05-03":"bihcbg","1953-05-17":"bdiccg","1953-05-31":"cjjccg","1953-06-14":"cdkdcg","1953-06-28":"djkdcg","1953-07-12":"ddldcg","1953-07-26":"ejadcg","1953-08-09":"eebecg","1953-08-23":"ekbecg","1953-09-06":"fececg","1953-09-20":"fkdecg","1953-10-04":"geeecg","1953-10-18":"gkefcg","1953-11-01":"hfffcg","1953-11-15":"hlgfcg","1953-11-29":"ifhfcg","1953-12-13":"ilhfcg","1953-12-27":"jfigcg","1954-01-10":"jljgcg","1954-01-24":"kfkgcg","1954-02-07":"kakgch","1954-02-21":"lglgch","1954-03-07":"laahch","1954-03-21":"lgahch","1954-04-04":"aabhch","1954-04-18":"agchch","1954-05-02":"badich","1954-05-16":"bhdidh","1954-05-30":"cbeidh","1954-06-13":"chfidh","1954-06-27":"dbgjdh","1954-07-11":"dhhjdh","1954-07-25":"ebhjdh","1954-08-08":"ehikdh","1954-08-22":"ecjkdh","1954-09-05":"fikkdh","1954-09-19":"fckkdh","1954-10-03":"gilldh","1954-10-17":"gcaldh","1954-10-31":"hialdh","1954-11-14":"hdbadh","1954-11-28":"ijcadh","1954-12-12":"iddadh","1954-12-26":"jjdadh","1955-01-09":"jdebdh","1955-01-23":"kjfbdh","1955-02-06":"kegbdh","1955-02-20":"ljgbdh","1955-03-06":"lehcdh","1955-03-20":"lkicdh","1955-04-03":"aejcdh","1955-04-17":"akjcdh","1955-05-01":"bfkddh","1955-05-15":"bkldeh","1955-05-29":"cfadeh","1955-06-12":"cladeh","1955-06-26":"dfbeeh","1955-07-10":"dlceeh","1955-07-24":"efdeeh","1955-08-07":"eldeeh","1955-08-21":"egeeeh","1955-09-04":"faffeh","1955-09-18":"fggfeh","1955-10-02":"gagfeh","1955-10-16":"gghfeh","1955-10-30":"haifeh","1955-11-13":"hhjgeh","1955-11-27":"iajgeh","1955-12-11":"ihkgeh","1955-12-25":"jblgeh","1956-01-08":"jhageh","1956-01-22":"kbaheh","1956-02-05":"kibheh","1956-02-19":"kbcheh","1956-03-04":"lidheh","1956-03-18":"lcdieh","1956-04-01":"aieieh","1956-04-15":"acfieh","1956-04-29":"bigieh","1956-05-13":"bcgjfh","1956-05-27":"cjhjfh","1956-06-10":"cdijfh","1956-06-24":"djjjfh","1956-07-08":"ddjkfh","1956-07-22":"djkkfh","1956-08-05":"edlkfh","1956-08-19":"ejalfi","1956-09-02":"fealfi","1956-09-16":"fkblfi","1956-09-30":"gecafi","1956-10-14":"gkdafi","1956-10-28":"hedafi","1956-11-11":"hkeafi","1956-11-25":"iffbfi","1956-12-09":"ikgbfi","1956-12-23":"jfgbfi","1957-01-06":"jlhbfi","1957-01-20":"jficfi","1957-02-03":"kljcfi","1957-02-17":"kfjcfi","1957-03-03":"llkcfi","1957-03-17":"lgldfi","1957-03-31":"aaadfi","1957-04-14":"agadfi","1957-04-28":"babdgi","1957-05-12":"bgcegi","1957-05-26":"cadegi","1957-06-09":"chdegi","1957-06-23":"dbeegi","1957-07-07":"dhfegi","1957-07-21":"dbgfgi","1957-08-04":"ehgfgi","1957-08-18":"ebhfgi","1957-09-01":"fiifgi","1957-09-15":"fbjfgi","1957-09-29":"gijggi","1957-10-13":"gckggi","1957-10-27":"hilggi","1957-11-10":"hcaggi","1957-11-24":"ijaggi","1957-12-08":"icbhgi","1957-12-22":"ijchgi","1958-01-05":"jddhgi","1958-01-19":"jjdhgi","1958-02-02":"kdeigi","1958-02-16":"kjfigi","1958-03-02":"ldgigi","1958-03-16":"lkgigi","1958-03-30":"adhjgi","1958-04-13":"akijgi","1958-04-27":"bejjhi","1958-05-11":"bkjjhi","1958-05-25":"cekkhi","1958-06-08":"cllkhi","1958-06-22":"delkhi","1958-07-06":"dlalhi","1958-07-20":"dfblhi","1958-08-03":"elclhi","1958-08-17":"efclhi","1958-08-31":"fldahi","1958-09-14":"ffeahi","1958-09-28":"gafahi","1958-10-12":"ggfbhi","1958-10-26":"hagbhi","1958-11-09":"hghbhi","1958-11-23":"iaibhi","1958-12-07":"igichi","1958-12-21":"ibjchi","1959-01-04":"jhkchi","1959-01-18":"jblchi","1959-02-01":"khldhi","1959-02-15":"kbadhi","1959-03-01":"lhbdhj","1959-03-15":"lbcdhj","1959-03-29":"aicehj","1959-04-12":"acdehj","1959-04-26":"bieeij","1959-05-10":"bcfeij","1959-05-24":"cifeij","1959-06-07":"ccgfij","1959-06-21":"cjhfij","1959-07-05":"ddifij","1959-07-19":"djifij","1959-08-02":"edjfij","1959-08-16":"ejkgij","1959-08-30":"fdlgij","1959-09-13":"fjlgij","1959-09-27":"gdagij","1959-10-11":"gkbgij","1959-10-25":"hechij","1959-11-08":"hkchij","1959-11-22":"hedhij","1959-12-06":"ikehij","1959-12-20":"iefiij","1960-01-03":"jlfiij","1960-01-17":"jegiij","1960-01-31":"klhiij","1960-02-14":"kfijij","1960-02-28":"llijij","1960-03-13":"lfjjij","1960-03-27":"aakjij","1960-04-10":"aflkij","1960-04-24":"balkjj","1960-05-08":"bgakjj","1960-05-22":"cabljj","1960-06-05":"cgcljj","1960-06-19":"cbcljj","1960-07-03":"dgdljj","1960-07-17":"dbeajj","1960-07-31":"ehfajj","1960-08-14":"ebfajj","1960-08-28":"fhgbjj","1960-09-11":"fbhbjj","1960-09-25":"ghibjj","1960-10-09":"gcibjj","1960-10-23":"gijcjj","1960-11-06":"hckcjj","1960-11-20":"hilcjj","1960-12-04":"iclcjj","1960-12-18":"iiadjj","1961-01-01":"jdbdjj","1961-01-15":"jicdjj","1961-01-29":"kdcdjj","1961-02-12":"kjdejj","1961-02-26":"ldeejj","1961-03-12":"ljfejj","1961-03-26":"adfejj","1961-04-09":"ajgejj","1961-04-23":"behfkj","1961-05-07":"bkifkj","1961-05-21":"beifkj","1961-06-04":"ckjfkj","1961-06-18":"cekfkj","1961-07-02":"dklgkj","1961-07-16":"delgkj","1961-07-30":"elagkj","1961-08-13":"efbgkj","1961-08-27":"flcgkj","1961-09-10":"ffchkk","1961-09-24":"gldhkk","1961-10-08":"gfehkk","1961-10-22":"gafhkk","1961-11-05":"hgfikk","1961-11-19":"hagikk","1961-12-03":"ighikk","1961-12-17":"iaiikk","1961-12-31":"jgijkk","1962-01-14":"jbjjkk","1962-01-28":"kgkjkk","1962-02-11":"kbljkk","1962-02-25":"lhlkkk","1962-03-11":"lbakkk","1962-03-25":"ahbkkk","1962-04-08":"acbllk","1962-04-22":"bhcllk","1962-05-06":"bcdllk","1962-05-20":"biellk","1962-06-03":"ccfalk","1962-06-17":"cifalk","1962-07-01":"dcgalk","1962-07-15":"dihblk","1962-07-29":"ediblk","1962-08-12":"eiiblk","1962-08-26":"fdjblk","1962-09-09":"fjkclk","1962-09-23":"fdkclk","1962-10-07":"gjlclk","1962-10-21":"geaclk","1962-11-04":"hjbdlk","1962-11-18":"hebdlk","1962-12-02":"ikcdlk","1962-12-16":"ieddlk","1962-12-30":"jkedlk","1963-01-13":"jeeelk","1963-01-27":"kkfelk","1963-02-10":"kfgelk","1963-02-24":"llhelk","1963-03-10":"lfhflk","1963-03-24":"aliflk","1963-04-07":"afjfak","1963-04-21":"blkfak","1963-05-05":"bgkfak","1963-05-19":"bllgak","1963-06-02":"cgagak","1963-06-16":"cabgak","1963-06-30":"dgbgak","1963-07-14":"dacgak","1963-07-28":"egdhak","1963-08-11":"ebehak","1963-08-25":"fhehak","1963-09-08":"fbfhak","1963-09-22":"fhgiak","1963-10-06":"gbhiak","1963-10-20":"ghhiak","1963-11-03":"hbiiak","1963-11-17":"hijjak","1963-12-01":"ickjak","1963-12-15":"iikjak","1963-12-29":"jcljak","1964-01-12":"jiakak","1964-01-26":"kcbkak","1964-02-09":"kibkak","1964-02-23":"ldclak","1964-03-08":"ljdlak","1964-03-22":"adelal","1964-04-05":"ajelbl","1964-04-19":"adfabl","1964-05-03":"bjgabl","1964-05-17":"behabl","1964-05-31":"cjhbbl","1964-06-14":"ceibbl","1964-06-28":"dkjbbl","1964-07-12":"dekbbl","1964-07-26":"ekkcbl","1964-08-09":"eflcbl","1964-08-23":"ekacbl","1964-09-06":"ffbcbl","1964-09-20":"flbdbl","1964-10-04":"gfcdbl","1964-10-18":"glddbl","1964-11-01":"hgedbl","1964-11-15":"hledbl","1964-11-29":"igfebl","1964-12-13":"iagebl","1964-12-27":"jghebl","1965-01-10":"jahebl","1965-01-24":"kgiebl","1965-02-07":"kajfbl","1965-02-21":"lhkfbl","1965-03-07":"lakfbl","1965-03-21":"ahlfbl","1965-04-04":"abafcl","1965-04-18":"ahbgcl","1965-05-02":"bbbgcl","1965-05-16":"bicgcl","1965-05-30":"cbdgcl","1965-06-13":"ciehcl","1965-06-27":"dcehcl","1965-07-11":"difhcl","1965-07-25":"ecghcl","1965-08-08":"eihicl","1965-08-22":"echicl","1965-09-05":"fjiicl","1965-09-19":"fdjicl","1965-10-03":"gjkjcl","1965-10-17":"gdkjcl","1965-10-31":"hjljcl","1965-11-14":"hdajcl","1965-11-28":"ijbkcl","1965-12-12":"iebkcl","1965-12-26":"jkckcl","1966-01-09":"jedlcl","1966-01-23":"kkelcl","1966-02-06":"keelcl","1966-02-20":"lkflcl","1966-03-06":"lfgacl","1966-03-20":"llhadl","1966-04-03":"afhadl","1966-04-17":"alibdl","1966-05-01":"bfjbdl","1966-05-15":"blkbdl","1966-05-29":"cfkbdl","1966-06-12":"cllcdl","1966-06-26":"dgacdl","1966-07-10":"daacdl","1966-07-24":"egbcdl","1966-08-07":"eacddl","1966-08-21":"egdddl","1966-09-04":"fadddl","1966-09-18":"fheddl","1966-10-02":"gbfdda","1966-10-16":"ghgeda","1966-10-30":"hbheda","1966-11-13":"hhheda","1966-11-27":"ibieda","1966-12-11":"iijeda","1966-12-25":"jbkfda","1967-01-08":"jikfda","1967-01-22":"kclfda","1967-02-05":"kiafda","1967-02-19":"kcafda","1967-03-05":"ljbgda","1967-03-19":"lccgea","1967-04-02":"ajdgea","1967-04-16":"addgea","1967-04-30":"bjehea","1967-05-14":"bdfhea","1967-05-28":"cjghea","1967-06-11":"cdghea","1967-06-25":"dkhiea","1967-07-09":"deiiea","1967-07-23":"dkjiea","1967-08-06":"eejiea","1967-08-20":"ekkjea","1967-09-03":"feljea","1967-09-17":"flajea","1967-10-01":"geajea","1967-10-15":"glbkea","1967-10-29":"hfckea","1967-11-12":"hldkea","1967-11-26":"ifdlea","1967-12-10":"iaelea","1967-12-24":"jfflea","1968-01-07":"jaglea","1968-01-21":"kggaea","1968-02-04":"kahaea","1968-02-18":"kgiaea","1968-03-03":"lajbea","1968-03-17":"lgjbfa","1968-03-31":"abkbfa","1968-04-14":"ahlbfa","1968-04-28":"bbacfa","1968-05-12":"bhacfa","1968-05-26":"cbbcfa","1968-06-09":"chccfa","1968-06-23":"dcddfa","1968-07-07":"diddfa","1968-07-21":"dcedfa","1968-08-04":"eifdfa","1968-08-18":"ecgdfa","1968-09-01":"figefa","1968-09-15":"fchefa","1968-09-29":"gjiefa","1968-10-13":"gdjefa","1968-10-27":"hjjefa","1968-11-10":"hdkffa","1968-11-24":"ijlffa","1968-12-08":"idaffa","1968-12-22":"jkaffa","1969-01-05":"jdbffa","1969-01-19":"jkcgfa","1969-02-02":"kedgfa","1969-02-16":"kkdgfa","1969-03-02":"leegfa","1969-03-16":"lkfhga","1969-03-30":"aeghgb","1969-04-13":"alghgb","1969-04-27":"bfhhgb","1969-05-11":"blihgb","1969-05-25":"cfjigb","1969-06-08":"cljigb","1969-06-22":"dfkigb","1969-07-06":"daljgb","1969-07-20":"dfajgb","1969-08-03":"eaajgb","1969-08-17":"egbjgb","1969-08-31":"fackgb","1969-09-14":"fgdkgb","1969-09-28":"gbdkgb","1969-10-12":"ggekgb","1969-10-26":"hbflgb","1969-11-09":"hhglgb","1969-11-23":"ibglgb","1969-12-07":"ihhagb","1969-12-21":"ibiagb","1970-01-04":"jhjagb","1970-01-18":"jcjagb","1970-02-01":"khkbgb","1970-02-15":"kclbgb","1970-03-01":"liabgb","1970-03-15":"lcachb","1970-03-29":"aibchb","1970-04-12":"adcchb","1970-04-26":"bidchb","1970-05-10":"bdddhb","1970-05-24":"cjedhb","1970-06-07":"cdfdhb","1970-06-21":"cjgdhb","1970-07-05":"ddgdhb","1970-07-19":"djhehb","1970-08-02":"eeiehb","1970-08-16":"ekjehb","1970-08-30":"fejehb","1970-09-13":"fkkehb","1970-09-27":"gelfhb","1970-10-11":"gklfhb","1970-10-25":"hfafhb","1970-11-08":"hlbfhb","1970-11-22":"hfcfhb","1970-12-06":"ilcghb","1970-12-20":"ifdghb","1971-01-03":"jleghb","1971-01-17":"jffghb","1971-01-31":"kafhhb","1971-02-14":"kgghhb","1971-02-28":"lahhib","1971-03-14":"lgihib","1971-03-28":"aaihib","1971-04-11":"agjiib","1971-04-25":"bbkiib","1971-05-09":"bhliib","1971-05-23":"cbljib","1971-06-06":"chajib","1971-06-20":"cbbjib","1971-07-04":"dhcjib","1971-07-18":"dcckib","1971-08-01":"ehdkib","1971-08-15":"ecekib","1971-08-29":"fifkib","1971-09-12":"fcflib","1971-09-26":"giglib","1971-10-10":"gdhlic","1971-10-24":"giiaic","1971-11-07":"hdiaic","1971-11-21":"hjjaic","1971-12-05":"idkaic","1971-12-19":"ijlbic","1972-01-02":"jdlbic","1972-01-16":"jjabic","1972-01-30":"kebcic","1972-02-13":"kjccic","1972-02-27":"leccjc","1972-03-12":"lkdcjc","1972-03-26":"aeedjc","1972-04-09":"akfdjc","1972-04-23":"bffdjc","1972-05-07":"bkgdjc","1972-05-21":"cfhdjc","1972-06-04":"cliejc","1972-06-18":"cfiejc","1972-07-02":"dljejc","1972-07-16":"dfkejc","1972-07-30":"ellejc","1972-08-13":"eglfjc","1972-08-27":"faafjc","1972-09-10":"fgbfjc","1972-09-24":"gacfjc","1972-10-08":"ggcfjc","1972-10-22":"gadgjc","1972-11-05":"hhegjc","1972-11-19":"hafgjc","1972-12-03":"ihfgjc","1972-12-17":"ibghjc","1972-12-31":"jhhhjc","1973-01-14":"jbihjc","1973-01-28":"khihjc","1973-02-11":"kbjhjc","1973-02-25":"likikc","1973-03-11":"lclikc","1973-03-25":"ailikc","1973-04-08":"acaikc","1973-04-22":"bibjkc","1973-05-06":"bccjkc","1973-05-20":"bicjkc","1973-06-03":"cddkkc","1973-06-17":"cjekkc","1973-07-01":"ddfkkc","1973-07-15":"djfkkc","1973-07-29":"edglkc","1973-08-12":"ejhlkc","1973-08-26":"feilkc","1973-09-09":"fkiakc","1973-09-23":"fejakc","1973-10-07":"gkkakc","1973-10-21":"gelakc","1973-11-04":"hklbkc","1973-11-18":"hfabkc","1973-12-02":"ikbbkc","1973-12-16":"ifcckc","1973-12-30":"jlcckc","1974-01-13":"jfdckc","1974-01-27":"kleckc","1974-02-10":"kgfdkc","1974-02-24":"llfdlc","1974-03-10":"lggdlc","1974-03-24":"aahdlc","1974-04-07":"agidld","1974-04-21":"baield","1974-05-05":"bgjeld","1974-05-19":"bakeld","1974-06-02":"chleld","1974-06-16":"caleld","1974-06-30":"dhafld","1974-07-14":"dbbfld","1974-07-28":"ehbfld","1974-08-11":"ebcfld","1974-08-25":"fidfld","1974-09-08":"fbegld","1974-09-22":"fifgld","1974-10-06":"gcfgld","1974-10-20":"giggld","1974-11-03":"hchgld","1974-11-17":"hiihld","1974-12-01":"icihld","1974-12-15":"ijjhld","1974-12-29":"jdkhld","1975-01-12":"jjkild","1975-01-26":"kdlild","1975-02-09":"kjaiad","1975-02-23":"ldbiad","1975-03-09":"lkbjad","1975-03-23":"aecjad","1975-04-06":"akdjad","1975-04-20":"aeekad","1975-05-04":"bkekad","1975-05-18":"befkad","1975-06-01":"ckgkad","1975-06-15":"cfhlad","1975-06-29":"dlhlad","1975-07-13":"dfilad","1975-07-27":"eljaad","1975-08-10":"efkaad","1975-08-24":"flkaad","1975-09-07":"fglaad","1975-09-21":"faabad","1975-10-05":"ggbbad","1975-10-19":"gabbad","1975-11-02":"hgccad","1975-11-16":"hadcad","1975-11-30":"igecad","1975-12-14":"iaecad","1975-12-28":"jhfcad","1976-01-11":"jbgdad","1976-01-25":"khhdad","1976-02-08":"kbhdbd","1976-02-22":"lhidbd","1976-03-07":"lbjebd","1976-03-21":"aikebd","1976-04-04":"ackebd","1976-04-18":"ailebd","1976-05-02":"bcaebd","1976-05-16":"bibfbd","1976-05-30":"ccbfbd","1976-06-13":"cjcfbd","1976-06-27":"dcdfbd","1976-07-11":"djefbd","1976-07-25":"edegbd","1976-08-08":"ejfgbd","1976-08-22":"edggbd","1976-09-05":"fkhgbd","1976-09-19":"fdhgbd","1976-10-03":"gkihbe","1976-10-17":"gejhbe","1976-10-31":"hkkhbe","1976-11-14":"hekhbe","1976-11-28":"iklibe","1976-12-12":"ieaibe","1976-12-26":"jlbibe","1977-01-09":"jebibe","1977-01-23":"klcjbe","1977-02-06":"kfdjce","1977-02-20":"llejce","1977-03-06":"lfekce","1977-03-20":"lafkce","1977-04-03":"afgkce","1977-04-17":"aahkce","1977-05-01":"bghlce","1977-05-15":"bailce","1977-05-29":"cgjlce","1977-06-12":"cakace","1977-06-26":"dgkace","1977-07-10":"dblace","1977-07-24":"ehaace","1977-08-07":"ebbbce","1977-08-21":"ehbbce","1977-09-04":"fbcbce","1977-09-18":"fhdbce","1977-10-02":"gcecce","1977-10-16":"giecce","1977-10-30":"hcfcce","1977-11-13":"higcce","1977-11-27":"ichdce","1977-12-11":"iihdce","1977-12-25":"jcidce","1978-01-08":"jjjdce","1978-01-22":"kdkece","1978-02-05":"kjkede","1978-02-19":"kdlede","1978-03-05":"ljaede","1978-03-19":"ldbede","1978-04-02":"akbfde","1978-04-16":"aecfde","1978-04-30":"bkdfde","1978-05-14":"beefde","1978-05-28":"ckefde","1978-06-11":"cefgde","1978-06-25":"dlggde","1978-07-09":"dehgde","1978-07-23":"dlhgde","1978-08-06":"efigde","1978-08-20":"eljhde","1978-09-03":"ffkhde","1978-09-17":"flkhde","1978-10-01":"gflhde","1978-10-15":"gaaide","1978-10-29":"hgaide","1978-11-12":"habide","1978-11-26":"igcide","1978-12-10":"iadjde","1978-12-24":"jgdjde","1979-01-07":"jbejde","1979-01-21":"kgfkee","1979-02-04":"kbgkee","1979-02-18":"khhkee","1979-03-04":"lbhkee","1979-03-18":"lhilee","1979-04-01":"acjlef","1979-04-15":"ahjlef","1979-04-29":"bckaef","1979-05-13":"bilaef","1979-05-27":"ccaaef","1979-06-10":"ciaaef","1979-06-24":"dcbbef","1979-07-08":"dicbef","1979-07-22":"dddbef","1979-08-05":"eidbef","1979-08-19":"edecef","1979-09-02":"fjfcef","1979-09-16":"fdgcef","1979-09-30":"gjgcef","1979-10-14":"gehdef","1979-10-28":"hjidef","1979-11-11":"hejdef","1979-11-25":"ikjdef","1979-12-09":"iekeef","1979-12-23":"jkleef","1980-01-06":"jeaeef","1980-01-20":"jkaeff","1980-02-03":"kfbeff","1980-02-17":"klcfff","1980-03-02":"lfdfff","1980-03-16":"lldfff","1980-03-30":"afefff","1980-04-13":"alffff","1980-04-27":"bgggff","1980-05-11":"baggff","1980-05-25":"cghgff","1980-06-08":"caigff","1980-06-22":"dgjgff","1980-07-06":"dajhff","1980-07-20":"dgkhff","1980-08-03":"eblhff","1980-08-17":"ehahff","1980-08-31":"fbaiff","1980-09-14":"fhbiff","1980-09-28":"gbciff","1980-10-12":"ghdiff","1980-10-26":"hcdjff","1980-11-09":"hhejff","1980-11-23":"icfjff","1980-12-07":"iigkff","1980-12-21":"icgkff","1981-01-04":"jihkff","1981-01-18":"jcikgf","1981-02-01":"kijlgf","1981-02-15":"kdjlgf","1981-03-01":"ljklgf","1981-03-15":"ldlagf","1981-03-29":"ajaagf","1981-04-12":"adaagf","1981-04-26":"bjbagf","1981-05-10":"becbgf","1981-05-24":"cjdbgf","1981-06-07":"cedbgf","1981-06-21":"ckebgf","1981-07-05":"defcgf","1981-07-19":"dkgcgf","1981-08-02":"efgcgf","1981-08-16":"ekhcgf","1981-08-30":"ffidgf","1981-09-13":"fljdgg","1981-09-27":"gfjdgg","1981-10-11":"glkdgg","1981-10-25":"hglegg","1981-11-08":"hlaegg","1981-11-22":"hgaegg","1981-12-06":"iabegg","1981-12-20":"igcegg","1982-01-03":"jadfgg","1982-01-17":"jgdfhg","1982-01-31":"kaefhg","1982-02-14":"khffhg","1982-02-28":"lbgfhg","1982-03-14":"lhgghg","1982-03-28":"abhghg","1982-04-11":"ahighg","1982-04-25":"bbjghg","1982-05-09":"bhjghg","1982-05-23":"cbkhhg","1982-06-06":"cilhhg","1982-06-20":"ccahhg","1982-07-04":"diahhg","1982-07-18":"dcbihg","1982-08-01":"eicihg","1982-08-15":"ecdihg","1982-08-29":"fjdihg","1982-09-12":"fdejhg","1982-09-26":"gjfjhg","1982-10-10":"gdgjhg","1982-10-24":"hjgjhg","1982-11-07":"hdhkhg","1982-11-21":"hjikhg","1982-12-05":"iejkhg","1982-12-19":"ikjlhg","1983-01-02":"jeklhg","1983-01-16":"jkllig","1983-01-30":"kelaig","1983-02-13":"kkaaig","1983-02-27":"lfbaig","1983-03-13":"llcaig","1983-03-27":"afcbig","1983-04-10":"aldbig","1983-04-24":"bfebig","1983-05-08":"blfbig","1983-05-22":"cgfcig","1983-06-05":"clgcig","1983-06-19":"cghcig","1983-07-03":"daicig","1983-07-17":"dgidig","1983-07-31":"eajdig","1983-08-14":"ehkdig","1983-08-28":"faldig","1983-09-11":"fhleig","1983-09-25":"gbaeig","1983-10-09":"ghbeig","1983-10-23":"gbceig","1983-11-06":"hhceig","1983-11-20":"hbdfig","1983-12-04":"iiefig","1983-12-18":"ibffig","1984-01-01":"jiffjg","1984-01-15":"jcgfjg","1984-01-29":"kihgjg","1984-02-12":"kcigjg","1984-02-26":"ljigjh","1984-03-11":"lcjgjh","1984-03-25":"ajkgjh","1984-04-08":"adlhjh","1984-04-22":"bjlhjh","1984-05-06":"bdahjh","1984-05-20":"bjbhjh","1984-06-03":"cdcijh","1984-06-17":"ckcijh","1984-07-01":"dedijh","1984-07-15":"dkeijh","1984-07-29":"eefjjh","1984-08-12":"ekfjjh","1984-08-26":"fegjjh","1984-09-09":"flhjjh","1984-09-23":"gfikjh","1984-10-07":"glikjh","1984-10-21":"gfjkjh","1984-11-04":"hlkljh","1984-11-18":"hflljh","1984-12-02":"illljh","1984-12-16":"ifaljh","1984-12-30":"jabakh","1985-01-13":"jgcakh","1985-01-27":"kacakh","1985-02-10":"kgdbkh","1985-02-24":"laebkh","1985-03-10":"lgfbkh","1985-03-24":"aafbkh","1985-04-07":"ahgckh","1985-04-21":"bbhckh","1985-05-05":"bhickh","1985-05-19":"bbickh","1985-06-02":"chjdkh","1985-06-16":"cbkdkh","1985-06-30":"dildkh","1985-07-14":"dcldkh","1985-07-28":"eiaekh","1985-08-11":"ecbekh","1985-08-25":"ficekh","1985-09-08":"fccekh","1985-09-22":"fjdekh","1985-10-06":"gcefkh","1985-10-20":"gjffkh","1985-11-03":"hdffkh","1985-11-17":"hjgfkh","1985-12-01":"idhfkh","1985-12-15":"ikigkh","1985-12-29":"jdiglh","1986-01-12":"jkjglh","1986-01-26":"kekglh","1986-02-09":"kklglh","1986-02-23":"lelhlh","1986-03-09":"lkahlh","1986-03-23":"aebhlh","1986-04-06":"alchlh","1986-04-20":"afcilh","1986-05-04":"bldilh","1986-05-18":"bfeilh","1986-06-01":"clfilh","1986-06-15":"cffjlh","1986-06-29":"dagjlh","1986-07-13":"dfhjlh","1986-07-27":"eaijlh","1986-08-10":"egikli","1986-08-24":"fajkli","1986-09-07":"fgkkli","1986-09-21":"fbllli","1986-10-05":"ggllli","1986-10-19":"gballi","1986-11-02":"hhblli","1986-11-16":"hbbali","1986-11-30":"ihcali","1986-12-14":"ibdali","1986-12-28":"jhebai","1987-01-11":"jcfbai","1987-01-25":"kifbai","1987-02-08":"kcgbai","1987-02-22":"lihcai","1987-03-08":"lcicai","1987-03-22":"aiicai","1987-04-05":"adjcai","1987-04-19":"ajkdai","1987-05-03":"bdkdai","1987-05-17":"bjldai","1987-05-31":"cdadai","1987-06-14":"cjbeai","1987-06-28":"ddbeai","1987-07-12":"dkceai","1987-07-26":"eedeai","1987-08-09":"ekeeai","1987-08-23":"eeefai","1987-09-06":"fkffai","1987-09-20":"fegfai","1987-10-04":"gkhfai","1987-10-18":"gehfai","1987-11-01":"hligai","1987-11-15":"hfjgai","1987-11-29":"ilkgai","1987-12-13":"ifkgbi","1987-12-27":"jllgbi","1988-01-10":"jfahbi","1988-01-24":"kabhbi","1988-02-07":"kgbhbi","1988-02-21":"lachbi","1988-03-06":"lgdibi","1988-03-20":"laeibi","1988-04-03":"ageibi","1988-04-17":"abfibi","1988-05-01":"bggjbi","1988-05-15":"bbhjbi","1988-05-29":"chhjbi","1988-06-12":"cbijbi","1988-06-26":"dhjkbi","1988-07-10":"dckkbi","1988-07-24":"ehkkbi","1988-08-07":"ecllbi","1988-08-21":"eialbi","1988-09-04":"fcblbi","1988-09-18":"fiblbi","1988-10-02":"gdcabi","1988-10-16":"gidabi","1988-10-30":"hdeabi","1988-11-13":"hjebbi","1988-11-27":"idfbbi","1988-12-11":"ijgbci","1988-12-25":"jdhbci","1989-01-08":"jjhcci","1989-01-22":"keiccj","1989-02-05":"kjjccj","1989-02-19":"lekccj","1989-03-05":"lkkdcj","1989-03-19":"leldcj","1989-04-02":"akadcj","1989-04-16":"afbdcj","1989-04-30":"bkbdcj","1989-05-14":"bfcecj","1989-05-28":"cldecj","1989-06-11":"cfeecj","1989-06-25":"dleecj","1989-07-09":"dfffcj","1989-07-23":"elgfcj","1989-08-06":"eghfcj","1989-08-20":"eahfcj","1989-09-03":"fgifcj","1989-09-17":"fajgcj","1989-10-01":"ggkgcj","1989-10-15":"gakgcj","1989-10-29":"hglgcj","1989-11-12":"hbagcj","1989-11-26":"ihbhcj","1989-12-10":"ibbhdj","1989-12-24":"jhchdj","1990-01-07":"jbdhdj","1990-01-21":"kheidj","1990-02-04":"kceidj","1990-02-18":"kifidj","1990-03-04":"lcgidj","1990-03-18":"lihjdj","1990-04-01":"achjdj","1990-04-15":"aiijdj","1990-04-29":"bdjjdj","1990-05-13":"bikkdj","1990-05-27":"cdkkdj","1990-06-10":"cjlkdj","1990-06-24":"ddaldj","1990-07-08":"djbldj","1990-07-22":"ddbldj","1990-08-05":"ejcldj","1990-08-19":"eedadj","1990-09-02":"fkeadj","1990-09-16":"feeadj","1990-09-30":"gkfbdj","1990-10-14":"gegbdj","1990-10-28":"hkhbdj","1990-11-11":"hfhbdj","1990-11-25":"ikicdj","1990-12-09":"ifjcej","1990-12-23":"jlkcej","1991-01-06":"jfkcej","1991-01-20":"jlldej","1991-02-03":"kgadej","1991-02-17":"kladej","1991-03-03":"lgbdej","1991-03-17":"lacdej","1991-03-31":"agdeej","1991-04-14":"aadeej","1991-04-28":"bgeeej","1991-05-12":"bafeej","1991-05-26":"chgfej","1991-06-09":"cbhfej","1991-06-23":"dhhfej","1991-07-07":"dbifek","1991-07-21":"dhjfek","1991-08-04":"ebjgek","1991-08-18":"eikgek","1991-09-01":"fblgek","1991-09-15":"fiagek","1991-09-29":"gcagek","1991-10-13":"gibhek","1991-10-27":"hcchek","1991-11-10":"hidhek","1991-11-24":"icdhek","1991-12-08":"ijeifk","1991-12-22":"idfifk","1992-01-05":"jjgifk","1992-01-19":"jdgifk","1992-02-02":"kjhjfk","1992-02-16":"kdijfk","1992-03-01":"lkjjfk","1992-03-15":"lejjfk","1992-03-29":"akkkfk","1992-04-12":"aelkfk","1992-04-26":"bkakfk","1992-05-10":"bealfk","1992-05-24":"ckblfk","1992-06-07":"cfclfk","1992-06-21":"cldlfk","1992-07-05":"dfdafk","1992-07-19":"dleafk","1992-08-02":"effafk","1992-08-16":"elgbfk","1992-08-30":"fggbfk","1992-09-13":"flhbfk","1992-09-27":"ggibfk","1992-10-11":"gajcfk","1992-10-25":"hgjcfk","1992-11-08":"hakcfk","1992-11-22":"hglcgk","1992-12-06":"iaadgk","1992-12-20":"ihadgk","1993-01-03":"jbbdgk","1993-01-17":"jhcdgk","1993-01-31":"kbddgk","1993-02-14":"khdegk","1993-02-28":"lbeegk","1993-03-14":"lifegk","1993-03-28":"abgegk","1993-04-11":"aigegk","1993-04-25":"bchfgk","1993-05-09":"biifgk","1993-05-23":"ccjfgk","1993-06-06":"cjjfgk","1993-06-20":"cckfgk","1993-07-04":"djlggk","1993-07-18":"ddaggk","1993-08-01":"ejaggk","1993-08-15":"edbggk","1993-08-29":"fkchgk","1993-09-12":"fddhgk","1993-09-26":"gkdhgk","1993-10-10":"geehgk","1993-10-24":"hkfigk","1993-11-07":"hegigk","1993-11-21":"hkgihk","1993-12-05":"iehihl","1993-12-19":"ilijhl","1994-01-02":"jfjjhl","1994-01-16":"jljjhl","1994-01-30":"kfkjhl","1994-02-13":"kllkhl","1994-02-27":"lfakhl","1994-03-13":"llakhl","1994-03-27":"afblhl","1994-04-10":"aaclhl","1994-04-24":"bgdlhl","1994-05-08":"badlhl","1994-05-22":"cgeahl","1994-06-05":"cafahl","1994-06-19":"cggahl","1994-07-03":"dbgbhl","1994-07-17":"dhhbhl","1994-07-31":"ebibhl","1994-08-14":"ehjbhl","1994-08-28":"fbjchl","1994-09-11":"fhkchl","1994-09-25":"gblchl","1994-10-09":"giachl","1994-10-23":"gcadhl","1994-11-06":"hibdhl","1994-11-20":"hccdil","1994-12-04":"iiddil","1994-12-18":"icddil","1995-01-01":"jjeeil","1995-01-15":"jdfeil","1995-01-29":"kjgeil","1995-02-12":"kdgeil","1995-02-26":"ljheil","1995-03-12":"ldifil","1995-03-26":"akjfil","1995-04-09":"adjfil","1995-04-23":"bkkfil","1995-05-07":"belfil","1995-05-21":"bklgil","1995-06-04":"ceagil","1995-06-18":"clbgil","1995-07-02":"decgil","1995-07-16":"dlchil","1995-07-30":"efdhil","1995-08-13":"elehil","1995-08-27":"fffhil","1995-09-10":"flfhil","1995-09-24":"gfgiil","1995-10-08":"gahiil","1995-10-22":"gfiiil","1995-11-05":"haijil","1995-11-19":"hgjjjl","1995-12-03":"iakjjl","1995-12-17":"igljjl","1995-12-31":"jblkjl","1996-01-14":"jgakjl","1996-01-28":"kbbkjl","1996-02-11":"khcljl","1996-02-25":"lbcljl","1996-03-10":"lhdljl","1996-03-24":"abeljl","1996-04-07":"ahfajl","1996-04-21":"bcfajl","1996-05-05":"bigaja","1996-05-19":"bchbja","1996-06-02":"ciibja","1996-06-16":"ccibja","1996-06-30":"dijbja","1996-07-14":"ddkcja","1996-07-28":"ejlcja","1996-08-11":"edlcja","1996-08-25":"fjacja","1996-09-08":"fdbdja","1996-09-22":"fjcdja","1996-10-06":"gdcdja","1996-10-20":"gkddja","1996-11-03":"heedka","1996-11-17":"hkfeka","1996-12-01":"iefeka","1996-12-15":"ikgeka","1996-12-29":"jeheka","1997-01-12":"jlieka","1997-01-26":"kfifka","1997-02-09":"kljfka","1997-02-23":"lfkfka","1997-03-09":"lllfka","1997-03-23":"aflfka","1997-04-06":"alagka","1997-04-20":"afbgka","1997-05-04":"bacgka","1997-05-18":"bgcgka","1997-06-01":"cadhka","1997-06-15":"cgehka","1997-06-29":"dafhka","1997-07-13":"dgfhka","1997-07-27":"ebghka","1997-08-10":"eghika","1997-08-24":"fbiika","1997-09-07":"fhiika","1997-09-21":"fbjjka","1997-10-05":"ghkjka","1997-10-19":"gcljka","1997-11-02":"hhljla","1997-11-16":"hcakla","1997-11-30":"iibkla","1997-12-14":"icckla","1997-12-28":"jickla","1998-01-11":"jddlla","1998-01-25":"kiella","1998-02-08":"kdflla","1998-02-22":"ljfala","1998-03-08":"ldgala","1998-03-22":"ajhala","1998-04-05":"adiala","1998-04-19":"ajibla","1998-05-03":"bejbla","1998-05-17":"bjkbla","1998-05-31":"celcla","1998-06-14":"cklcla","1998-06-28":"deacla","1998-07-12":"dkbcla","1998-07-26":"efcdla","1998-08-09":"ekcdla","1998-08-23":"efddla","1998-09-06":"fledla","1998-09-20":"fffdla","1998-10-04":"glfelb","1998-10-18":"gfgelb","1998-11-01":"hlheab","1998-11-15":"hgieab","1998-11-29":"iaieab","1998-12-13":"igjfab","1998-12-27":"jakfab","1999-01-10":"jglfab","1999-01-24":"kalfab","1999-02-07":"khafab","1999-02-21":"lbbgab","1999-03-07":"lhbgab","1999-03-21":"lbcgab","1999-04-04":"ahdgab","1999-04-18":"abehab","1999-05-02":"bhfhab","1999-05-16":"bcfhab","1999-05-30":"cighab","1999-06-13":"cchhab","1999-06-27":"diiiab","1999-07-11":"dciiab","1999-07-25":"eijiab","1999-08-08":"eckiab","1999-08-22":"ejkjab","1999-09-05":"fdljab","1999-09-19":"fjajab","1999-10-03":"gdbkab","1999-10-17":"gjbkab","1999-10-31":"hdckbb","1999-11-14":"hjdkbb","1999-11-28":"ieelbb","1999-12-12":"ikelbb","1999-12-26":"jeflbb","2000-01-09":"jkgabb","2000-01-23":"kehabb","2000-02-06":"kkhabb","2000-02-20":"lfiabb","2000-03-05":"lljbbb","2000-03-19":"lfkbbb","2000-04-02":"alkbbb","2000-04-16":"aflcbb","2000-04-30":"blacbb","2000-05-14":"bgbcbb","2000-05-28":"clbcbb","2000-06-11":"cgcdbb","2000-06-25":"daddbb","2000-07-09":"dgedbb","2000-07-23":"eaedbb","2000-08-06":"ehfdbb","2000-08-20":"eagebb","2000-09-03":"fhhebb","2000-09-17":"fbhebb","2000-10-01":"ghiebb","2000-10-15":"gbjecb","2000-10-29":"hhkfcb","2000-11-12":"hbkfcb","2000-11-26":"iilfcb","2000-12-10":"ibafcb","2000-12-24":"jibfcb","2001-01-07":"jcbgcb","2001-01-21":"kicgcb","2001-02-04":"kcdgcb","2001-02-18":"kjegcb","2001-03-04":"lcegcc","2001-03-18":"ljfhcc","2001-04-01":"adghcc","2001-04-15":"ajhhcc","2001-04-29":"bdhhcc","2001-05-13":"bjiicc","2001-05-27":"cdjicc","2001-06-10":"ckkicc","2001-06-24":"dekicc","2001-07-08":"dkljcc","2001-07-22":"deajcc","2001-08-05":"ekbjcc","2001-08-19":"eebkcc","2001-09-02":"flckcc","2001-09-16":"ffdkcc","2001-09-30":"glekcc","2001-10-14":"gfeldc","2001-10-28":"hlfldc","2001-11-11":"hfgldc","2001-11-25":"ilhadc","2001-12-09":"ighadc","2001-12-23":"jaiadc","2002-01-06":"jgjadc","2002-01-20":"jakbdc","2002-02-03":"kgkbdc","2002-02-17":"kalbdc","2002-03-03":"lhacdc","2002-03-17":"labcdc","2002-03-31":"ahbcdc","2002-04-14":"abccdc","2002-04-28":"bhdcdc","2002-05-12":"bbeddc","2002-05-26":"cheddc","2002-06-09":"cbfddc","2002-06-23":"digddc","2002-07-07":"dchedc","2002-07-21":"dihedc","2002-08-04":"eciedc","2002-08-18":"eijedc","2002-09-01":"fckedc","2002-09-15":"fjkfdc","2002-09-29":"gclfdc","2002-10-13":"gjafec","2002-10-27":"hdbfec","2002-11-10":"hjbfec","2002-11-24":"idcgec","2002-12-08":"ikdgec","2002-12-22":"idegec","2003-01-05":"jkegec","2003-01-19":"jefgec","2003-02-02":"kkghec","2003-02-16":"kehhec","2003-03-02":"lkhhec","2003-03-16":"leihec","2003-03-30":"aljiec","2003-04-13":"afkiec","2003-04-27":"blkiec","2003-05-11":"bfliec","2003-05-25":"clajec","2003-06-08":"cfajec","2003-06-22":"dabjec","2003-07-06":"dfckec","2003-07-20":"dadked","2003-08-03":"egdked","2003-08-17":"eaeked","2003-08-31":"fgfled","2003-09-14":"fagled","2003-09-28":"gghled","2003-10-12":"gbhafd","2003-10-26":"hhiafd","2003-11-09":"hbjafd","2003-11-23":"ihjafd","2003-12-07":"ibkbfd","2003-12-21":"ihlbfd","2004-01-04":"jcabfd","2004-01-18":"jiabfd","2004-02-01":"kcbcfd","2004-02-15":"kiccfd","2004-02-29":"lcdcfd","2004-03-14":"lidcfd","2004-03-28":"acedfd","2004-04-11":"ajfdfd","2004-04-25":"bdgdfd","2004-05-09":"bjgdfd","2004-05-23":"cdhefd","2004-06-06":"cjiefd","2004-06-20":"cdjefd","2004-07-04":"dkjefd","2004-07-18":"dekefd","2004-08-01":"eklffd","2004-08-15":"eeaffd","2004-08-29":"fkaffd","2004-09-12":"febffd","2004-09-26":"glcffd","2004-10-10":"gedggd","2004-10-24":"hldggd","2004-11-07":"hfeggd","2004-11-21":"hlfggd","2004-12-05":"ifgggd","2004-12-19":"iaghgd","2005-01-02":"jfhhgd","2005-01-16":"jaihgd","2005-01-30":"kgjhgd","2005-02-13":"kajigd","2005-02-27":"lgkigd","2005-03-13":"laligd","2005-03-27":"agaigd","2005-04-10":"abajgd","2005-04-24":"bgbjgd","2005-05-08":"bbcjgd","2005-05-22":"chdkgd","2005-06-05":"cbdkgd","2005-06-19":"chekgd","2005-07-03":"dcfkgd","2005-07-17":"dhglgd","2005-07-31":"ecglgd","2005-08-14":"eihlgd","2005-08-28":"fciagd","2005-09-11":"fijagd","2005-09-25":"gcjahd","2005-10-09":"gikahd","2005-10-23":"gdlbhd","2005-11-06":"hjabhd","2005-11-20":"hdabhd","2005-12-04":"ijbbhd","2005-12-18":"idcche","2006-01-01":"jjdche","2006-01-15":"jedche","2006-01-29":"kkeche","2006-02-12":"kefdhe","2006-02-26":"lkgdhe","2006-03-12":"legdhe","2006-03-26":"akhdhe","2006-04-09":"aeiehe","2006-04-23":"bkjehe","2006-05-07":"bfjehe","2006-05-21":"blkehe","2006-06-04":"cflehe","2006-06-18":"clafhe","2006-07-02":"dfafhe","2006-07-16":"dlbfhe","2006-07-30":"efcfhe","2006-08-13":"eadfhe","2006-08-27":"fgdghe","2006-09-10":"faeghe","2006-09-24":"ggfgie","2006-10-08":"gaggie","2006-10-22":"ggggie","2006-11-05":"hbhhie","2006-11-19":"hhihie","2006-12-03":"ibjhie","2006-12-17":"ihjhie","2006-12-31":"jbkiie","2007-01-14":"jhliie","2007-01-28":"kcaiie","2007-02-11":"khaiie","2007-02-25":"lcbjie","2007-03-11":"licjie","2007-03-25":"acdjie","2007-04-08":"aidkie","2007-04-22":"bdekie","2007-05-06":"bifkie","2007-05-20":"bdgkie","2007-06-03":"cjglie","2007-06-17":"cdhlie","2007-07-01":"djilie","2007-07-15":"ddjaie","2007-07-29":"ejjaie","2007-08-12":"eekaie","2007-08-26":"fklaie","2007-09-09":"felbie","2007-09-23":"fkabje","2007-10-07":"gebbje","2007-10-21":"gkcbje","2007-11-04":"hfccje","2007-11-18":"hkdcje","2007-12-02":"ifecje","2007-12-16":"ilfcje","2007-12-30":"jffdje","2008-01-13":"jlgdje","2008-01-27":"kghdje","2008-02-10":"klidje","2008-02-24":"lgieje","2008-03-09":"lajeje","2008-03-23":"agkeje","2008-04-06":"aaleje","2008-04-20":"bgleje","2008-05-04":"baafjf","2008-05-18":"bhbfjf","2008-06-01":"cbcfjf","2008-06-15":"chcfjf","2008-06-29":"dbdfjf","2008-07-13":"dhegjf","2008-07-27":"ebfgjf","2008-08-10":"eifgjf","2008-08-24":"fcggjf","2008-09-07":"fihgjf","2008-09-21":"fcihkf","2008-10-05":"giihkf","2008-10-19":"gcjhkf","2008-11-02":"hikhkf","2008-11-16":"hdlikf","2008-11-30":"ijlikf","2008-12-14":"idaikf","2008-12-28":"jjbikf","2009-01-11":"jdcjkf","2009-01-25":"kjcjkf","2009-02-08":"kddjkf","2009-02-22":"ljejkf","2009-03-08":"lefkkf","2009-03-22":"akfkkf","2009-04-05":"aegkkf","2009-04-19":"akhlkf","2009-05-03":"beilkf","2009-05-17":"bkilkf","2009-05-31":"cfjakf","2009-06-14":"clkakf","2009-06-28":"dflakf","2009-07-12":"dllakf","2009-07-26":"efabkf","2009-08-09":"elbbkf","2009-08-23":"fgcbkf","2009-09-06":"flcblf","2009-09-20":"fgdclf","2009-10-04":"gaeclf","2009-10-18":"ggfclf","2009-11-01":"hafclf","2009-11-15":"hhgdlf","2009-11-29":"iahdlf","2009-12-13":"ihidlf","2009-12-27":"jbidlf","2010-01-10":"jhjelf","2010-01-24":"kbkelf","2010-02-07":"kilelf","2010-02-21":"lblelf","2010-03-07":"liaelf","2010-03-21":"abbflf","2010-04-04":"aicflf","2010-04-18":"accflf","2010-05-02":"bidflf","2010-05-16":"bceflf","2010-05-30":"cjfglf","2010-06-13":"ccfglf","2010-06-27":"djgglf","2010-07-11":"ddhglf","2010-07-25":"ejiglf","2010-08-08":"edihlf","2010-08-22":"ejjhlf","2010-09-05":"fdkhaf","2010-09-19":"fklhag","2010-10-03":"geliag","2010-10-17":"gkaiag","2010-10-31":"hebiag","2010-11-14":"hkciag","2010-11-28":"iecjag","2010-12-12":"ildjag","2010-12-26":"jfejag","2011-01-09":"jlfjag","2011-01-23":"kffkag","2011-02-06":"klgkag","2011-02-20":"lfhkag","2011-03-06":"llilag","2011-03-20":"lgilag","2011-04-03":"aajlag","2011-04-17":"agklag","2011-05-01":"balaag","2011-05-15":"bglaag","2011-05-29":"caaaag","2011-06-12":"chbbag","2011-06-26":"dbbbag","2011-07-10":"dhcbag","2011-07-24":"ebdbag","2011-08-07":"ehecag","2011-08-21":"ebfcag","2011-09-04":"fifcbg","2011-09-18":"fbgcbg","2011-10-02":"gihdbg","2011-10-16":"gcidbg","2011-10-30":"hiidbg","2011-11-13":"hcjdbg","2011-11-27":"iikebg","2011-12-11":"ickebg","2011-12-25":"jjlebg","2012-01-08":"jdaebg","2012-01-22":"kjbebg","2012-02-05":"kdbfbg","2012-02-19":"kjcfbg","2012-03-04":"lddfbg","2012-03-18":"lkefbg","2012-04-01":"adefbg","2012-04-15":"akfgbg","2012-04-29":"beggbg","2012-05-13":"bkhgbg","2012-05-27":"cehgbg","2012-06-10":"cligbg","2012-06-24":"dejhbg","2012-07-08":"dlkhbg","2012-07-22":"dfkhbg","2012-08-05":"ellhbg","2012-08-19":"efaibg","2012-09-02":"flbicg","2012-09-16":"ffbicg","2012-09-30":"gacicg","2012-10-14":"ggdjcg","2012-10-28":"haejcg","2012-11-11":"hgejcg","2012-11-25":"iafjcg","2012-12-09":"iggkcg","2012-12-23":"jbhkcg","2013-01-06":"jghkcg","2013-01-20":"kbilcg","2013-02-03":"khjlcg","2013-02-17":"kbklch","2013-03-03":"lhklch","2013-03-17":"lblach","2013-03-31":"ahaach","2013-04-14":"acbach","2013-04-28":"bibbch","2013-05-12":"bccbch","2013-05-26":"cidbch","2013-06-09":"ccebch","2013-06-23":"diecch","2013-07-07":"ddfcch","2013-07-21":"djgcch","2013-08-04":"edhcch","2013-08-18":"ejhdch","2013-09-01":"fdiddh","2013-09-15":"fjjddh","2013-09-29":"gdkddh","2013-10-13":"gkkedh","2013-10-27":"heledh","2013-11-10":"hkaedh","2013-11-24":"iebedh","2013-12-08":"ikbedh","2013-12-22":"jecfdh","2014-01-05":"jldfdh","2014-01-19":"jeefdh","2014-02-02":"klefdh","2014-02-16":"kfffdh","2014-03-02":"llggdh","2014-03-16":"lfhgdh","2014-03-30":"alhgdh","2014-04-13":"afigdh","2014-04-27":"bajgdh","2014-05-11":"bgkhdh","2014-05-25":"cakhdh","2014-06-08":"cglhdh","2014-06-22":"daahdh","2014-07-06":"dgbidh","2014-07-20":"dbbidh","2014-08-03":"egcidh","2014-08-17":"ebdieh","2014-08-31":"fhejeh","2014-09-14":"fbejeh","2014-09-28":"ghfjeh","2014-10-12":"gcgjeh","2014-10-26":"hhhkeh","2014-11-09":"hchkeh","2014-11-23":"iiikeh","2014-12-07":"icjleh","2014-12-21":"iikleh","2015-01-04":"jckleh","2015-01-18":"jilleh","2015-02-01":"kdaaeh","2015-02-15":"kjbaeh","2015-03-01":"ldbaeh","2015-03-15":"ljcbeh","2015-03-29":"addbeh","2015-04-12":"ajebeh","2015-04-26":"beebeh","2015-05-10":"bkfceh","2015-05-24":"cegceh","2015-06-07":"ckhceh","2015-06-21":"cehceh","2015-07-05":"dkidei","2015-07-19":"dejdei","2015-08-02":"elkdei","2015-08-16":"efkdfi","2015-08-30":"flldfi","2015-09-13":"ffaefi","2015-09-27":"glaefi","2015-10-11":"gfbefi","2015-10-25":"hlcefi","2015-11-08":"hgdffi","2015-11-22":"hadffi","2015-12-06":"igeffi","2015-12-20":"iafffi","2016-01-03":"jggffi","2016-01-17":"jahgfi","2016-01-31":"kghgfi","2016-02-14":"kbigfi","2016-02-28":"lhjgfi","2016-03-13":"lbjgfi","2016-03-27":"ahkhfi","2016-04-10":"ablhfi","2016-04-24":"bhahfi","2016-05-08":"bcahfi","2016-05-22":"cibifi","2016-06-05":"cccifi","2016-06-19":"cidifi","2016-07-03":"dcdifi","2016-07-17":"diejfi","2016-07-31":"edfjfi","2016-08-14":"eigjgi","2016-08-28":"fdgjgi","2016-09-11":"fjhkgi","2016-09-25":"gdikgi","2016-10-09":"gjjkgi","2016-10-23":"hejlgi","2016-11-06":"hjklgi","2016-11-20":"hellgi","2016-12-04":"ikalgi","2016-12-18":"ieaagi","2017-01-01":"jkbagi","2017-01-15":"jecagi","2017-01-29":"kkdbgi","2017-02-12":"kfdbgi","2017-02-26":"llebgi","2017-03-12":"lffbgi","2017-03-26":"algcgi","2017-04-09":"afgcgi","2017-04-23":"blhcgi","2017-05-07":"bgicgi","2017-05-21":"cljdgi","2017-06-04":"cgjdgi","2017-06-18":"cakdgi","2017-07-02":"dgldgi","2017-07-16":"daadgi","2017-07-30":"egaegi","2017-08-13":"eabehi","2017-08-27":"fhcehi","2017-09-10":"fbdehi","2017-09-24":"ghdfhi","2017-10-08":"gbefhi","2017-10-22":"ghffhi","2017-11-05":"hbgfhi","2017-11-19":"higfhj","2017-12-03":"ichghj","2017-12-17":"iiighj","2017-12-31":"jcjghj","2018-01-14":"jijghj","2018-01-28":"kckghj","2018-02-11":"kilhhj","2018-02-25":"lcahhj","2018-03-11":"ljahhj","2018-03-25":"adbhhj","2018-04-08":"ajcihj","2018-04-22":"bddihj","2018-05-06":"bjdihj","2018-05-20":"bdeihj","2018-06-03":"ckfjhj","2018-06-17":"cegjhj","2018-07-01":"dkgjhj","2018-07-15":"dehjhj","2018-07-29":"ekikij","2018-08-12":"eejkij","2018-08-26":"fkjkij","2018-09-09":"ffklij","2018-09-23":"flllij","2018-10-07":"gfalij","2018-10-21":"glalij","2018-11-04":"hfbaij","2018-11-18":"hlcaij","2018-12-02":"igdaij","2018-12-16":"ildbij","2018-12-30":"jgebij","2019-01-13":"jafbij","2019-01-27":"kggbij","2019-02-10":"kagcij","2019-02-24":"lhhcij","2019-03-10":"laicij","2019-03-24":"ahjcij","2019-04-07":"abjdij","2019-04-21":"bhkdij","2019-05-05":"bbldij","2019-05-19":"bhadij","2019-06-02":"cbadij","2019-06-16":"cibeij","2019-06-30":"dcceij","2019-07-14":"dideij","2019-07-28":"ecdejj","2019-08-11":"eieejj","2019-08-25":"fcffjj","2019-09-08":"fjgfjj","2019-09-22":"fcgfjj","2019-10-06":"gjhfjj","2019-10-20":"gdifjj","2019-11-03":"hjjgjj","2019-11-17":"hdjgjj","2019-12-01":"ikkgjj","2019-12-15":"idlgjj","2019-12-29":"jklhjj","2020-01-12":"jeahjj","2020-01-26":"kkbhjj","2020-02-09":"kechjj","2020-02-23":"lkcijj","2020-03-08":"ledijj","2020-03-22":"aleijj","2020-04-05":"affijj","2020-04-19":"alfjjk","2020-05-03":"bfgjjk","2020-05-17":"blhjjk","2020-05-31":"cfijjk","2020-06-14":"caikjk","2020-06-28":"dgjkjk","2020-07-12":"dakkjk","2020-07-26":"egllkk","2020-08-09":"eallkk","2020-08-23":"fgalkk","2020-09-06":"fablkk","2020-09-20":"fhcakk","2020-10-04":"gbcakk","2020-10-18":"ghdakk","2020-11-01":"hbebkk","2020-11-15":"hhfbkk","2020-11-29":"ibfbkk","2020-12-13":"ihgbkk","2020-12-27":"jchckk","2021-01-10":"jiickk","2021-01-24":"kcickk","2021-02-07":"kijckk","2021-02-21":"lckdkk","2021-03-07":"lildkk","2021-03-21":"acldkk","2021-04-04":"ajadkk","2021-04-18":"adbdkk","2021-05-02":"bjcekk","2021-05-16":"bdcekk","2021-05-30":"cjdekk","2021-06-13":"cdeekk","2021-06-27":"dkfekk","2021-07-11":"ddffkk","2021-07-25":"ekgflk","2021-08-08":"eehflk","2021-08-22":"ekiflk","2021-09-05":"feiflk","2021-09-19":"fljglk","2021-10-03":"gekglk","2021-10-17":"gllglk","2021-10-31":"hflglk","2021-11-14":"hlahlk","2021-11-28":"ifbhlk","2021-12-12":"iachlk","2021-12-26":"jfchlk","2022-01-09":"jadhlk","2022-01-23":"kgeilk","2022-02-06":"kafilk","2022-02-20":"lgfilk","2022-03-06":"lagjlk","2022-03-20":"lghjlk","2022-04-03":"abijlk","2022-04-17":"agijlk","2022-05-01":"bbjklk","2022-05-15":"bhkklk","2022-05-29":"cblklk","2022-06-12":"chlllk","2022-06-26":"dcallk","2022-07-10":"dhblak","2022-07-24":"ecclak","2022-08-07":"eicaak","2022-08-21":"ecdaak","2022-09-04":"fieaal","2022-09-18":"fcfbal","2022-10-02":"gifbal","2022-10-16":"gdgbal","2022-10-30":"hjhbal","2022-11-13":"hdical","2022-11-27":"ijical","2022-12-11":"idjcal","2022-12-25":"jjkcal","2023-01-08":"jdldal","2023-01-22":"kkldal","2023-02-05":"keadal","2023-02-19":"lkbdal","2023-03-05":"lecdal","2023-03-19":"lkceal","2023-04-02":"aedeal","2023-04-16":"aleeal","2023-04-30":"bffeal","2023-05-14":"blfeal","2023-05-28":"cfgfal","2023-06-11":"clhfal","2023-06-25":"dfifal","2023-07-09":"daifbl","2023-07-23":"dfjfbl","2023-08-06":"eakgbl","2023-08-20":"eglgbl","2023-09-03":"falgbl","2023-09-17":"fgagbl","2023-10-01":"gabhbl","2023-10-15":"ggbhbl","2023-10-29":"hbchbl","2023-11-12":"hhdhbl","2023-11-26":"ibehbl","2023-12-10":"ihfibl","2023-12-24":"jbfibl","2024-01-07":"jhgibl","2024-01-21":"kchjbl","2024-02-04":"khijbl","2024-02-18":"kcijbl","2024-03-03":"lijjbl","2024-03-17":"lckkbl","2024-03-31":"aikkbl","2024-04-14":"adlkbl","2024-04-28":"biakbl","2024-05-12":"bdblbl","2024-05-26":"cjblbl","2024-06-09":"cdclbl","2024-06-23":"djdabl","2024-07-07":"ddeacl","2024-07-21":"djeacl","2024-08-04":"eefacl","2024-08-18":"ekgbcl","2024-09-01":"fehbcl","2024-09-15":"fkhbcl","2024-09-29":"geiccl","2024-10-13":"gkjccl","2024-10-27":"hfkccl","2024-11-10":"hkkccl","2024-11-24":"ifldcl","2024-12-08":"iladcl","2024-12-22":"jfbdcl","2025-01-05":"jlbdcl","2025-01-19":"jfcdcl","2025-02-02":"kldeca","2025-02-16":"kgeeca","2025-03-02":"laeeca","2025-03-16":"lgfeca","2025-03-30":"aageca","2025-04-13":"aghfca","2025-04-27":"bahfca","2025-05-11":"bhifca","2025-05-25":"cbjfca","2025-06-08":"chkfca","2025-06-22":"dbkgca","2025-07-06":"dhlgda","2025-07-20":"dbagda","2025-08-03":"ehbgda","2025-08-17":"ecbhda","2025-08-31":"fichda","2025-09-14":"fcdhda","2025-09-28":"giehda","2025-10-12":"gcehda","2025-10-26":"hifida","2025-11-09":"hdgida","2025-11-23":"iihida","2025-12-07":"idhida","2025-12-21":"ijijda","2026-01-04":"jdjjda","2026-01-18":"jjkjda","2026-02-01":"kekkda","2026-02-15":"kjlkda","2026-03-01":"leakda","2026-03-15":"lkbkda","2026-03-29":"aeblda","2026-04-12":"akclda","2026-04-26":"bedlda","2026-05-10":"bkeada","2026-05-24":"cfeada","2026-06-07":"ckfada","2026-06-21":"cfgada","2026-07-05":"dlhbea","2026-07-19":"dfhbea","2026-08-02":"elibea","2026-08-16":"egjcea","2026-08-30":"flkcea","2026-09-13":"fgkcea","2026-09-27":"galcea","2026-10-11":"ggadea","2026-10-25":"habdea","2026-11-08":"hhbdea","2026-11-22":"hacdea","2026-12-06":"ihddea","2026-12-20":"ibeeea","2027-01-03":"jheeea","2027-01-17":"jbfeea","2027-01-31":"khgeea","2027-02-14":"kbheea","2027-02-28":"lihfea","2027-03-14":"lcifea","2027-03-28":"aijfea","2027-04-11":"ackfea","2027-04-25":"bikfea","2027-05-09":"bclgea","2027-05-23":"cjagea","2027-06-06":"cdbgea","2027-06-20":"cjbgfb","2027-07-04":"ddchfb","2027-07-18":"djdhfb","2027-08-01":"edehfb","2027-08-15":"ejehfb","2027-08-29":"fdfhfb","2027-09-12":"fkgifb","2027-09-26":"gehifb","2027-10-10":"gkhifb","2027-10-24":"heiifb","2027-11-07":"hkjjfb","2027-11-21":"hekjfb","2027-12-05":"ikkjfb","2027-12-19":"iflkfb","2028-01-02":"jlakfb","2028-01-16":"jfakfb","2028-01-30":"klbkfb","2028-02-13":"kfclfb","2028-02-27":"lldlfb","2028-03-12":"lgdlfb","2028-03-26":"aaeafb","2028-04-09":"agfafb","2028-04-23":"bagafb","2028-05-07":"bghafb","2028-05-21":"cahbfb","2028-06-04":"chibfb","2028-06-18":"cajbgb","2028-07-02":"dhjcgb","2028-07-16":"dbkcgb","2028-07-30":"ehlcgb","2028-08-13":"ebacgb","2028-08-27":"fiadgb","2028-09-10":"fbbdgb","2028-09-24":"gicdgb","2028-10-08":"gcddgb","2028-10-22":"giddgb","2028-11-05":"hceegb","2028-11-19":"hifegb","2028-12-03":"icgegb","2028-12-17":"ijgegb","2028-12-31":"jdhegb","2029-01-14":"jjifgb","2029-01-28":"kdjfgb","2029-02-11":"kjjfgb","2029-02-25":"ldkfgb","2029-03-11":"lklfgb","2029-03-25":"adaggb","2029-04-08":"akaggb","2029-04-22":"bebggb","2029-05-06":"bkcggb","2029-05-20":"bedggb","2029-06-03":"cldhgb","2029-06-17":"ceehhb","2029-07-01":"dlfhhb","2029-07-15":"dfghhb","2029-07-29":"elgihb","2029-08-12":"efhihb","2029-08-26":"fliihb","2029-09-09":"ffjihb","2029-09-23":"gajjhb","2029-10-07":"ggkjhb","2029-10-21":"galjhb","2029-11-04":"hgakhb","2029-11-18":"haakhc","2029-12-02":"igbkhc","2029-12-16":"ibckhc","2029-12-30":"jgdlhc","2030-01-13":"jbdlhc","2030-01-27":"khelhc","2030-02-10":"kbfahc","2030-02-24":"lhgahc","2030-03-10":"lbgahc","2030-03-24":"aihahc","2030-04-07":"acibhc","2030-04-21":"bijbhc","2030-05-05":"bcjbhc","2030-05-19":"bikchc","2030-06-02":"cclchc","2030-06-16":"ciacic","2030-06-30":"dcacic","2030-07-14":"djbcic","2030-07-28":"edcdic","2030-08-11":"ejddic","2030-08-25":"fdddic","2030-09-08":"fjedic","2030-09-22":"fdfeic","2030-10-06":"gkgeic","2030-10-20":"gegeic","2030-11-03":"hkheic","2030-11-17":"heieic","2030-12-01":"ikjfic","2030-12-15":"iejfic","2030-12-29":"jlkfic"};
+  // 西洋占星術：本格実装（エッセンシャルディグニティ）
+  const PLANET_DATA = {"1950-01-01":"jccekf","1950-01-15":"jidfkf","1950-01-29":"kcefkf","1950-02-12":"kiffkf","1950-02-26":"lcffkf","1950-03-12":"ljgfkf","1950-03-26":"achgkf","1950-04-09":"ajigkf","1950-04-23":"bdigkf","1950-05-07":"bjjgkf","1950-05-21":"bdkgkf","1950-06-04":"cjkhlf","1950-06-18":"cdlhlf","1950-07-02":"dkahlf","1950-07-16":"debhlf","1950-07-30":"ekbilf","1950-08-13":"eecilf","1950-08-27":"fkdilf","1950-09-10":"feeilf","1950-09-24":"glejlf","1950-10-08":"gefjlf","1950-10-22":"glgjlf","1950-11-05":"hfhklf","1950-11-19":"hlhklf","1950-12-03":"ifiklf","1950-12-17":"iajklf","1950-12-31":"jfkllf","1951-01-14":"jakllf","1951-01-28":"kglllf","1951-02-11":"kaaalf","1951-02-25":"lgbalf","1951-03-11":"labalf","1951-03-25":"agcalf","1951-04-08":"abdblf","1951-04-22":"bheblf","1951-05-06":"bbeblf","1951-05-20":"bhfblf","1951-06-03":"cbgcaf","1951-06-17":"chhcaf","1951-07-01":"dchcaf","1951-07-15":"dhicaf","1951-07-29":"ecjdag","1951-08-12":"eikdag","1951-08-26":"fckdag","1951-09-09":"fildag","1951-09-23":"fcaeag","1951-10-07":"gibeag","1951-10-21":"gdbeag","1951-11-04":"hjceag","1951-11-18":"hddeag","1951-12-02":"ijefag","1951-12-16":"idefag","1951-12-30":"jjffag","1952-01-13":"jdgfag","1952-01-27":"kkhfag","1952-02-10":"kehgag","1952-02-24":"lkigag","1952-03-09":"lejgag","1952-03-23":"akkgag","1952-04-06":"aekgag","1952-04-20":"allhag","1952-05-04":"bfahag","1952-05-18":"blbhag","1952-06-01":"cfbhbg","1952-06-15":"clcibg","1952-06-29":"dfdibg","1952-07-13":"daeibg","1952-07-27":"efeibg","1952-08-10":"eafjbg","1952-08-24":"fggjbg","1952-09-07":"fahjbg","1952-09-21":"fghkbg","1952-10-05":"gbikbg","1952-10-19":"ggjkbg","1952-11-02":"hbkkbg","1952-11-16":"hhklbg","1952-11-30":"ibllbg","1952-12-14":"ihalbg","1952-12-28":"jbbabg","1953-01-11":"jhbabg","1953-01-25":"kccabg","1953-02-08":"khdabg","1953-02-22":"lcebbg","1953-03-08":"liebbg","1953-03-22":"acfbbg","1953-04-05":"aigbbg","1953-04-19":"adhcbg","1953-05-03":"bihcbg","1953-05-17":"bdiccg","1953-05-31":"cjjccg","1953-06-14":"cdkdcg","1953-06-28":"djkdcg","1953-07-12":"ddldcg","1953-07-26":"ejadcg","1953-08-09":"eebecg","1953-08-23":"ekbecg","1953-09-06":"fececg","1953-09-20":"fkdecg","1953-10-04":"geeecg","1953-10-18":"gkefcg","1953-11-01":"hfffcg","1953-11-15":"hlgfcg","1953-11-29":"ifhfcg","1953-12-13":"ilhfcg","1953-12-27":"jfigcg","1954-01-10":"jljgcg","1954-01-24":"kfkgcg","1954-02-07":"kakgch","1954-02-21":"lglgch","1954-03-07":"laahch","1954-03-21":"lgahch","1954-04-04":"aabhch","1954-04-18":"agchch","1954-05-02":"badich","1954-05-16":"bhdidh","1954-05-30":"cbeidh","1954-06-13":"chfidh","1954-06-27":"dbgjdh","1954-07-11":"dhhjdh","1954-07-25":"ebhjdh","1954-08-08":"ehikdh","1954-08-22":"ecjkdh","1954-09-05":"fikkdh","1954-09-19":"fckkdh","1954-10-03":"gilldh","1954-10-17":"gcaldh","1954-10-31":"hialdh","1954-11-14":"hdbadh","1954-11-28":"ijcadh","1954-12-12":"iddadh","1954-12-26":"jjdadh","1955-01-09":"jdebdh","1955-01-23":"kjfbdh","1955-02-06":"kegbdh","1955-02-20":"ljgbdh","1955-03-06":"lehcdh","1955-03-20":"lkicdh","1955-04-03":"aejcdh","1955-04-17":"akjcdh","1955-05-01":"bfkddh","1955-05-15":"bkldeh","1955-05-29":"cfadeh","1955-06-12":"cladeh","1955-06-26":"dfbeeh","1955-07-10":"dlceeh","1955-07-24":"efdeeh","1955-08-07":"eldeeh","1955-08-21":"egeeeh","1955-09-04":"faffeh","1955-09-18":"fggfeh","1955-10-02":"gagfeh","1955-10-16":"gghfeh","1955-10-30":"haifeh","1955-11-13":"hhjgeh","1955-11-27":"iajgeh","1955-12-11":"ihkgeh","1955-12-25":"jblgeh","1956-01-08":"jhageh","1956-01-22":"kbaheh","1956-02-05":"kibheh","1956-02-19":"kbcheh","1956-03-04":"lidheh","1956-03-18":"lcdieh","1956-04-01":"aieieh","1956-04-15":"acfieh","1956-04-29":"bigieh","1956-05-13":"bcgjfh","1956-05-27":"cjhjfh","1956-06-10":"cdijfh","1956-06-24":"djjjfh","1956-07-08":"ddjkfh","1956-07-22":"djkkfh","1956-08-05":"edlkfh","1956-08-19":"ejalfi","1956-09-02":"fealfi","1956-09-16":"fkblfi","1956-09-30":"gecafi","1956-10-14":"gkdafi","1956-10-28":"hedafi","1956-11-11":"hkeafi","1956-11-25":"iffbfi","1956-12-09":"ikgbfi","1956-12-23":"jfgbfi","1957-01-06":"jlhbfi","1957-01-20":"jficfi","1957-02-03":"kljcfi","1957-02-17":"kfjcfi","1957-03-03":"llkcfi","1957-03-17":"lgldfi","1957-03-31":"aaadfi","1957-04-14":"agadfi","1957-04-28":"babdgi","1957-05-12":"bgcegi","1957-05-26":"cadegi","1957-06-09":"chdegi","1957-06-23":"dbeegi","1957-07-07":"dhfegi","1957-07-21":"dbgfgi","1957-08-04":"ehgfgi","1957-08-18":"ebhfgi","1957-09-01":"fiifgi","1957-09-15":"fbjfgi","1957-09-29":"gijggi","1957-10-13":"gckggi","1957-10-27":"hilggi","1957-11-10":"hcaggi","1957-11-24":"ijaggi","1957-12-08":"icbhgi","1957-12-22":"ijchgi","1958-01-05":"jddhgi","1958-01-19":"jjdhgi","1958-02-02":"kdeigi","1958-02-16":"kjfigi","1958-03-02":"ldgigi","1958-03-16":"lkgigi","1958-03-30":"adhjgi","1958-04-13":"akijgi","1958-04-27":"bejjhi","1958-05-11":"bkjjhi","1958-05-25":"cekkhi","1958-06-08":"cllkhi","1958-06-22":"delkhi","1958-07-06":"dlalhi","1958-07-20":"dfblhi","1958-08-03":"elclhi","1958-08-17":"efclhi","1958-08-31":"fldahi","1958-09-14":"ffeahi","1958-09-28":"gafahi","1958-10-12":"ggfbhi","1958-10-26":"hagbhi","1958-11-09":"hghbhi","1958-11-23":"iaibhi","1958-12-07":"igichi","1958-12-21":"ibjchi","1959-01-04":"jhkchi","1959-01-18":"jblchi","1959-02-01":"khldhi","1959-02-15":"kbadhi","1959-03-01":"lhbdhj","1959-03-15":"lbcdhj","1959-03-29":"aicehj","1959-04-12":"acdehj","1959-04-26":"bieeij","1959-05-10":"bcfeij","1959-05-24":"cifeij","1959-06-07":"ccgfij","1959-06-21":"cjhfij","1959-07-05":"ddifij","1959-07-19":"djifij","1959-08-02":"edjfij","1959-08-16":"ejkgij","1959-08-30":"fdlgij","1959-09-13":"fjlgij","1959-09-27":"gdagij","1959-10-11":"gkbgij","1959-10-25":"hechij","1959-11-08":"hkchij","1959-11-22":"hedhij","1959-12-06":"ikehij","1959-12-20":"iefiij","1960-01-03":"jlfiij","1960-01-17":"jegiij","1960-01-31":"klhiij","1960-02-14":"kfijij","1960-02-28":"llijij","1960-03-13":"lfjjij","1960-03-27":"aakjij","1960-04-10":"aflkij","1960-04-24":"balkjj","1960-05-08":"bgakjj","1960-05-22":"cabljj","1960-06-05":"cgcljj","1960-06-19":"cbcljj","1960-07-03":"dgdljj","1960-07-17":"dbeajj","1960-07-31":"ehfajj","1960-08-14":"ebfajj","1960-08-28":"fhgbjj","1960-09-11":"fbhbjj","1960-09-25":"ghibjj","1960-10-09":"gcibjj","1960-10-23":"gijcjj","1960-11-06":"hckcjj","1960-11-20":"hilcjj","1960-12-04":"iclcjj","1960-12-18":"iiadjj","1961-01-01":"jdbdjj","1961-01-15":"jicdjj","1961-01-29":"kdcdjj","1961-02-12":"kjdejj","1961-02-26":"ldeejj","1961-03-12":"ljfejj","1961-03-26":"adfejj","1961-04-09":"ajgejj","1961-04-23":"behfkj","1961-05-07":"bkifkj","1961-05-21":"beifkj","1961-06-04":"ckjfkj","1961-06-18":"cekfkj","1961-07-02":"dklgkj","1961-07-16":"delgkj","1961-07-30":"elagkj","1961-08-13":"efbgkj","1961-08-27":"flcgkj","1961-09-10":"ffchkk","1961-09-24":"gldhkk","1961-10-08":"gfehkk","1961-10-22":"gafhkk","1961-11-05":"hgfikk","1961-11-19":"hagikk","1961-12-03":"ighikk","1961-12-17":"iaiikk","1961-12-31":"jgijkk","1962-01-14":"jbjjkk","1962-01-28":"kgkjkk","1962-02-11":"kbljkk","1962-02-25":"lhlkkk","1962-03-11":"lbakkk","1962-03-25":"ahbkkk","1962-04-08":"acbllk","1962-04-22":"bhcllk","1962-05-06":"bcdllk","1962-05-20":"biellk","1962-06-03":"ccfalk","1962-06-17":"cifalk","1962-07-01":"dcgalk","1962-07-15":"dihblk","1962-07-29":"ediblk","1962-08-12":"eiiblk","1962-08-26":"fdjblk","1962-09-09":"fjkclk","1962-09-23":"fdkclk","1962-10-07":"gjlclk","1962-10-21":"geaclk","1962-11-04":"hjbdlk","1962-11-18":"hebdlk","1962-12-02":"ikcdlk","1962-12-16":"ieddlk","1962-12-30":"jkedlk","1963-01-13":"jeeelk","1963-01-27":"kkfelk","1963-02-10":"kfgelk","1963-02-24":"llhelk","1963-03-10":"lfhflk","1963-03-24":"aliflk","1963-04-07":"afjfak","1963-04-21":"blkfak","1963-05-05":"bgkfak","1963-05-19":"bllgak","1963-06-02":"cgagak","1963-06-16":"cabgak","1963-06-30":"dgbgak","1963-07-14":"dacgak","1963-07-28":"egdhak","1963-08-11":"ebehak","1963-08-25":"fhehak","1963-09-08":"fbfhak","1963-09-22":"fhgiak","1963-10-06":"gbhiak","1963-10-20":"ghhiak","1963-11-03":"hbiiak","1963-11-17":"hijjak","1963-12-01":"ickjak","1963-12-15":"iikjak","1963-12-29":"jcljak","1964-01-12":"jiakak","1964-01-26":"kcbkak","1964-02-09":"kibkak","1964-02-23":"ldclak","1964-03-08":"ljdlak","1964-03-22":"adelal","1964-04-05":"ajelbl","1964-04-19":"adfabl","1964-05-03":"bjgabl","1964-05-17":"behabl","1964-05-31":"cjhbbl","1964-06-14":"ceibbl","1964-06-28":"dkjbbl","1964-07-12":"dekbbl","1964-07-26":"ekkcbl","1964-08-09":"eflcbl","1964-08-23":"ekacbl","1964-09-06":"ffbcbl","1964-09-20":"flbdbl","1964-10-04":"gfcdbl","1964-10-18":"glddbl","1964-11-01":"hgedbl","1964-11-15":"hledbl","1964-11-29":"igfebl","1964-12-13":"iagebl","1964-12-27":"jghebl","1965-01-10":"jahebl","1965-01-24":"kgiebl","1965-02-07":"kajfbl","1965-02-21":"lhkfbl","1965-03-07":"lakfbl","1965-03-21":"ahlfbl","1965-04-04":"abafcl","1965-04-18":"ahbgcl","1965-05-02":"bbbgcl","1965-05-16":"bicgcl","1965-05-30":"cbdgcl","1965-06-13":"ciehcl","1965-06-27":"dcehcl","1965-07-11":"difhcl","1965-07-25":"ecghcl","1965-08-08":"eihicl","1965-08-22":"echicl","1965-09-05":"fjiicl","1965-09-19":"fdjicl","1965-10-03":"gjkjcl","1965-10-17":"gdkjcl","1965-10-31":"hjljcl","1965-11-14":"hdajcl","1965-11-28":"ijbkcl","1965-12-12":"iebkcl","1965-12-26":"jkckcl","1966-01-09":"jedlcl","1966-01-23":"kkelcl","1966-02-06":"keelcl","1966-02-20":"lkflcl","1966-03-06":"lfgacl","1966-03-20":"llhadl","1966-04-03":"afhadl","1966-04-17":"alibdl","1966-05-01":"bfjbdl","1966-05-15":"blkbdl","1966-05-29":"cfkbdl","1966-06-12":"cllcdl","1966-06-26":"dgacdl","1966-07-10":"daacdl","1966-07-24":"egbcdl","1966-08-07":"eacddl","1966-08-21":"egdddl","1966-09-04":"fadddl","1966-09-18":"fheddl","1966-10-02":"gbfdda","1966-10-16":"ghgeda","1966-10-30":"hbheda","1966-11-13":"hhheda","1966-11-27":"ibieda","1966-12-11":"iijeda","1966-12-25":"jbkfda","1967-01-08":"jikfda","1967-01-22":"kclfda","1967-02-05":"kiafda","1967-02-19":"kcafda","1967-03-05":"ljbgda","1967-03-19":"lccgea","1967-04-02":"ajdgea","1967-04-16":"addgea","1967-04-30":"bjehea","1967-05-14":"bdfhea","1967-05-28":"cjghea","1967-06-11":"cdghea","1967-06-25":"dkhiea","1967-07-09":"deiiea","1967-07-23":"dkjiea","1967-08-06":"eejiea","1967-08-20":"ekkjea","1967-09-03":"feljea","1967-09-17":"flajea","1967-10-01":"geajea","1967-10-15":"glbkea","1967-10-29":"hfckea","1967-11-12":"hldkea","1967-11-26":"ifdlea","1967-12-10":"iaelea","1967-12-24":"jfflea","1968-01-07":"jaglea","1968-01-21":"kggaea","1968-02-04":"kahaea","1968-02-18":"kgiaea","1968-03-03":"lajbea","1968-03-17":"lgjbfa","1968-03-31":"abkbfa","1968-04-14":"ahlbfa","1968-04-28":"bbacfa","1968-05-12":"bhacfa","1968-05-26":"cbbcfa","1968-06-09":"chccfa","1968-06-23":"dcddfa","1968-07-07":"diddfa","1968-07-21":"dcedfa","1968-08-04":"eifdfa","1968-08-18":"ecgdfa","1968-09-01":"figefa","1968-09-15":"fchefa","1968-09-29":"gjiefa","1968-10-13":"gdjefa","1968-10-27":"hjjefa","1968-11-10":"hdkffa","1968-11-24":"ijlffa","1968-12-08":"idaffa","1968-12-22":"jkaffa","1969-01-05":"jdbffa","1969-01-19":"jkcgfa","1969-02-02":"kedgfa","1969-02-16":"kkdgfa","1969-03-02":"leegfa","1969-03-16":"lkfhga","1969-03-30":"aeghgb","1969-04-13":"alghgb","1969-04-27":"bfhhgb","1969-05-11":"blihgb","1969-05-25":"cfjigb","1969-06-08":"cljigb","1969-06-22":"dfkigb","1969-07-06":"daljgb","1969-07-20":"dfajgb","1969-08-03":"eaajgb","1969-08-17":"egbjgb","1969-08-31":"fackgb","1969-09-14":"fgdkgb","1969-09-28":"gbdkgb","1969-10-12":"ggekgb","1969-10-26":"hbflgb","1969-11-09":"hhglgb","1969-11-23":"ibglgb","1969-12-07":"ihhagb","1969-12-21":"ibiagb","1970-01-04":"jhjagb","1970-01-18":"jcjagb","1970-02-01":"khkbgb","1970-02-15":"kclbgb","1970-03-01":"liabgb","1970-03-15":"lcachb","1970-03-29":"aibchb","1970-04-12":"adcchb","1970-04-26":"bidchb","1970-05-10":"bdddhb","1970-05-24":"cjedhb","1970-06-07":"cdfdhb","1970-06-21":"cjgdhb","1970-07-05":"ddgdhb","1970-07-19":"djhehb","1970-08-02":"eeiehb","1970-08-16":"ekjehb","1970-08-30":"fejehb","1970-09-13":"fkkehb","1970-09-27":"gelfhb","1970-10-11":"gklfhb","1970-10-25":"hfafhb","1970-11-08":"hlbfhb","1970-11-22":"hfcfhb","1970-12-06":"ilcghb","1970-12-20":"ifdghb","1971-01-03":"jleghb","1971-01-17":"jffghb","1971-01-31":"kafhhb","1971-02-14":"kgghhb","1971-02-28":"lahhib","1971-03-14":"lgihib","1971-03-28":"aaihib","1971-04-11":"agjiib","1971-04-25":"bbkiib","1971-05-09":"bhliib","1971-05-23":"cbljib","1971-06-06":"chajib","1971-06-20":"cbbjib","1971-07-04":"dhcjib","1971-07-18":"dcckib","1971-08-01":"ehdkib","1971-08-15":"ecekib","1971-08-29":"fifkib","1971-09-12":"fcflib","1971-09-26":"giglib","1971-10-10":"gdhlic","1971-10-24":"giiaic","1971-11-07":"hdiaic","1971-11-21":"hjjaic","1971-12-05":"idkaic","1971-12-19":"ijlbic","1972-01-02":"jdlbic","1972-01-16":"jjabic","1972-01-30":"kebcic","1972-02-13":"kjccic","1972-02-27":"leccjc","1972-03-12":"lkdcjc","1972-03-26":"aeedjc","1972-04-09":"akfdjc","1972-04-23":"bffdjc","1972-05-07":"bkgdjc","1972-05-21":"cfhdjc","1972-06-04":"cliejc","1972-06-18":"cfiejc","1972-07-02":"dljejc","1972-07-16":"dfkejc","1972-07-30":"ellejc","1972-08-13":"eglfjc","1972-08-27":"faafjc","1972-09-10":"fgbfjc","1972-09-24":"gacfjc","1972-10-08":"ggcfjc","1972-10-22":"gadgjc","1972-11-05":"hhegjc","1972-11-19":"hafgjc","1972-12-03":"ihfgjc","1972-12-17":"ibghjc","1972-12-31":"jhhhjc","1973-01-14":"jbihjc","1973-01-28":"khihjc","1973-02-11":"kbjhjc","1973-02-25":"likikc","1973-03-11":"lclikc","1973-03-25":"ailikc","1973-04-08":"acaikc","1973-04-22":"bibjkc","1973-05-06":"bccjkc","1973-05-20":"bicjkc","1973-06-03":"cddkkc","1973-06-17":"cjekkc","1973-07-01":"ddfkkc","1973-07-15":"djfkkc","1973-07-29":"edglkc","1973-08-12":"ejhlkc","1973-08-26":"feilkc","1973-09-09":"fkiakc","1973-09-23":"fejakc","1973-10-07":"gkkakc","1973-10-21":"gelakc","1973-11-04":"hklbkc","1973-11-18":"hfabkc","1973-12-02":"ikbbkc","1973-12-16":"ifcckc","1973-12-30":"jlcckc","1974-01-13":"jfdckc","1974-01-27":"kleckc","1974-02-10":"kgfdkc","1974-02-24":"llfdlc","1974-03-10":"lggdlc","1974-03-24":"aahdlc","1974-04-07":"agidld","1974-04-21":"baield","1974-05-05":"bgjeld","1974-05-19":"bakeld","1974-06-02":"chleld","1974-06-16":"caleld","1974-06-30":"dhafld","1974-07-14":"dbbfld","1974-07-28":"ehbfld","1974-08-11":"ebcfld","1974-08-25":"fidfld","1974-09-08":"fbegld","1974-09-22":"fifgld","1974-10-06":"gcfgld","1974-10-20":"giggld","1974-11-03":"hchgld","1974-11-17":"hiihld","1974-12-01":"icihld","1974-12-15":"ijjhld","1974-12-29":"jdkhld","1975-01-12":"jjkild","1975-01-26":"kdlild","1975-02-09":"kjaiad","1975-02-23":"ldbiad","1975-03-09":"lkbjad","1975-03-23":"aecjad","1975-04-06":"akdjad","1975-04-20":"aeekad","1975-05-04":"bkekad","1975-05-18":"befkad","1975-06-01":"ckgkad","1975-06-15":"cfhlad","1975-06-29":"dlhlad","1975-07-13":"dfilad","1975-07-27":"eljaad","1975-08-10":"efkaad","1975-08-24":"flkaad","1975-09-07":"fglaad","1975-09-21":"faabad","1975-10-05":"ggbbad","1975-10-19":"gabbad","1975-11-02":"hgccad","1975-11-16":"hadcad","1975-11-30":"igecad","1975-12-14":"iaecad","1975-12-28":"jhfcad","1976-01-11":"jbgdad","1976-01-25":"khhdad","1976-02-08":"kbhdbd","1976-02-22":"lhidbd","1976-03-07":"lbjebd","1976-03-21":"aikebd","1976-04-04":"ackebd","1976-04-18":"ailebd","1976-05-02":"bcaebd","1976-05-16":"bibfbd","1976-05-30":"ccbfbd","1976-06-13":"cjcfbd","1976-06-27":"dcdfbd","1976-07-11":"djefbd","1976-07-25":"edegbd","1976-08-08":"ejfgbd","1976-08-22":"edggbd","1976-09-05":"fkhgbd","1976-09-19":"fdhgbd","1976-10-03":"gkihbe","1976-10-17":"gejhbe","1976-10-31":"hkkhbe","1976-11-14":"hekhbe","1976-11-28":"iklibe","1976-12-12":"ieaibe","1976-12-26":"jlbibe","1977-01-09":"jebibe","1977-01-23":"klcjbe","1977-02-06":"kfdjce","1977-02-20":"llejce","1977-03-06":"lfekce","1977-03-20":"lafkce","1977-04-03":"afgkce","1977-04-17":"aahkce","1977-05-01":"bghlce","1977-05-15":"bailce","1977-05-29":"cgjlce","1977-06-12":"cakace","1977-06-26":"dgkace","1977-07-10":"dblace","1977-07-24":"ehaace","1977-08-07":"ebbbce","1977-08-21":"ehbbce","1977-09-04":"fbcbce","1977-09-18":"fhdbce","1977-10-02":"gcecce","1977-10-16":"giecce","1977-10-30":"hcfcce","1977-11-13":"higcce","1977-11-27":"ichdce","1977-12-11":"iihdce","1977-12-25":"jcidce","1978-01-08":"jjjdce","1978-01-22":"kdkece","1978-02-05":"kjkede","1978-02-19":"kdlede","1978-03-05":"ljaede","1978-03-19":"ldbede","1978-04-02":"akbfde","1978-04-16":"aecfde","1978-04-30":"bkdfde","1978-05-14":"beefde","1978-05-28":"ckefde","1978-06-11":"cefgde","1978-06-25":"dlggde","1978-07-09":"dehgde","1978-07-23":"dlhgde","1978-08-06":"efigde","1978-08-20":"eljhde","1978-09-03":"ffkhde","1978-09-17":"flkhde","1978-10-01":"gflhde","1978-10-15":"gaaide","1978-10-29":"hgaide","1978-11-12":"habide","1978-11-26":"igcide","1978-12-10":"iadjde","1978-12-24":"jgdjde","1979-01-07":"jbejde","1979-01-21":"kgfkee","1979-02-04":"kbgkee","1979-02-18":"khhkee","1979-03-04":"lbhkee","1979-03-18":"lhilee","1979-04-01":"acjlef","1979-04-15":"ahjlef","1979-04-29":"bckaef","1979-05-13":"bilaef","1979-05-27":"ccaaef","1979-06-10":"ciaaef","1979-06-24":"dcbbef","1979-07-08":"dicbef","1979-07-22":"dddbef","1979-08-05":"eidbef","1979-08-19":"edecef","1979-09-02":"fjfcef","1979-09-16":"fdgcef","1979-09-30":"gjgcef","1979-10-14":"gehdef","1979-10-28":"hjidef","1979-11-11":"hejdef","1979-11-25":"ikjdef","1979-12-09":"iekeef","1979-12-23":"jkleef","1980-01-06":"jeaeef","1980-01-20":"jkaeff","1980-02-03":"kfbeff","1980-02-17":"klcfff","1980-03-02":"lfdfff","1980-03-16":"lldfff","1980-03-30":"afefff","1980-04-13":"alffff","1980-04-27":"bgggff","1980-05-11":"baggff","1980-05-25":"cghgff","1980-06-08":"caigff","1980-06-22":"dgjgff","1980-07-06":"dajhff","1980-07-20":"dgkhff","1980-08-03":"eblhff","1980-08-17":"ehahff","1980-08-31":"fbaiff","1980-09-14":"fhbiff","1980-09-28":"gbciff","1980-10-12":"ghdiff","1980-10-26":"hcdjff","1980-11-09":"hhejff","1980-11-23":"icfjff","1980-12-07":"iigkff","1980-12-21":"icgkff","1981-01-04":"jihkff","1981-01-18":"jcikgf","1981-02-01":"kijlgf","1981-02-15":"kdjlgf","1981-03-01":"ljklgf","1981-03-15":"ldlagf","1981-03-29":"ajaagf","1981-04-12":"adaagf","1981-04-26":"bjbagf","1981-05-10":"becbgf","1981-05-24":"cjdbgf","1981-06-07":"cedbgf","1981-06-21":"ckebgf","1981-07-05":"defcgf","1981-07-19":"dkgcgf","1981-08-02":"efgcgf","1981-08-16":"ekhcgf","1981-08-30":"ffidgf","1981-09-13":"fljdgg","1981-09-27":"gfjdgg","1981-10-11":"glkdgg","1981-10-25":"hglegg","1981-11-08":"hlaegg","1981-11-22":"hgaegg","1981-12-06":"iabegg","1981-12-20":"igcegg","1982-01-03":"jadfgg","1982-01-17":"jgdfhg","1982-01-31":"kaefhg","1982-02-14":"khffhg","1982-02-28":"lbgfhg","1982-03-14":"lhgghg","1982-03-28":"abhghg","1982-04-11":"ahighg","1982-04-25":"bbjghg","1982-05-09":"bhjghg","1982-05-23":"cbkhhg","1982-06-06":"cilhhg","1982-06-20":"ccahhg","1982-07-04":"diahhg","1982-07-18":"dcbihg","1982-08-01":"eicihg","1982-08-15":"ecdihg","1982-08-29":"fjdihg","1982-09-12":"fdejhg","1982-09-26":"gjfjhg","1982-10-10":"gdgjhg","1982-10-24":"hjgjhg","1982-11-07":"hdhkhg","1982-11-21":"hjikhg","1982-12-05":"iejkhg","1982-12-19":"ikjlhg","1983-01-02":"jeklhg","1983-01-16":"jkllig","1983-01-30":"kelaig","1983-02-13":"kkaaig","1983-02-27":"lfbaig","1983-03-13":"llcaig","1983-03-27":"afcbig","1983-04-10":"aldbig","1983-04-24":"bfebig","1983-05-08":"blfbig","1983-05-22":"cgfcig","1983-06-05":"clgcig","1983-06-19":"cghcig","1983-07-03":"daicig","1983-07-17":"dgidig","1983-07-31":"eajdig","1983-08-14":"ehkdig","1983-08-28":"faldig","1983-09-11":"fhleig","1983-09-25":"gbaeig","1983-10-09":"ghbeig","1983-10-23":"gbceig","1983-11-06":"hhceig","1983-11-20":"hbdfig","1983-12-04":"iiefig","1983-12-18":"ibffig","1984-01-01":"jiffjg","1984-01-15":"jcgfjg","1984-01-29":"kihgjg","1984-02-12":"kcigjg","1984-02-26":"ljigjh","1984-03-11":"lcjgjh","1984-03-25":"ajkgjh","1984-04-08":"adlhjh","1984-04-22":"bjlhjh","1984-05-06":"bdahjh","1984-05-20":"bjbhjh","1984-06-03":"cdcijh","1984-06-17":"ckcijh","1984-07-01":"dedijh","1984-07-15":"dkeijh","1984-07-29":"eefjjh","1984-08-12":"ekfjjh","1984-08-26":"fegjjh","1984-09-09":"flhjjh","1984-09-23":"gfikjh","1984-10-07":"glikjh","1984-10-21":"gfjkjh","1984-11-04":"hlkljh","1984-11-18":"hflljh","1984-12-02":"illljh","1984-12-16":"ifaljh","1984-12-30":"jabakh","1985-01-13":"jgcakh","1985-01-27":"kacakh","1985-02-10":"kgdbkh","1985-02-24":"laebkh","1985-03-10":"lgfbkh","1985-03-24":"aafbkh","1985-04-07":"ahgckh","1985-04-21":"bbhckh","1985-05-05":"bhickh","1985-05-19":"bbickh","1985-06-02":"chjdkh","1985-06-16":"cbkdkh","1985-06-30":"dildkh","1985-07-14":"dcldkh","1985-07-28":"eiaekh","1985-08-11":"ecbekh","1985-08-25":"ficekh","1985-09-08":"fccekh","1985-09-22":"fjdekh","1985-10-06":"gcefkh","1985-10-20":"gjffkh","1985-11-03":"hdffkh","1985-11-17":"hjgfkh","1985-12-01":"idhfkh","1985-12-15":"ikigkh","1985-12-29":"jdiglh","1986-01-12":"jkjglh","1986-01-26":"kekglh","1986-02-09":"kklglh","1986-02-23":"lelhlh","1986-03-09":"lkahlh","1986-03-23":"aebhlh","1986-04-06":"alchlh","1986-04-20":"afcilh","1986-05-04":"bldilh","1986-05-18":"bfeilh","1986-06-01":"clfilh","1986-06-15":"cffjlh","1986-06-29":"dagjlh","1986-07-13":"dfhjlh","1986-07-27":"eaijlh","1986-08-10":"egikli","1986-08-24":"fajkli","1986-09-07":"fgkkli","1986-09-21":"fbllli","1986-10-05":"ggllli","1986-10-19":"gballi","1986-11-02":"hhblli","1986-11-16":"hbbali","1986-11-30":"ihcali","1986-12-14":"ibdali","1986-12-28":"jhebai","1987-01-11":"jcfbai","1987-01-25":"kifbai","1987-02-08":"kcgbai","1987-02-22":"lihcai","1987-03-08":"lcicai","1987-03-22":"aiicai","1987-04-05":"adjcai","1987-04-19":"ajkdai","1987-05-03":"bdkdai","1987-05-17":"bjldai","1987-05-31":"cdadai","1987-06-14":"cjbeai","1987-06-28":"ddbeai","1987-07-12":"dkceai","1987-07-26":"eedeai","1987-08-09":"ekeeai","1987-08-23":"eeefai","1987-09-06":"fkffai","1987-09-20":"fegfai","1987-10-04":"gkhfai","1987-10-18":"gehfai","1987-11-01":"hligai","1987-11-15":"hfjgai","1987-11-29":"ilkgai","1987-12-13":"ifkgbi","1987-12-27":"jllgbi","1988-01-10":"jfahbi","1988-01-24":"kabhbi","1988-02-07":"kgbhbi","1988-02-21":"lachbi","1988-03-06":"lgdibi","1988-03-20":"laeibi","1988-04-03":"ageibi","1988-04-17":"abfibi","1988-05-01":"bggjbi","1988-05-15":"bbhjbi","1988-05-29":"chhjbi","1988-06-12":"cbijbi","1988-06-26":"dhjkbi","1988-07-10":"dckkbi","1988-07-24":"ehkkbi","1988-08-07":"ecllbi","1988-08-21":"eialbi","1988-09-04":"fcblbi","1988-09-18":"fiblbi","1988-10-02":"gdcabi","1988-10-16":"gidabi","1988-10-30":"hdeabi","1988-11-13":"hjebbi","1988-11-27":"idfbbi","1988-12-11":"ijgbci","1988-12-25":"jdhbci","1989-01-08":"jjhcci","1989-01-22":"keiccj","1989-02-05":"kjjccj","1989-02-19":"lekccj","1989-03-05":"lkkdcj","1989-03-19":"leldcj","1989-04-02":"akadcj","1989-04-16":"afbdcj","1989-04-30":"bkbdcj","1989-05-14":"bfcecj","1989-05-28":"cldecj","1989-06-11":"cfeecj","1989-06-25":"dleecj","1989-07-09":"dfffcj","1989-07-23":"elgfcj","1989-08-06":"eghfcj","1989-08-20":"eahfcj","1989-09-03":"fgifcj","1989-09-17":"fajgcj","1989-10-01":"ggkgcj","1989-10-15":"gakgcj","1989-10-29":"hglgcj","1989-11-12":"hbagcj","1989-11-26":"ihbhcj","1989-12-10":"ibbhdj","1989-12-24":"jhchdj","1990-01-07":"jbdhdj","1990-01-21":"kheidj","1990-02-04":"kceidj","1990-02-18":"kifidj","1990-03-04":"lcgidj","1990-03-18":"lihjdj","1990-04-01":"achjdj","1990-04-15":"aiijdj","1990-04-29":"bdjjdj","1990-05-13":"bikkdj","1990-05-27":"cdkkdj","1990-06-10":"cjlkdj","1990-06-24":"ddaldj","1990-07-08":"djbldj","1990-07-22":"ddbldj","1990-08-05":"ejcldj","1990-08-19":"eedadj","1990-09-02":"fkeadj","1990-09-16":"feeadj","1990-09-30":"gkfbdj","1990-10-14":"gegbdj","1990-10-28":"hkhbdj","1990-11-11":"hfhbdj","1990-11-25":"ikicdj","1990-12-09":"ifjcej","1990-12-23":"jlkcej","1991-01-06":"jfkcej","1991-01-20":"jlldej","1991-02-03":"kgadej","1991-02-17":"kladej","1991-03-03":"lgbdej","1991-03-17":"lacdej","1991-03-31":"agdeej","1991-04-14":"aadeej","1991-04-28":"bgeeej","1991-05-12":"bafeej","1991-05-26":"chgfej","1991-06-09":"cbhfej","1991-06-23":"dhhfej","1991-07-07":"dbifek","1991-07-21":"dhjfek","1991-08-04":"ebjgek","1991-08-18":"eikgek","1991-09-01":"fblgek","1991-09-15":"fiagek","1991-09-29":"gcagek","1991-10-13":"gibhek","1991-10-27":"hcchek","1991-11-10":"hidhek","1991-11-24":"icdhek","1991-12-08":"ijeifk","1991-12-22":"idfifk","1992-01-05":"jjgifk","1992-01-19":"jdgifk","1992-02-02":"kjhjfk","1992-02-16":"kdijfk","1992-03-01":"lkjjfk","1992-03-15":"lejjfk","1992-03-29":"akkkfk","1992-04-12":"aelkfk","1992-04-26":"bkakfk","1992-05-10":"bealfk","1992-05-24":"ckblfk","1992-06-07":"cfclfk","1992-06-21":"cldlfk","1992-07-05":"dfdafk","1992-07-19":"dleafk","1992-08-02":"effafk","1992-08-16":"elgbfk","1992-08-30":"fggbfk","1992-09-13":"flhbfk","1992-09-27":"ggibfk","1992-10-11":"gajcfk","1992-10-25":"hgjcfk","1992-11-08":"hakcfk","1992-11-22":"hglcgk","1992-12-06":"iaadgk","1992-12-20":"ihadgk","1993-01-03":"jbbdgk","1993-01-17":"jhcdgk","1993-01-31":"kbddgk","1993-02-14":"khdegk","1993-02-28":"lbeegk","1993-03-14":"lifegk","1993-03-28":"abgegk","1993-04-11":"aigegk","1993-04-25":"bchfgk","1993-05-09":"biifgk","1993-05-23":"ccjfgk","1993-06-06":"cjjfgk","1993-06-20":"cckfgk","1993-07-04":"djlggk","1993-07-18":"ddaggk","1993-08-01":"ejaggk","1993-08-15":"edbggk","1993-08-29":"fkchgk","1993-09-12":"fddhgk","1993-09-26":"gkdhgk","1993-10-10":"geehgk","1993-10-24":"hkfigk","1993-11-07":"hegigk","1993-11-21":"hkgihk","1993-12-05":"iehihl","1993-12-19":"ilijhl","1994-01-02":"jfjjhl","1994-01-16":"jljjhl","1994-01-30":"kfkjhl","1994-02-13":"kllkhl","1994-02-27":"lfakhl","1994-03-13":"llakhl","1994-03-27":"afblhl","1994-04-10":"aaclhl","1994-04-24":"bgdlhl","1994-05-08":"badlhl","1994-05-22":"cgeahl","1994-06-05":"cafahl","1994-06-19":"cggahl","1994-07-03":"dbgbhl","1994-07-17":"dhhbhl","1994-07-31":"ebibhl","1994-08-14":"ehjbhl","1994-08-28":"fbjchl","1994-09-11":"fhkchl","1994-09-25":"gblchl","1994-10-09":"giachl","1994-10-23":"gcadhl","1994-11-06":"hibdhl","1994-11-20":"hccdil","1994-12-04":"iiddil","1994-12-18":"icddil","1995-01-01":"jjeeil","1995-01-15":"jdfeil","1995-01-29":"kjgeil","1995-02-12":"kdgeil","1995-02-26":"ljheil","1995-03-12":"ldifil","1995-03-26":"akjfil","1995-04-09":"adjfil","1995-04-23":"bkkfil","1995-05-07":"belfil","1995-05-21":"bklgil","1995-06-04":"ceagil","1995-06-18":"clbgil","1995-07-02":"decgil","1995-07-16":"dlchil","1995-07-30":"efdhil","1995-08-13":"elehil","1995-08-27":"fffhil","1995-09-10":"flfhil","1995-09-24":"gfgiil","1995-10-08":"gahiil","1995-10-22":"gfiiil","1995-11-05":"haijil","1995-11-19":"hgjjjl","1995-12-03":"iakjjl","1995-12-17":"igljjl","1995-12-31":"jblkjl","1996-01-14":"jgakjl","1996-01-28":"kbbkjl","1996-02-11":"khcljl","1996-02-25":"lbcljl","1996-03-10":"lhdljl","1996-03-24":"abeljl","1996-04-07":"ahfajl","1996-04-21":"bcfajl","1996-05-05":"bigaja","1996-05-19":"bchbja","1996-06-02":"ciibja","1996-06-16":"ccibja","1996-06-30":"dijbja","1996-07-14":"ddkcja","1996-07-28":"ejlcja","1996-08-11":"edlcja","1996-08-25":"fjacja","1996-09-08":"fdbdja","1996-09-22":"fjcdja","1996-10-06":"gdcdja","1996-10-20":"gkddja","1996-11-03":"heedka","1996-11-17":"hkfeka","1996-12-01":"iefeka","1996-12-15":"ikgeka","1996-12-29":"jeheka","1997-01-12":"jlieka","1997-01-26":"kfifka","1997-02-09":"kljfka","1997-02-23":"lfkfka","1997-03-09":"lllfka","1997-03-23":"aflfka","1997-04-06":"alagka","1997-04-20":"afbgka","1997-05-04":"bacgka","1997-05-18":"bgcgka","1997-06-01":"cadhka","1997-06-15":"cgehka","1997-06-29":"dafhka","1997-07-13":"dgfhka","1997-07-27":"ebghka","1997-08-10":"eghika","1997-08-24":"fbiika","1997-09-07":"fhiika","1997-09-21":"fbjjka","1997-10-05":"ghkjka","1997-10-19":"gcljka","1997-11-02":"hhljla","1997-11-16":"hcakla","1997-11-30":"iibkla","1997-12-14":"icckla","1997-12-28":"jickla","1998-01-11":"jddlla","1998-01-25":"kiella","1998-02-08":"kdflla","1998-02-22":"ljfala","1998-03-08":"ldgala","1998-03-22":"ajhala","1998-04-05":"adiala","1998-04-19":"ajibla","1998-05-03":"bejbla","1998-05-17":"bjkbla","1998-05-31":"celcla","1998-06-14":"cklcla","1998-06-28":"deacla","1998-07-12":"dkbcla","1998-07-26":"efcdla","1998-08-09":"ekcdla","1998-08-23":"efddla","1998-09-06":"fledla","1998-09-20":"fffdla","1998-10-04":"glfelb","1998-10-18":"gfgelb","1998-11-01":"hlheab","1998-11-15":"hgieab","1998-11-29":"iaieab","1998-12-13":"igjfab","1998-12-27":"jakfab","1999-01-10":"jglfab","1999-01-24":"kalfab","1999-02-07":"khafab","1999-02-21":"lbbgab","1999-03-07":"lhbgab","1999-03-21":"lbcgab","1999-04-04":"ahdgab","1999-04-18":"abehab","1999-05-02":"bhfhab","1999-05-16":"bcfhab","1999-05-30":"cighab","1999-06-13":"cchhab","1999-06-27":"diiiab","1999-07-11":"dciiab","1999-07-25":"eijiab","1999-08-08":"eckiab","1999-08-22":"ejkjab","1999-09-05":"fdljab","1999-09-19":"fjajab","1999-10-03":"gdbkab","1999-10-17":"gjbkab","1999-10-31":"hdckbb","1999-11-14":"hjdkbb","1999-11-28":"ieelbb","1999-12-12":"ikelbb","1999-12-26":"jeflbb","2000-01-09":"jkgabb","2000-01-23":"kehabb","2000-02-06":"kkhabb","2000-02-20":"lfiabb","2000-03-05":"lljbbb","2000-03-19":"lfkbbb","2000-04-02":"alkbbb","2000-04-16":"aflcbb","2000-04-30":"blacbb","2000-05-14":"bgbcbb","2000-05-28":"clbcbb","2000-06-11":"cgcdbb","2000-06-25":"daddbb","2000-07-09":"dgedbb","2000-07-23":"eaedbb","2000-08-06":"ehfdbb","2000-08-20":"eagebb","2000-09-03":"fhhebb","2000-09-17":"fbhebb","2000-10-01":"ghiebb","2000-10-15":"gbjecb","2000-10-29":"hhkfcb","2000-11-12":"hbkfcb","2000-11-26":"iilfcb","2000-12-10":"ibafcb","2000-12-24":"jibfcb","2001-01-07":"jcbgcb","2001-01-21":"kicgcb","2001-02-04":"kcdgcb","2001-02-18":"kjegcb","2001-03-04":"lcegcc","2001-03-18":"ljfhcc","2001-04-01":"adghcc","2001-04-15":"ajhhcc","2001-04-29":"bdhhcc","2001-05-13":"bjiicc","2001-05-27":"cdjicc","2001-06-10":"ckkicc","2001-06-24":"dekicc","2001-07-08":"dkljcc","2001-07-22":"deajcc","2001-08-05":"ekbjcc","2001-08-19":"eebkcc","2001-09-02":"flckcc","2001-09-16":"ffdkcc","2001-09-30":"glekcc","2001-10-14":"gfeldc","2001-10-28":"hlfldc","2001-11-11":"hfgldc","2001-11-25":"ilhadc","2001-12-09":"ighadc","2001-12-23":"jaiadc","2002-01-06":"jgjadc","2002-01-20":"jakbdc","2002-02-03":"kgkbdc","2002-02-17":"kalbdc","2002-03-03":"lhacdc","2002-03-17":"labcdc","2002-03-31":"ahbcdc","2002-04-14":"abccdc","2002-04-28":"bhdcdc","2002-05-12":"bbeddc","2002-05-26":"cheddc","2002-06-09":"cbfddc","2002-06-23":"digddc","2002-07-07":"dchedc","2002-07-21":"dihedc","2002-08-04":"eciedc","2002-08-18":"eijedc","2002-09-01":"fckedc","2002-09-15":"fjkfdc","2002-09-29":"gclfdc","2002-10-13":"gjafec","2002-10-27":"hdbfec","2002-11-10":"hjbfec","2002-11-24":"idcgec","2002-12-08":"ikdgec","2002-12-22":"idegec","2003-01-05":"jkegec","2003-01-19":"jefgec","2003-02-02":"kkghec","2003-02-16":"kehhec","2003-03-02":"lkhhec","2003-03-16":"leihec","2003-03-30":"aljiec","2003-04-13":"afkiec","2003-04-27":"blkiec","2003-05-11":"bfliec","2003-05-25":"clajec","2003-06-08":"cfajec","2003-06-22":"dabjec","2003-07-06":"dfckec","2003-07-20":"dadked","2003-08-03":"egdked","2003-08-17":"eaeked","2003-08-31":"fgfled","2003-09-14":"fagled","2003-09-28":"gghled","2003-10-12":"gbhafd","2003-10-26":"hhiafd","2003-11-09":"hbjafd","2003-11-23":"ihjafd","2003-12-07":"ibkbfd","2003-12-21":"ihlbfd","2004-01-04":"jcabfd","2004-01-18":"jiabfd","2004-02-01":"kcbcfd","2004-02-15":"kiccfd","2004-02-29":"lcdcfd","2004-03-14":"lidcfd","2004-03-28":"acedfd","2004-04-11":"ajfdfd","2004-04-25":"bdgdfd","2004-05-09":"bjgdfd","2004-05-23":"cdhefd","2004-06-06":"cjiefd","2004-06-20":"cdjefd","2004-07-04":"dkjefd","2004-07-18":"dekefd","2004-08-01":"eklffd","2004-08-15":"eeaffd","2004-08-29":"fkaffd","2004-09-12":"febffd","2004-09-26":"glcffd","2004-10-10":"gedggd","2004-10-24":"hldggd","2004-11-07":"hfeggd","2004-11-21":"hlfggd","2004-12-05":"ifgggd","2004-12-19":"iaghgd","2005-01-02":"jfhhgd","2005-01-16":"jaihgd","2005-01-30":"kgjhgd","2005-02-13":"kajigd","2005-02-27":"lgkigd","2005-03-13":"laligd","2005-03-27":"agaigd","2005-04-10":"abajgd","2005-04-24":"bgbjgd","2005-05-08":"bbcjgd","2005-05-22":"chdkgd","2005-06-05":"cbdkgd","2005-06-19":"chekgd","2005-07-03":"dcfkgd","2005-07-17":"dhglgd","2005-07-31":"ecglgd","2005-08-14":"eihlgd","2005-08-28":"fciagd","2005-09-11":"fijagd","2005-09-25":"gcjahd","2005-10-09":"gikahd","2005-10-23":"gdlbhd","2005-11-06":"hjabhd","2005-11-20":"hdabhd","2005-12-04":"ijbbhd","2005-12-18":"idcche","2006-01-01":"jjdche","2006-01-15":"jedche","2006-01-29":"kkeche","2006-02-12":"kefdhe","2006-02-26":"lkgdhe","2006-03-12":"legdhe","2006-03-26":"akhdhe","2006-04-09":"aeiehe","2006-04-23":"bkjehe","2006-05-07":"bfjehe","2006-05-21":"blkehe","2006-06-04":"cflehe","2006-06-18":"clafhe","2006-07-02":"dfafhe","2006-07-16":"dlbfhe","2006-07-30":"efcfhe","2006-08-13":"eadfhe","2006-08-27":"fgdghe","2006-09-10":"faeghe","2006-09-24":"ggfgie","2006-10-08":"gaggie","2006-10-22":"ggggie","2006-11-05":"hbhhie","2006-11-19":"hhihie","2006-12-03":"ibjhie","2006-12-17":"ihjhie","2006-12-31":"jbkiie","2007-01-14":"jhliie","2007-01-28":"kcaiie","2007-02-11":"khaiie","2007-02-25":"lcbjie","2007-03-11":"licjie","2007-03-25":"acdjie","2007-04-08":"aidkie","2007-04-22":"bdekie","2007-05-06":"bifkie","2007-05-20":"bdgkie","2007-06-03":"cjglie","2007-06-17":"cdhlie","2007-07-01":"djilie","2007-07-15":"ddjaie","2007-07-29":"ejjaie","2007-08-12":"eekaie","2007-08-26":"fklaie","2007-09-09":"felbie","2007-09-23":"fkabje","2007-10-07":"gebbje","2007-10-21":"gkcbje","2007-11-04":"hfccje","2007-11-18":"hkdcje","2007-12-02":"ifecje","2007-12-16":"ilfcje","2007-12-30":"jffdje","2008-01-13":"jlgdje","2008-01-27":"kghdje","2008-02-10":"klidje","2008-02-24":"lgieje","2008-03-09":"lajeje","2008-03-23":"agkeje","2008-04-06":"aaleje","2008-04-20":"bgleje","2008-05-04":"baafjf","2008-05-18":"bhbfjf","2008-06-01":"cbcfjf","2008-06-15":"chcfjf","2008-06-29":"dbdfjf","2008-07-13":"dhegjf","2008-07-27":"ebfgjf","2008-08-10":"eifgjf","2008-08-24":"fcggjf","2008-09-07":"fihgjf","2008-09-21":"fcihkf","2008-10-05":"giihkf","2008-10-19":"gcjhkf","2008-11-02":"hikhkf","2008-11-16":"hdlikf","2008-11-30":"ijlikf","2008-12-14":"idaikf","2008-12-28":"jjbikf","2009-01-11":"jdcjkf","2009-01-25":"kjcjkf","2009-02-08":"kddjkf","2009-02-22":"ljejkf","2009-03-08":"lefkkf","2009-03-22":"akfkkf","2009-04-05":"aegkkf","2009-04-19":"akhlkf","2009-05-03":"beilkf","2009-05-17":"bkilkf","2009-05-31":"cfjakf","2009-06-14":"clkakf","2009-06-28":"dflakf","2009-07-12":"dllakf","2009-07-26":"efabkf","2009-08-09":"elbbkf","2009-08-23":"fgcbkf","2009-09-06":"flcblf","2009-09-20":"fgdclf","2009-10-04":"gaeclf","2009-10-18":"ggfclf","2009-11-01":"hafclf","2009-11-15":"hhgdlf","2009-11-29":"iahdlf","2009-12-13":"ihidlf","2009-12-27":"jbidlf","2010-01-10":"jhjelf","2010-01-24":"kbkelf","2010-02-07":"kilelf","2010-02-21":"lblelf","2010-03-07":"liaelf","2010-03-21":"abbflf","2010-04-04":"aicflf","2010-04-18":"accflf","2010-05-02":"bidflf","2010-05-16":"bceflf","2010-05-30":"cjfglf","2010-06-13":"ccfglf","2010-06-27":"djgglf","2010-07-11":"ddhglf","2010-07-25":"ejiglf","2010-08-08":"edihlf","2010-08-22":"ejjhlf","2010-09-05":"fdkhaf","2010-09-19":"fklhag","2010-10-03":"geliag","2010-10-17":"gkaiag","2010-10-31":"hebiag","2010-11-14":"hkciag","2010-11-28":"iecjag","2010-12-12":"ildjag","2010-12-26":"jfejag","2011-01-09":"jlfjag","2011-01-23":"kffkag","2011-02-06":"klgkag","2011-02-20":"lfhkag","2011-03-06":"llilag","2011-03-20":"lgilag","2011-04-03":"aajlag","2011-04-17":"agklag","2011-05-01":"balaag","2011-05-15":"bglaag","2011-05-29":"caaaag","2011-06-12":"chbbag","2011-06-26":"dbbbag","2011-07-10":"dhcbag","2011-07-24":"ebdbag","2011-08-07":"ehecag","2011-08-21":"ebfcag","2011-09-04":"fifcbg","2011-09-18":"fbgcbg","2011-10-02":"gihdbg","2011-10-16":"gcidbg","2011-10-30":"hiidbg","2011-11-13":"hcjdbg","2011-11-27":"iikebg","2011-12-11":"ickebg","2011-12-25":"jjlebg","2012-01-08":"jdaebg","2012-01-22":"kjbebg","2012-02-05":"kdbfbg","2012-02-19":"kjcfbg","2012-03-04":"lddfbg","2012-03-18":"lkefbg","2012-04-01":"adefbg","2012-04-15":"akfgbg","2012-04-29":"beggbg","2012-05-13":"bkhgbg","2012-05-27":"cehgbg","2012-06-10":"cligbg","2012-06-24":"dejhbg","2012-07-08":"dlkhbg","2012-07-22":"dfkhbg","2012-08-05":"ellhbg","2012-08-19":"efaibg","2012-09-02":"flbicg","2012-09-16":"ffbicg","2012-09-30":"gacicg","2012-10-14":"ggdjcg","2012-10-28":"haejcg","2012-11-11":"hgejcg","2012-11-25":"iafjcg","2012-12-09":"iggkcg","2012-12-23":"jbhkcg","2013-01-06":"jghkcg","2013-01-20":"kbilcg","2013-02-03":"khjlcg","2013-02-17":"kbklch","2013-03-03":"lhklch","2013-03-17":"lblach","2013-03-31":"ahaach","2013-04-14":"acbach","2013-04-28":"bibbch","2013-05-12":"bccbch","2013-05-26":"cidbch","2013-06-09":"ccebch","2013-06-23":"diecch","2013-07-07":"ddfcch","2013-07-21":"djgcch","2013-08-04":"edhcch","2013-08-18":"ejhdch","2013-09-01":"fdiddh","2013-09-15":"fjjddh","2013-09-29":"gdkddh","2013-10-13":"gkkedh","2013-10-27":"heledh","2013-11-10":"hkaedh","2013-11-24":"iebedh","2013-12-08":"ikbedh","2013-12-22":"jecfdh","2014-01-05":"jldfdh","2014-01-19":"jeefdh","2014-02-02":"klefdh","2014-02-16":"kfffdh","2014-03-02":"llggdh","2014-03-16":"lfhgdh","2014-03-30":"alhgdh","2014-04-13":"afigdh","2014-04-27":"bajgdh","2014-05-11":"bgkhdh","2014-05-25":"cakhdh","2014-06-08":"cglhdh","2014-06-22":"daahdh","2014-07-06":"dgbidh","2014-07-20":"dbbidh","2014-08-03":"egcidh","2014-08-17":"ebdieh","2014-08-31":"fhejeh","2014-09-14":"fbejeh","2014-09-28":"ghfjeh","2014-10-12":"gcgjeh","2014-10-26":"hhhkeh","2014-11-09":"hchkeh","2014-11-23":"iiikeh","2014-12-07":"icjleh","2014-12-21":"iikleh","2015-01-04":"jckleh","2015-01-18":"jilleh","2015-02-01":"kdaaeh","2015-02-15":"kjbaeh","2015-03-01":"ldbaeh","2015-03-15":"ljcbeh","2015-03-29":"addbeh","2015-04-12":"ajebeh","2015-04-26":"beebeh","2015-05-10":"bkfceh","2015-05-24":"cegceh","2015-06-07":"ckhceh","2015-06-21":"cehceh","2015-07-05":"dkidei","2015-07-19":"dejdei","2015-08-02":"elkdei","2015-08-16":"efkdfi","2015-08-30":"flldfi","2015-09-13":"ffaefi","2015-09-27":"glaefi","2015-10-11":"gfbefi","2015-10-25":"hlcefi","2015-11-08":"hgdffi","2015-11-22":"hadffi","2015-12-06":"igeffi","2015-12-20":"iafffi","2016-01-03":"jggffi","2016-01-17":"jahgfi","2016-01-31":"kghgfi","2016-02-14":"kbigfi","2016-02-28":"lhjgfi","2016-03-13":"lbjgfi","2016-03-27":"ahkhfi","2016-04-10":"ablhfi","2016-04-24":"bhahfi","2016-05-08":"bcahfi","2016-05-22":"cibifi","2016-06-05":"cccifi","2016-06-19":"cidifi","2016-07-03":"dcdifi","2016-07-17":"diejfi","2016-07-31":"edfjfi","2016-08-14":"eigjgi","2016-08-28":"fdgjgi","2016-09-11":"fjhkgi","2016-09-25":"gdikgi","2016-10-09":"gjjkgi","2016-10-23":"hejlgi","2016-11-06":"hjklgi","2016-11-20":"hellgi","2016-12-04":"ikalgi","2016-12-18":"ieaagi","2017-01-01":"jkbagi","2017-01-15":"jecagi","2017-01-29":"kkdbgi","2017-02-12":"kfdbgi","2017-02-26":"llebgi","2017-03-12":"lffbgi","2017-03-26":"algcgi","2017-04-09":"afgcgi","2017-04-23":"blhcgi","2017-05-07":"bgicgi","2017-05-21":"cljdgi","2017-06-04":"cgjdgi","2017-06-18":"cakdgi","2017-07-02":"dgldgi","2017-07-16":"daadgi","2017-07-30":"egaegi","2017-08-13":"eabehi","2017-08-27":"fhcehi","2017-09-10":"fbdehi","2017-09-24":"ghdfhi","2017-10-08":"gbefhi","2017-10-22":"ghffhi","2017-11-05":"hbgfhi","2017-11-19":"higfhj","2017-12-03":"ichghj","2017-12-17":"iiighj","2017-12-31":"jcjghj","2018-01-14":"jijghj","2018-01-28":"kckghj","2018-02-11":"kilhhj","2018-02-25":"lcahhj","2018-03-11":"ljahhj","2018-03-25":"adbhhj","2018-04-08":"ajcihj","2018-04-22":"bddihj","2018-05-06":"bjdihj","2018-05-20":"bdeihj","2018-06-03":"ckfjhj","2018-06-17":"cegjhj","2018-07-01":"dkgjhj","2018-07-15":"dehjhj","2018-07-29":"ekikij","2018-08-12":"eejkij","2018-08-26":"fkjkij","2018-09-09":"ffklij","2018-09-23":"flllij","2018-10-07":"gfalij","2018-10-21":"glalij","2018-11-04":"hfbaij","2018-11-18":"hlcaij","2018-12-02":"igdaij","2018-12-16":"ildbij","2018-12-30":"jgebij","2019-01-13":"jafbij","2019-01-27":"kggbij","2019-02-10":"kagcij","2019-02-24":"lhhcij","2019-03-10":"laicij","2019-03-24":"ahjcij","2019-04-07":"abjdij","2019-04-21":"bhkdij","2019-05-05":"bbldij","2019-05-19":"bhadij","2019-06-02":"cbadij","2019-06-16":"cibeij","2019-06-30":"dcceij","2019-07-14":"dideij","2019-07-28":"ecdejj","2019-08-11":"eieejj","2019-08-25":"fcffjj","2019-09-08":"fjgfjj","2019-09-22":"fcgfjj","2019-10-06":"gjhfjj","2019-10-20":"gdifjj","2019-11-03":"hjjgjj","2019-11-17":"hdjgjj","2019-12-01":"ikkgjj","2019-12-15":"idlgjj","2019-12-29":"jklhjj","2020-01-12":"jeahjj","2020-01-26":"kkbhjj","2020-02-09":"kechjj","2020-02-23":"lkcijj","2020-03-08":"ledijj","2020-03-22":"aleijj","2020-04-05":"affijj","2020-04-19":"alfjjk","2020-05-03":"bfgjjk","2020-05-17":"blhjjk","2020-05-31":"cfijjk","2020-06-14":"caikjk","2020-06-28":"dgjkjk","2020-07-12":"dakkjk","2020-07-26":"egllkk","2020-08-09":"eallkk","2020-08-23":"fgalkk","2020-09-06":"fablkk","2020-09-20":"fhcakk","2020-10-04":"gbcakk","2020-10-18":"ghdakk","2020-11-01":"hbebkk","2020-11-15":"hhfbkk","2020-11-29":"ibfbkk","2020-12-13":"ihgbkk","2020-12-27":"jchckk","2021-01-10":"jiickk","2021-01-24":"kcickk","2021-02-07":"kijckk","2021-02-21":"lckdkk","2021-03-07":"lildkk","2021-03-21":"acldkk","2021-04-04":"ajadkk","2021-04-18":"adbdkk","2021-05-02":"bjcekk","2021-05-16":"bdcekk","2021-05-30":"cjdekk","2021-06-13":"cdeekk","2021-06-27":"dkfekk","2021-07-11":"ddffkk","2021-07-25":"ekgflk","2021-08-08":"eehflk","2021-08-22":"ekiflk","2021-09-05":"feiflk","2021-09-19":"fljglk","2021-10-03":"gekglk","2021-10-17":"gllglk","2021-10-31":"hflglk","2021-11-14":"hlahlk","2021-11-28":"ifbhlk","2021-12-12":"iachlk","2021-12-26":"jfchlk","2022-01-09":"jadhlk","2022-01-23":"kgeilk","2022-02-06":"kafilk","2022-02-20":"lgfilk","2022-03-06":"lagjlk","2022-03-20":"lghjlk","2022-04-03":"abijlk","2022-04-17":"agijlk","2022-05-01":"bbjklk","2022-05-15":"bhkklk","2022-05-29":"cblklk","2022-06-12":"chlllk","2022-06-26":"dcallk","2022-07-10":"dhblak","2022-07-24":"ecclak","2022-08-07":"eicaak","2022-08-21":"ecdaak","2022-09-04":"fieaal","2022-09-18":"fcfbal","2022-10-02":"gifbal","2022-10-16":"gdgbal","2022-10-30":"hjhbal","2022-11-13":"hdical","2022-11-27":"ijical","2022-12-11":"idjcal","2022-12-25":"jjkcal","2023-01-08":"jdldal","2023-01-22":"kkldal","2023-02-05":"keadal","2023-02-19":"lkbdal","2023-03-05":"lecdal","2023-03-19":"lkceal","2023-04-02":"aedeal","2023-04-16":"aleeal","2023-04-30":"bffeal","2023-05-14":"blfeal","2023-05-28":"cfgfal","2023-06-11":"clhfal","2023-06-25":"dfifal","2023-07-09":"daifbl","2023-07-23":"dfjfbl","2023-08-06":"eakgbl","2023-08-20":"eglgbl","2023-09-03":"falgbl","2023-09-17":"fgagbl","2023-10-01":"gabhbl","2023-10-15":"ggbhbl","2023-10-29":"hbchbl","2023-11-12":"hhdhbl","2023-11-26":"ibehbl","2023-12-10":"ihfibl","2023-12-24":"jbfibl","2024-01-07":"jhgibl","2024-01-21":"kchjbl","2024-02-04":"khijbl","2024-02-18":"kcijbl","2024-03-03":"lijjbl","2024-03-17":"lckkbl","2024-03-31":"aikkbl","2024-04-14":"adlkbl","2024-04-28":"biakbl","2024-05-12":"bdblbl","2024-05-26":"cjblbl","2024-06-09":"cdclbl","2024-06-23":"djdabl","2024-07-07":"ddeacl","2024-07-21":"djeacl","2024-08-04":"eefacl","2024-08-18":"ekgbcl","2024-09-01":"fehbcl","2024-09-15":"fkhbcl","2024-09-29":"geiccl","2024-10-13":"gkjccl","2024-10-27":"hfkccl","2024-11-10":"hkkccl","2024-11-24":"ifldcl","2024-12-08":"iladcl","2024-12-22":"jfbdcl","2025-01-05":"jlbdcl","2025-01-19":"jfcdcl","2025-02-02":"kldeca","2025-02-16":"kgeeca","2025-03-02":"laeeca","2025-03-16":"lgfeca","2025-03-30":"aageca","2025-04-13":"aghfca","2025-04-27":"bahfca","2025-05-11":"bhifca","2025-05-25":"cbjfca","2025-06-08":"chkfca","2025-06-22":"dbkgca","2025-07-06":"dhlgda","2025-07-20":"dbagda","2025-08-03":"ehbgda","2025-08-17":"ecbhda","2025-08-31":"fichda","2025-09-14":"fcdhda","2025-09-28":"giehda","2025-10-12":"gcehda","2025-10-26":"hifida","2025-11-09":"hdgida","2025-11-23":"iihida","2025-12-07":"idhida","2025-12-21":"ijijda","2026-01-04":"jdjjda","2026-01-18":"jjkjda","2026-02-01":"kekkda","2026-02-15":"kjlkda","2026-03-01":"leakda","2026-03-15":"lkbkda","2026-03-29":"aeblda","2026-04-12":"akclda","2026-04-26":"bedlda","2026-05-10":"bkeada","2026-05-24":"cfeada","2026-06-07":"ckfada","2026-06-21":"cfgada","2026-07-05":"dlhbea","2026-07-19":"dfhbea","2026-08-02":"elibea","2026-08-16":"egjcea","2026-08-30":"flkcea","2026-09-13":"fgkcea","2026-09-27":"galcea","2026-10-11":"ggadea","2026-10-25":"habdea","2026-11-08":"hhbdea","2026-11-22":"hacdea","2026-12-06":"ihddea","2026-12-20":"ibeeea","2027-01-03":"jheeea","2027-01-17":"jbfeea","2027-01-31":"khgeea","2027-02-14":"kbheea","2027-02-28":"lihfea","2027-03-14":"lcifea","2027-03-28":"aijfea","2027-04-11":"ackfea","2027-04-25":"bikfea","2027-05-09":"bclgea","2027-05-23":"cjagea","2027-06-06":"cdbgea","2027-06-20":"cjbgfb","2027-07-04":"ddchfb","2027-07-18":"djdhfb","2027-08-01":"edehfb","2027-08-15":"ejehfb","2027-08-29":"fdfhfb","2027-09-12":"fkgifb","2027-09-26":"gehifb","2027-10-10":"gkhifb","2027-10-24":"heiifb","2027-11-07":"hkjjfb","2027-11-21":"hekjfb","2027-12-05":"ikkjfb","2027-12-19":"iflkfb","2028-01-02":"jlakfb","2028-01-16":"jfakfb","2028-01-30":"klbkfb","2028-02-13":"kfclfb","2028-02-27":"lldlfb","2028-03-12":"lgdlfb","2028-03-26":"aaeafb","2028-04-09":"agfafb","2028-04-23":"bagafb","2028-05-07":"bghafb","2028-05-21":"cahbfb","2028-06-04":"chibfb","2028-06-18":"cajbgb","2028-07-02":"dhjcgb","2028-07-16":"dbkcgb","2028-07-30":"ehlcgb","2028-08-13":"ebacgb","2028-08-27":"fiadgb","2028-09-10":"fbbdgb","2028-09-24":"gicdgb","2028-10-08":"gcddgb","2028-10-22":"giddgb","2028-11-05":"hceegb","2028-11-19":"hifegb","2028-12-03":"icgegb","2028-12-17":"ijgegb","2028-12-31":"jdhegb","2029-01-14":"jjifgb","2029-01-28":"kdjfgb","2029-02-11":"kjjfgb","2029-02-25":"ldkfgb","2029-03-11":"lklfgb","2029-03-25":"adaggb","2029-04-08":"akaggb","2029-04-22":"bebggb","2029-05-06":"bkcggb","2029-05-20":"bedggb","2029-06-03":"cldhgb","2029-06-17":"ceehhb","2029-07-01":"dlfhhb","2029-07-15":"dfghhb","2029-07-29":"elgihb","2029-08-12":"efhihb","2029-08-26":"fliihb","2029-09-09":"ffjihb","2029-09-23":"gajjhb","2029-10-07":"ggkjhb","2029-10-21":"galjhb","2029-11-04":"hgakhb","2029-11-18":"haakhc","2029-12-02":"igbkhc","2029-12-16":"ibckhc","2029-12-30":"jgdlhc","2030-01-13":"jbdlhc","2030-01-27":"khelhc","2030-02-10":"kbfahc","2030-02-24":"lhgahc","2030-03-10":"lbgahc","2030-03-24":"aihahc","2030-04-07":"acibhc","2030-04-21":"bijbhc","2030-05-05":"bcjbhc","2030-05-19":"bikchc","2030-06-02":"cclchc","2030-06-16":"ciacic","2030-06-30":"dcacic","2030-07-14":"djbcic","2030-07-28":"edcdic","2030-08-11":"ejddic","2030-08-25":"fdddic","2030-09-08":"fjedic","2030-09-22":"fdfeic","2030-10-06":"gkgeic","2030-10-20":"gegeic","2030-11-03":"hkheic","2030-11-17":"heieic","2030-12-01":"ikjfic","2030-12-15":"iejfic","2030-12-29":"jlkfic"};
 
   const calcZodiac = (year, month, day) => {
     const m = Number(month), d = Number(day), y = Number(year);
 
-    // 太陽星座は惑星チE�Eタから取得！Eunは最初�E斁E��E's'�E�E
-    // 惑星の品位テーブル�E�エチE��ンシャルチE��グニティ�E�E    // Domicile=100, Exaltation=85, 中竁E50, Fall=15, Detriment=0
+    // 太陽星座は惑星データから取得（sunは最初の文字 's'）
+
+    // 惑星の品位テーブル（エッセンシャルディグニティ）
+    // Domicile=100, Exaltation=85, 中立=50, Fall=15, Detriment=0
     const DIGNITY = {
       sun:      {domicile:[4],exaltation:[0],fall:[6],detriment:[10]},
       moon:     {domicile:[3],exaltation:[1],fall:[7],detriment:[9]},
@@ -874,7 +870,8 @@ export default function App() {
       return 50;
     };
 
-    // 惑星位置チE�Eタから吁E��星�E星座を取征E    const targetJD = ((y*12+m)*31+d)*1;
+    // 惑星位置データから各惑星の星座を取得
+    const targetJD = ((y*12+m)*31+d)*1;
     let bestKey=null, bestDiff=Infinity;
     for(const key of Object.keys(PLANET_DATA)){
       const [ky,km,kd]=key.split('-').map(Number);
@@ -884,40 +881,52 @@ export default function App() {
     const encoded = PLANET_DATA[bestKey]||'hccedf';
     const planetIdxs = encoded.split('').map(c=>c.charCodeAt(0)-97);
 
-    // 吁E��星�E品位スコア�E�太陽は実際の星座インチE��クスを使用�E�E    const planetList = ['sun','moon','venus','mars','jupiter','saturn'];
+    // 各惑星の品位スコア（太陽は実際の星座インデックスを使用）
+    const planetList = ['sun','moon','venus','mars','jupiter','saturn'];
     const weights =    [3,    2,     2,      1,     2,        1];
     
-    // 全惑星を惑星データから取征E    const signIdxs = planetIdxs;
+    // 全惑星を惑星データから取得
+    const signIdxs = planetIdxs;
     
     const totalWeight = weights.reduce((a,b)=>a+b,0);
     const score = Math.round(
       planetList.reduce((acc,p,i) => acc + getDignityScore(p, signIdxs[i]||0) * weights[i], 0) / totalWeight
     );
 
-    const signs = ["牡羊座","牡牛座","双子座","蟹座","獁E��座","乙女座","天秤座","蠍座","封E��座","山羊座","水瓶座","魚座"];
+    const signs = ["牡羊座","牡牛座","双子座","蟹座","獅子座","乙女座","天秤座","蠍座","射手座","山羊座","水瓶座","魚座"];
 
-    // 太陽星座は正確な日付計算で上書き（惑星データの誤差を修正�E�E    const getSunSignIdx = (mo, da) => {
+    // 太陽星座は正確な日付計算で上書き（惑星データの誤差を修正）
+    const getSunSignIdx = (mo, da) => {
       const mn=Number(mo), dn=Number(da);
-      if((mn===3&&dn>=21)||(mn===4&&dn<=19)) return 0;  // 牡羁E      if((mn===4&&dn>=20)||(mn===5&&dn<=20)) return 1;  // 牡牁E      if((mn===5&&dn>=21)||(mn===6&&dn<=21)) return 2;  // 双孁E      if((mn===6&&dn>=22)||(mn===7&&dn<=22)) return 3;  // 蟹
-      if((mn===7&&dn>=23)||(mn===8&&dn<=22)) return 4;  // 獁E��E      if((mn===8&&dn>=23)||(mn===9&&dn<=22)) return 5;  // 乙女
+      if((mn===3&&dn>=21)||(mn===4&&dn<=19)) return 0;  // 牡羊
+      if((mn===4&&dn>=20)||(mn===5&&dn<=20)) return 1;  // 牡牛
+      if((mn===5&&dn>=21)||(mn===6&&dn<=21)) return 2;  // 双子
+      if((mn===6&&dn>=22)||(mn===7&&dn<=22)) return 3;  // 蟹
+      if((mn===7&&dn>=23)||(mn===8&&dn<=22)) return 4;  // 獅子
+      if((mn===8&&dn>=23)||(mn===9&&dn<=22)) return 5;  // 乙女
       if((mn===9&&dn>=23)||(mn===10&&dn<=23)) return 6; // 天秤
-      if((mn===10&&dn>=24)||(mn===11&&dn<=22)) return 7;// 蠁E      if((mn===11&&dn>=23)||(mn===12&&dn<=21)) return 8;// 封E��
-      if((mn===12&&dn>=22)||(mn===1&&dn<=19)) return 9; // 山羁E      if((mn===1&&dn>=20)||(mn===2&&dn<=18)) return 10; // 水瓶
-      return 11; // 魁E    };
+      if((mn===10&&dn>=24)||(mn===11&&dn<=22)) return 7;// 蠍
+      if((mn===11&&dn>=23)||(mn===12&&dn<=21)) return 8;// 射手
+      if((mn===12&&dn>=22)||(mn===1&&dn<=19)) return 9; // 山羊
+      if((mn===1&&dn>=20)||(mn===2&&dn<=18)) return 10; // 水瓶
+      return 11; // 魚
+    };
 
-    const sunIdx = getSunSignIdx(m, d); // 正確な日付計箁E    const moonIdx = planetIdxs[1]??0;
+    const sunIdx = getSunSignIdx(m, d); // 正確な日付計算
+    const moonIdx = planetIdxs[1]??0;
     const venusIdx = planetIdxs[2]??0;
     const sunSign = signs[sunIdx];
     const moonSign = signs[moonIdx];
     const venusSign = signs[venusIdx];
 
-    // 吁E��星�E品位説昁E    const dignityLabel = (planet, idx) => {
+    // 各惑星の品位説明
+    const dignityLabel = (planet, idx) => {
       const d = DIGNITY[planet];
       if(d.domicile.includes(idx)) return "ドミサイル(最強)";
-      if(d.exaltation.includes(idx)) return "エグザルチE�Eション(高揚)";
+      if(d.exaltation.includes(idx)) return "エグザルテーション(高揚)";
       if(d.fall.includes(idx)) return "フォール(転落)";
-      if(d.detriment.includes(idx)) return "チE��リメンチE追放)";
-      return "中竁E;
+      if(d.detriment.includes(idx)) return "デトリメント(追放)";
+      return "中立";
     };
 
     return {
@@ -929,24 +938,29 @@ export default function App() {
     };
   };
 
-  // 四柱推命�E�本格実裁E  const calcShichu = (year, month, day) => {
+  // 四柱推命：本格実装
+  const calcShichu = (year, month, day) => {
     const y = Number(year), m = Number(month), d = Number(day);
-    const junishi = ["孁E,"丁E,"寁E,"卯","辰","巳","十E,"未","申","酁E,"戁E,"亥"];
-    const jikkan = ["甲","乁E,"丁E,"丁E,"戁E,"己","庁E,"辁E,"壬","癸"];
+    const junishi = ["子","丑","寅","卯","辰","巳","午","未","申","酉","戌","亥"];
+    const jikkan = ["甲","乙","丙","丁","戊","己","庚","辛","壬","癸"];
 
-    // 年柱�E�正確な干支計箁E    const yearStemIdx = (y - 4) % 10;
+    // 年柱：正確な干支計算
+    const yearStemIdx = (y - 4) % 10;
     const yearBranchIdx = (y - 4) % 12;
     const yearStem = jikkan[((yearStemIdx%10)+10)%10];
     const yearBranch = junishi[((yearBranchIdx%12)+12)%12];
 
-    // 月柱�E�節入りを老E�Eした簡易月干支
-    // 月支は固定（寁E1月、卯=2朁E..�E�E    const monthBranchIdx = (m + 1) % 12;
+    // 月柱：節入りを考慮した簡易月干支
+    // 月支は固定（寅=1月、卯=2月...）
+    const monthBranchIdx = (m + 1) % 12;
     const monthBranch = junishi[monthBranchIdx];
-    // 月干は年干から算�E�E�甲己年は丙寁E��、乙庚年は戊寁E��...�E�E    const monthStemBase = {0:2,1:4,2:6,3:8,4:0,5:2,6:4,7:6,8:8,9:0}; // 年干indexから月干base
+    // 月干は年干から算出（甲己年は丙寅起、乙庚年は戊寅起...）
+    const monthStemBase = {0:2,1:4,2:6,3:8,4:0,5:2,6:4,7:6,8:8,9:0}; // 年干indexから月干base
     const monthStemIdx = (monthStemBase[((yearStemIdx%10)+10)%10] + (m-1)) % 10;
     const monthStem = jikkan[monthStemIdx];
 
-    // 日柱�E�ユリウス通算日から干支計箁E    const a = Math.floor((14-m)/12);
+    // 日柱：ユリウス通算日から干支計算
+    const a = Math.floor((14-m)/12);
     const yy = y - a;
     const mm = m + 12*a - 2;
     const jd = d + Math.floor((153*mm+2)/5) + 365*yy + Math.floor(yy/4) - Math.floor(yy/100) + Math.floor(yy/400) - 32045;
@@ -955,40 +969,44 @@ export default function App() {
     const dayBranch = junishi[dayBranchIdx];
     const dayStem = jikkan[dayStemIdx];
 
-    // 五行�EチE��ング
-    const stemElement = {甲:"木",乁E"木",丁E"火",丁E"火",戁E"圁E,己:"圁E,庁E"釁E,辁E"釁E,壬:"水",癸:"水"};
-    const branchElement = {孁E"水",丁E"圁E,寁E"木",卯:"木",辰:"圁E,巳:"火",十E"火",未:"圁E,申:"釁E,酁E"釁E,戁E"圁E,亥:"水"};
-    const isYang = ["甲","丁E,"戁E,"庁E,"壬"].includes(dayStem);
+    // 五行マッピング
+    const stemElement = {甲:"木",乙:"木",丙:"火",丁:"火",戊:"土",己:"土",庚:"金",辛:"金",壬:"水",癸:"水"};
+    const branchElement = {子:"水",丑:"土",寅:"木",卯:"木",辰:"土",巳:"火",午:"火",未:"土",申:"金",酉:"金",戌:"土",亥:"水"};
+    const isYang = ["甲","丙","戊","庚","壬"].includes(dayStem);
 
-    // 四柱の五行カウンチE    const allStems = [yearStem, monthStem, dayStem];
+    // 四柱の五行カウント
+    const allStems = [yearStem, monthStem, dayStem];
     const allBranches = [yearBranch, monthBranch, dayBranch];
-    const elementCount = {木:0,火:0,圁E0,釁E0,水:0};
+    const elementCount = {木:0,火:0,土:0,金:0,水:0};
     allStems.forEach(s=>{ if(stemElement[s]) elementCount[stemElement[s]]+=2; });
     allBranches.forEach(b=>{ if(branchElement[b]) elementCount[branchElement[b]]+=1; });
 
-    // 最強・最弱の五衁E    const sorted = Object.entries(elementCount).sort((a,b)=>b[1]-a[1]);
+    // 最強・最弱の五行
+    const sorted = Object.entries(elementCount).sort((a,b)=>b[1]-a[1]);
     const strongest = sorted[0][0];
     const weakest = sorted[4][0];
     const dayElement = stemElement[dayStem];
 
-    // 五行�E特性
+    // 五行の特性
     const elementTraits = {
-      木: {strength:"成長力�E創造性・向上忁E��強ぁE, weakness:"頑固で融通が利かなぁE��めE, career:"教育・芸術�E医療�E農業"},
-      火: {strength:"惁E�E・行動力�Eカリスマ性があめE, weakness:"感情皁E��なりやすく短気な面めE, career:"営業・芸能・政治・スポ�EチE},
-      圁E {strength:"安定感・信頼性・誠実さが強み", weakness:"変化を嫌い保守的になりがち", career:"不動産・金融・建設・食品"},
-      釁E {strength:"決断力�E正義感�E実行力があめE, weakness:"頑固で妥協しにくい面めE, career:"法律�E金融・製造・IT"},
-      水: {strength:"知性・適応力・コミュニケーション力が高い", weakness:"優柔不断で流されやすい面めE, career:"貿易�E通信・旁E���E学衁E},
+      木: {strength:"成長力・創造性・向上心が強い", weakness:"頑固で融通が利かない面も", career:"教育・芸術・医療・農業"},
+      火: {strength:"情熱・行動力・カリスマ性がある", weakness:"感情的になりやすく短気な面も", career:"営業・芸能・政治・スポーツ"},
+      土: {strength:"安定感・信頼性・誠実さが強み", weakness:"変化を嫌い保守的になりがち", career:"不動産・金融・建設・食品"},
+      金: {strength:"決断力・正義感・実行力がある", weakness:"頑固で妥協しにくい面も", career:"法律・金融・製造・IT"},
+      水: {strength:"知性・適応力・コミュニケーション力が高い", weakness:"優柔不断で流されやすい面も", career:"貿易・通信・旅行・学術"},
     };
 
-    // スコアは総合には使わず0固定（特性診断のみ�E�E    return {
-      score: 50, // 総合スコアには影響させなぁE      yearStem, yearBranch, monthStem, monthBranch, dayStem, dayBranch,
+    // スコアは総合には使わず0固定（特性診断のみ）
+    return {
+      score: 50, // 総合スコアには影響させない
+      yearStem, yearBranch, monthStem, monthBranch, dayStem, dayBranch,
       dayElement, strongest, weakest, isYang, elementCount,
       elementTraits,
-      profile: `日主、E{dayStem}�E�E{dayElement}の気）、E{isYang?'陽':'陰'}干。五行�E${strongest}が最も強く、E{weakest}が弱ぁE��E{elementTraits[dayElement].strength}。`
+      profile: `日主「${dayStem}（${dayElement}の気）」${isYang?'陽':'陰'}干。五行は${strongest}が最も強く、${weakest}が弱い。${elementTraits[dayElement].strength}。`
     };
   };
 
-  // 手相�E��E部短ぁE�E薁E��=0、�E部長ぁE�E深ぁE100
+  // 手相：全部短い・薄い=0、全部長い・深い=100
   const calcTesou = (lifeLine, heartLine, headLine) => {
     const lifeScore = {short:0, medium:60, long:100};
     const heartScore = {shallow:0, medium:60, deep:100};
@@ -996,9 +1014,11 @@ export default function App() {
     return Math.round((lifeScore[lifeLine]+heartScore[heartLine]+headScore[headLine])/3);
   };
 
-  // 姓名判断�E�本格実裁E��五格判断�E�E  const KANJI_KAKUSU = {"一":1,"亁E:2,"人":2,"入":2,"八":2,"劁E:2,"刀":2,"十E:2,"叁E:2,"丁E:3,"山":3,"巁E:3,"丁E:3,"丁E:3,"圁E:3,"大":3,"女":3,"孁E:3,"封E:3,"十E:3,"口":3,"工":3,"弁E:3,"乁E:3,"己":3,"干":3,"丸":3,"囁E:4,"中":4,"忁E:4,"扁E:4,"木":4,"水":4,"火":4,"天":4,"允E:4,"太":4,"叁E:4,"斁E:4,"方":4,"日":4,"朁E:4,"玁E:4,"冁E:4,"匁E:4,"仁E:4,"公":4,"冁E:4,"刁E:4,"刁E:4,"仁E:4,"仁E:4,"亁E:4,"十E:4,"封E:4,"叁E:4,"支":4,"毁E:4,"父":4,"牁E:4,"牁E:4,"亁E:5,"甁E:5,"田":5,"石":5,"白":5,"竁E:5,"出":5,"正":5,"本":5,"末":5,"未":5,"平":5,"代":5,"丁E:5,"古":5,"史":5,"司":5,"右":5,"左":5,"号":5,"台":5,"币E:5,"币E:5,"弁E:5,"永":5,"玁E:5,"用":5,"矢":5,"以":5,"加":5,"劁E:5,"匁E:5,"匁E:5,"六":6,"允E:6,"吁E:6,"年":6,"早":6,"氁E:6,"囁E:6,"衁E:6,"西":6,"宁E:6,"孁E:6,"朁E:6,"戁E:6,"朱":6,"汁E:6,"池":6,"百":6,"竹":6,"羁E:6,"糸":6,"色":6,"虫":6,"血":6,"共":6,"吁E:6,"吁E:6,"在":6,"夁E:6,"吁E:6,"吁E:6,"地":6,"妁E:6,"好":6,"妁E:6,"宁E:6,"宁E:6,"宁E:6,"币E:6,"庁E:6,"弁E:6,"旭":6,"曲":6,"次":6,"死":6,"毁E:6,"灰":6,"羽":6,"老E:6,"自":6,"至":6,"舁E:6,"丁E:7,"花":7,"杁E:7,"来":7,"男":7,"要E:7,"釁E:7,"麦":7,"谷":7,"貁E:7,"赤":7,"走":7,"足":7,"身":7,"軁E:7,"辁E:7,"迁E:7,"呁E:7,"助":7,"努":7,"吁E:7,"坁E:7,"坁E:7,"忁E:7,"快":7,"忁E:7,"孁E:7,"宁E:7,"局":7,"形":7,"戁E:7,"改":7,"更":7,"杁E:7,"杁E:7,"杁E:7,"条":7,"沁E:7,"沁E:7,"決":7,"沢":7,"状":7,"牡":7,"利":7,"刁E:7,"別":7,"判":7,"町":7,"秀":7,"究":7,"系":7,"良":7,"芁E:7,"见E:7,"言":7,"八":8,"釁E:8,"靁E:8,"東":8,"极E:8,"咁E:8,"岡":8,"昁E:8,"宁E:8,"极E:8,"佳":8,"侁E:8,"典":8,"具":8,"制":8,"効":8,"十E:8,"十E:8,"叁E:8,"呼":8,"味":8,"固":8,"国":8,"坪":8,"妻":8,"姁E:8,"姁E:8,"季":8,"宁E:8,"宁E:8,"宁E:8,"宁E:8,"宁E:8,"岩":8,"岸":8,"庁E:8,"弦":8,"征E:8,"性":8,"所":8,"拁E:8,"拁E:8,"抱":8,"放":8,"昁E:8,"昁E:8,"松":8,"极E:8,"武":8,"河":8,"泡":8,"泳":8,"治":8,"況E:8,"波":8,"泰":8,"知":8,"祁E:8,"空":8,"老E:8,"肩":8,"育":8,"芳":8,"英":8,"表":8,"乁E:9,"十E:9,"海":9,"風":9,"春":9,"昁E:9,"品E:9,"信":9,"俁E:9,"俁E:9,"剁E:9,"勁E:9,"埁E:9,"夁E:9,"奁E:9,"姿":9,"威E:9,"宣":9,"室":9,"客":9,"宮":9,"建":9,"征E:9,"态E:9,"急":9,"拁E:9,"政":9,"敁E:9,"柁E:9,"柁E:9,"柳":9,"洁E:9,"洁E:9,"派":9,"活":9,"点":9,"省E:9,"私E:9,"私E:9,"穁E:9,"紁E:9,"羁E:9,"老E:9,"胡":9,"茁E:9,"茁E:9,"訁E:9,"釁E:9,"面":9,"厁E:10,"島":10,"家":10,"桁E:10,"流E:10,"省E:10,"紁E:10,"能":10,"屁E:10,"峰":10,"倫":10,"兼":10,"凁E:10,"凁E:10,"剁E:10,"華":10,"哲":10,"員":10,"唁E:10,"埁E:10,"夁E:10,"威E:10,"宰":10,"宴":10,"封E:10,"封E:10,"峡":10,"差":10,"恵":10,"恁E:10,"桁E:10,"桁E:10,"桁E:10,"殁E:10,"浦":10,"浩":10,"浮":10,"特":10,"畁E:10,"盁E:10,"祁E:10,"素":10,"紁E:10,"紁E:10,"訁E:10,"財":10,"起":10,"髁E:10,"倭":10,"雪":11,"釁E:11,"崁E:11,"深":11,"朁E:11,"渁E:11,"健":11,"康":11,"彩":11,"彬":11,"惁E:11,"悠":11,"推":11,"断":11,"梁E:11,"琁E:11,"琁E:11,"現":11,"略":11,"盁E:11,"眼":11,"移":11,"第":11,"統":11,"菁E:11,"菁E:11,"貨":11,"都":11,"釁E:11,"雁E:11,"麻":11,"森":12,"晴":12,"湁E:12,"景":12,"十E:12,"寁E:12,"喁E:12,"寁E:12,"幾":12,"晶":12,"朁E:12,"朁E:12,"港":12,"湯":12,"無":12,"登":12,"紫":12,"絁E:12,"絵":12,"喁E:12,"趁E:12,"貴":12,"閁E:12,"雲":12,"頁E:12,"飯":12,"黁E:12,"楽":13,"愁E:13,"新":13,"義":13,"照":13,"溁E:13,"滁E:13,"瑁E:13,"督":13,"禁E:13,"稁E:13,"絁E:13,"群":13,"葁E:13,"豁E:13,"路":13,"電":13,"鈴":13,"鉁E:13,"雁E:13,"鼁E:13,"靁E:14,"誁E:14,"徳":14,"寁E:14,"寧":14,"歁E:14,"漁E:14,"碧":14,"精":14,"綾":14,"維":14,"緁E:14,"舁E:14,"蒼":14,"誁E:14,"誠":14,"銀":14,"関":14,"需":14,"輁E:15,"潮":15,"慶":15,"確":15,"緁E:15,"蓮":15,"諁E:15,"賁E:15,"遠":15,"霁E:15,"駁E:15,"髪":15,"龁E:16,"橁E:16,"澁E:16,"燁E:16,"篠":16,"舁E:16,"頼":16,"頭":16,"館":16,"優":17,"環":17,"礼":17,"隁E:17,"霧":17,"藤":18,"繁E:18,"鎁E:18,"雁E:18,"麁E:19,"霁E:19,"響":20,"露":21,"鶴":21,"壮":6,"奁E:8,"态E:8,"蓮":13,"颯":14,"瑁E:12,"蒼":13,"陽":12,"翁E:12,"琴":12,"澪":16,"凁E:15,"葵":12,"杁E:7,"唯":11,"萁E:11,"咲":9,"桁E:10,"舁E:9,"駿":17,"泰":8,"康":11,"宁E:7,"昁E:8,"亮":9,"敦":12,"篤":16,"剁E:10,"哲":10,"誠":13,"智":12,"雁E:13,"豪":14,"竁E:10,"龁E:16,"慁E:13,"悁E:10,"隼":10,"航":10,"斁E:4,"陸":11,"幹":13,"柁E:9,"椁E:12,"楁E:13,"渁E:11,"湁E:12,"蛁E:11,"螢":16,"薫":16,"藁E:18,"玲":9,"珠":10,"璁E:15,"瑠":14,"碧":14,"翠":14,"菫":11,"菁E:11,"苺":8,"莁E:10,"茁E:8,"梨":11,"柁E:9,"柁E:9,"梁E:11,"槁E:14,"寁E:13,"寿":7,"孁E:7,"謁E:17,"礼":5,"倫":10,"廁E:13,"渁E:11,"紁E:10,"淳":11,"溁E:13,"潤":15,"憲":16,"徹":15,"猁E:11,"剣":9,"封E:10,"帥":9,"征E:8,"敬":12,"弁E:5,"晁E:10,"晁E:10,"晴":12,"暁E:12,"昭":9,"昁E:8,"昁E:8,"旭":6,"旺":8,"央":5,"奥":12};
+  // 姓名判断：本格実装（五格判断）
+  const KANJI_KAKUSU = {"一":1,"二":2,"人":2,"入":2,"八":2,"力":2,"刀":2,"十":2,"又":2,"三":3,"山":3,"川":3,"上":3,"下":3,"土":3,"大":3,"女":3,"子":3,"小":3,"千":3,"口":3,"工":3,"弓":3,"久":3,"己":3,"干":3,"丸":3,"四":4,"中":4,"心":4,"手":4,"木":4,"水":4,"火":4,"天":4,"元":4,"太":4,"友":4,"文":4,"方":4,"日":4,"月":4,"王":4,"円":4,"化":4,"今":4,"公":4,"内":4,"分":4,"切":4,"仁":4,"介":4,"井":4,"午":4,"少":4,"反":4,"支":4,"比":4,"父":4,"牛":4,"片":4,"五":5,"生":5,"田":5,"石":5,"白":5,"立":5,"出":5,"正":5,"本":5,"末":5,"未":5,"平":5,"代":5,"世":5,"古":5,"史":5,"司":5,"右":5,"左":5,"号":5,"台":5,"市":5,"布":5,"弘":5,"永":5,"玄":5,"用":5,"矢":5,"以":5,"加":5,"功":5,"包":5,"北":5,"六":6,"光":6,"名":6,"年":6,"早":6,"気":6,"回":6,"行":6,"西":6,"安":6,"字":6,"有":6,"成":6,"朱":6,"江":6,"池":6,"百":6,"竹":6,"羊":6,"糸":6,"色":6,"虫":6,"血":6,"共":6,"各":6,"合":6,"在":6,"多":6,"吉":6,"同":6,"地":6,"如":6,"好":6,"妃":6,"宇":6,"守":6,"宅":6,"帆":6,"庄":6,"式":6,"旭":6,"曲":6,"次":6,"死":6,"毎":6,"灰":6,"羽":6,"考":6,"自":6,"至":6,"舟":6,"七":7,"花":7,"村":7,"来":7,"男":7,"見":7,"里":7,"麦":7,"谷":7,"貝":7,"赤":7,"走":7,"足":7,"身":7,"車":7,"辛":7,"近":7,"告":7,"助":7,"努":7,"君":7,"坂":7,"均":7,"志":7,"快":7,"応":7,"孝":7,"完":7,"局":7,"形":7,"我":7,"改":7,"更":7,"束":7,"材":7,"杉":7,"条":7,"沙":7,"沖":7,"決":7,"沢":7,"状":7,"牡":7,"利":7,"初":7,"別":7,"判":7,"町":7,"秀":7,"究":7,"系":7,"良":7,"芝":7,"角":7,"言":7,"八":8,"金":8,"青":8,"東":8,"林":8,"和":8,"岡":8,"明":8,"実":8,"果":8,"佳":8,"依":8,"典":8,"具":8,"制":8,"効":8,"卓":8,"協":8,"受":8,"呼":8,"味":8,"固":8,"国":8,"坪":8,"妻":8,"姓":8,"委":8,"季":8,"宗":8,"官":8,"宙":8,"定":8,"宝":8,"岩":8,"岸":8,"店":8,"弦":8,"征":8,"性":8,"所":8,"招":8,"拓":8,"抱":8,"放":8,"昇":8,"昌":8,"松":8,"枝":8,"武":8,"河":8,"泡":8,"泳":8,"治":8,"法":8,"波":8,"泰":8,"知":8,"祈":8,"空":8,"者":8,"肩":8,"育":8,"芳":8,"英":8,"表":8,"九":9,"南":9,"海":9,"風":9,"春":9,"星":9,"品":9,"信":9,"保":9,"俊":9,"則":9,"勇":9,"城":9,"変":9,"奏":9,"姿":9,"威":9,"宣":9,"室":9,"客":9,"宮":9,"建":9,"律":9,"思":9,"急":9,"拝":9,"政":9,"故":9,"染":9,"柔":9,"柳":9,"洋":9,"洗":9,"派":9,"活":9,"点":9,"看":9,"科":9,"秋":9,"穂":9,"紅":9,"美":9,"耐":9,"胡":9,"茂":9,"茜":9,"計":9,"重":9,"面":9,"原":10,"島":10,"家":10,"桜":10,"流":10,"真":10,"紙":10,"能":10,"展":10,"峰":10,"倫":10,"兼":10,"准":10,"凌":10,"剛":10,"華":10,"哲":10,"員":10,"唐":10,"埋":10,"夏":10,"娘":10,"宰":10,"宴":10,"将":10,"射":10,"峡":10,"差":10,"恵":10,"恋":10,"桂":10,"桃":10,"桐":10,"殊":10,"浦":10,"浩":10,"浮":10,"特":10,"留":10,"益":10,"祐":10,"素":10,"紋":10,"純":10,"記":10,"財":10,"起":10,"高":10,"倭":10,"雪":11,"野":11,"崎":11,"深":11,"望":11,"清":11,"健":11,"康":11,"彩":11,"彬":11,"情":11,"悠":11,"推":11,"断":11,"梅":11,"球":11,"理":11,"現":11,"略":11,"盛":11,"眼":11,"移":11,"第":11,"統":11,"菊":11,"菜":11,"貨":11,"都":11,"釈":11,"雄":11,"麻":11,"森":12,"晴":12,"湖":12,"景":12,"博":12,"富":12,"喜":12,"寒":12,"幾":12,"晶":12,"朝":12,"期":12,"港":12,"湯":12,"無":12,"登":12,"紫":12,"結":12,"絵":12,"善":12,"超":12,"貴":12,"開":12,"雲":12,"順":12,"飯":12,"黄":12,"楽":13,"愛":13,"新":13,"義":13,"照":13,"源":13,"滋":13,"瑞":13,"督":13,"禁":13,"稚":13,"経":13,"群":13,"葉":13,"豊":13,"路":13,"電":13,"鈴":13,"鉄":13,"雅":13,"鼓":13,"静":14,"語":14,"徳":14,"察":14,"寧":14,"歌":14,"漁":14,"碧":14,"精":14,"綾":14,"維":14,"緑":14,"舞":14,"蒼":14,"認":14,"誠":14,"銀":14,"関":14,"需":14,"輝":15,"潮":15,"慶":15,"確":15,"緒":15,"蓮":15,"論":15,"賞":15,"遠":15,"震":15,"駒":15,"髪":15,"龍":16,"橋":16,"澄":16,"燃":16,"篠":16,"興":16,"頼":16,"頭":16,"館":16,"優":17,"環":17,"礼":17,"隆":17,"霧":17,"藤":18,"織":18,"鎌":18,"雛":18,"麗":19,"霞":19,"響":20,"露":21,"鶴":21,"壮":6,"奈":8,"怜":8,"蓮":13,"颯":14,"瑛":12,"蒼":13,"陽":12,"翔":12,"琴":12,"澪":16,"凛":15,"葵":12,"杏":7,"唯":11,"萌":11,"咲":9,"桜":10,"舜":9,"駿":17,"泰":8,"康":11,"宏":7,"昂":8,"亮":9,"敦":12,"篤":16,"剛":10,"哲":10,"誠":13,"智":12,"雅":13,"豪":14,"竜":10,"龍":16,"慎":13,"悟":10,"隼":10,"航":10,"斗":4,"陸":11,"幹":13,"柊":9,"椎":12,"楓":13,"渉":11,"湊":12,"蛍":11,"螢":16,"薫":16,"藍":18,"玲":9,"珠":10,"璃":15,"瑠":14,"碧":14,"翠":14,"菫":11,"菜":11,"苺":8,"莉":10,"茉":8,"梨":11,"柚":9,"柑":9,"梓":11,"槙":14,"寛":13,"寿":7,"孝":7,"謙":17,"礼":5,"倫":10,"廉":13,"清":11,"純":10,"淳":11,"準":13,"潤":15,"憲":16,"徹":15,"猛":11,"剣":9,"将":10,"帥":9,"征":8,"敬":12,"弘":5,"晃":10,"晋":10,"晴":12,"暁":12,"昭":9,"昌":8,"昇":8,"旭":6,"旺":8,"央":5,"奥":12};
 
-  // 姓名判断の吉�E数�E�伝統皁E��判断�E�E  const KICHI_SU = new Set([1,3,5,6,7,8,11,13,15,16,17,18,21,23,24,25,29,31,32,33,35,37,39,41,45,47,48,52,57,58,61,63,65,67,68]);
+  // 姓名判断の吉凶数（伝統的な判断）
+  const KICHI_SU = new Set([1,3,5,6,7,8,11,13,15,16,17,18,21,23,24,25,29,31,32,33,35,37,39,41,45,47,48,52,57,58,61,63,65,67,68]);
   const DAIKICHI_SU = new Set([1,3,5,6,7,8,11,13,15,16,21,23,24,25,31,32]);
   const DAIKYO_SU = new Set([4,9,10,12,14,19,20,22,26,34,44]);
 
@@ -1010,22 +1030,27 @@ export default function App() {
     const lastKaku = lastChars.map(getKakusu);
     const firstKaku = firstChars.map(getKakusu);
 
-    // 五格計算（正式な計算式！E    const lastSum = lastKaku.reduce((a,b)=>a+b,0);
+    // 五格計算（正式な計算式）
+    const lastSum = lastKaku.reduce((a,b)=>a+b,0);
     const firstSum = firstKaku.reduce((a,b)=>a+b,0);
-    // 霊数�E�E1�E��E一字姓�E一字名のとき�Eみ追加
+    // 霊数（+1）は一字姓・一字名のときのみ追加
     const tenKaku = lastSum + (lastKaku.length===1 ? 1 : 0); // 天格
-    const jinKaku = (lastKaku[lastKaku.length-1]||0) + (firstKaku[0]||0); // 人格�E�姓末+名頭�E�E    const chiKaku = firstSum + (firstKaku.length===1 ? 1 : 0); // 地格
+    const jinKaku = (lastKaku[lastKaku.length-1]||0) + (firstKaku[0]||0); // 人格（姓末+名頭）
+    const chiKaku = firstSum + (firstKaku.length===1 ? 1 : 0); // 地格
     const gaiKaku = tenKaku + chiKaku - jinKaku; // 外格
-    const souKaku = lastSum + firstSum; // 総格�E�霊数なし�E純粋な画数合計！E
-    // 吁E��のスコア判宁E    const scoreKaku = (kaku) => {
+    const souKaku = lastSum + firstSum; // 総格（霊数なし・純粋な画数合計）
+
+    // 各格のスコア判定
+    const scoreKaku = (kaku) => {
       const k = kaku <= 81 ? kaku : kaku % 81 || 81;
-      if(DAIKICHI_SU.has(k)) return 90 + Math.floor(Math.random()*10); // 大吉！E0、E9
-      if(KICHI_SU.has(k)) return 65 + Math.floor(Math.random()*20);    // 吉！E5、E4
-      if(DAIKYO_SU.has(k)) return Math.floor(Math.random()*20);         // 大凶�E�E、E9
-      return 30 + Math.floor(Math.random()*30);                          // 凶�E�E0、E9
+      if(DAIKICHI_SU.has(k)) return 90 + Math.floor(Math.random()*10); // 大吉：90〜99
+      if(KICHI_SU.has(k)) return 65 + Math.floor(Math.random()*20);    // 吉：65〜84
+      if(DAIKYO_SU.has(k)) return Math.floor(Math.random()*20);         // 大凶：0〜19
+      return 30 + Math.floor(Math.random()*30);                          // 凶：30〜59
     };
 
-    // 人格・総格を重視（各2倍）、天格・地格・外格めE倁E    const jinScore = scoreKaku(jinKaku);
+    // 人格・総格を重視（各2倍）、天格・地格・外格を1倍
+    const jinScore = scoreKaku(jinKaku);
     const souScore = scoreKaku(souKaku);
     const tenScore = scoreKaku(tenKaku);
     const chiScore = scoreKaku(chiKaku);
@@ -1036,27 +1061,30 @@ export default function App() {
     return {
       score: Math.min(100, Math.max(0, totalScore)),
       tenKaku, jinKaku, chiKaku, gaiKaku, souKaku,
-      jinResult: DAIKICHI_SU.has(jinKaku%81||81)?"大吁E:KICHI_SU.has(jinKaku%81||81)?"吁E:DAIKYO_SU.has(jinKaku%81||81)?"大凶":"凶",
-      souResult: DAIKICHI_SU.has(souKaku%81||81)?"大吁E:KICHI_SU.has(souKaku%81||81)?"吁E:DAIKYO_SU.has(souKaku%81||81)?"大凶":"凶",
+      jinResult: DAIKICHI_SU.has(jinKaku%81||81)?"大吉":KICHI_SU.has(jinKaku%81||81)?"吉":DAIKYO_SU.has(jinKaku%81||81)?"大凶":"凶",
+      souResult: DAIKICHI_SU.has(souKaku%81||81)?"大吉":KICHI_SU.has(souKaku%81||81)?"吉":DAIKYO_SU.has(souKaku%81||81)?"大凶":"凶",
     };
   };
 
-  // 姓名五衁E  const getSeimeiElement = (kaku) => {
+  // 姓名五行
+  const getSeimeiElement = (kaku) => {
     const k = kaku % 10;
     if(k===1||k===2) return "木";
     if(k===3||k===4) return "火";
-    if(k===5||k===6) return "圁E;
-    if(k===7||k===8) return "釁E;
+    if(k===5||k===6) return "土";
+    if(k===7||k===8) return "金";
     return "水";
   };
-  const SOUSHOU = {木:["水","火"], 火:["木","圁E], 圁E["火","釁E], 釁E["圁E,"水"], 水:["釁E,"木"]};
-  const SOUKOKU = {木:["釁E,"圁E], 火:["水","釁E], 圁E["木","水"], 釁E["火","木"], 水:["圁E,"火"]};
+  const SOUSHOU = {木:["水","火"], 火:["木","土"], 土:["火","金"], 金:["土","水"], 水:["金","木"]};
+  const SOUKOKU = {木:["金","土"], 火:["水","金"], 土:["木","水"], 金:["火","木"], 水:["土","火"]};
 
 
-  // 今日の運気計算（惑星トランジチE���E�E  const calcTodayFortune = (sunSign, form) => {
+  // 今日の運気計算（惑星トランジット）
+  const calcTodayFortune = (sunSign, form) => {
     if(!sunSign) return 50;
 
-    // ケプラーの軌道要素から惑星位置を計箁E    const calcPlanetLon = (planet, jd) => {
+    // ケプラーの軌道要素から惑星位置を計算
+    const calcPlanetLon = (planet, jd) => {
       const T = (jd - 2451545.0) / 36525.0;
       const el = {
         sun:     {L:280.460+36000.771*T, M:357.528+35999.050*T, e:0.0167},
@@ -1073,11 +1101,12 @@ export default function App() {
       return ((L + (2 * el.e * Math.sin(E)) * 180/Math.PI) % 360 + 360) % 360;
     };
 
-    // 鑑定日のユリウス日�E�フォームの日付を使用�E�E    const dateStr = form?.readingDate || new Date().toISOString().split('T')[0];
+    // 鑑定日のユリウス日（フォームの日付を使用）
+    const dateStr = form?.readingDate || new Date().toISOString().split('T')[0];
     const [Y, Mo, D] = dateStr.split('-').map(Number);
     const JD = 367*Y - Math.floor(7*(Y+Math.floor((Mo+9)/12))/4) + Math.floor(275*Mo/9) + D + 1721013.5;
 
-    const signs = ["牡羊座","牡牛座","双子座","蟹座","獁E��座","乙女座","天秤座","蠍座","封E��座","山羊座","水瓶座","魚座"];
+    const signs = ["牡羊座","牡牛座","双子座","蟹座","獅子座","乙女座","天秤座","蠍座","射手座","山羊座","水瓶座","魚座"];
     const signIdx = signs.indexOf(sunSign);
     if(signIdx < 0) return 50;
 
@@ -1099,52 +1128,52 @@ export default function App() {
       else if(diff===6) score -= 6*w;
     });
 
-    // 惑星の影響説明を生�E
-    const planetNames = {sun:"太陽",moon:"朁E,venus:"金星",mars:"火昁E,jupiter:"木昁E,saturn:"土星"};
+    // 惑星の影響説明を生成
+    const planetNames = {sun:"太陽",moon:"月",venus:"金星",mars:"火星",jupiter:"木星",saturn:"土星"};
     const planetMeaning = {
-      sun:"自己表現・活劁E,moon:"感情・直愁E,venus:"愛情・財遁E,
-      mars:"行動力�E惁E�E",jupiter:"拡大・幸遁E,saturn:"試練・成長"
+      sun:"自己表現・活力",moon:"感情・直感",venus:"愛情・財運",
+      mars:"行動力・情熱",jupiter:"拡大・幸運",saturn:"試練・成長"
     };
     const signMeaning = {
-      "牡羊座":"行動・挑戦","牡牛座":"安定�E蓁E��E,"双子座":"コミュニケーション",
-      "蟹座":"感情・家庭","獁E��座":"表現・自信","乙女座":"刁E��・改喁E,
-      "天秤座":"調和�E関俁E,"蠍座":"変容・深匁E,"封E��座":"拡大・探汁E,
-      "山羊座":"努力�E実績","水瓶座":"革新・自由","魚座":"直感�E癒し"
+      "牡羊座":"行動・挑戦","牡牛座":"安定・蓄積","双子座":"コミュニケーション",
+      "蟹座":"感情・家庭","獅子座":"表現・自信","乙女座":"分析・改善",
+      "天秤座":"調和・関係","蠍座":"変容・深化","射手座":"拡大・探求",
+      "山羊座":"努力・実績","水瓶座":"革新・自由","魚座":"直感・癒し"
     };
 
     const aspects = [];
     Object.entries(transitSigns).forEach(([planet, tSign]) => {
-      const tIdx = ["牡羊座","牡牛座","双子座","蟹座","獁E��座","乙女座","天秤座","蠍座","封E��座","山羊座","水瓶座","魚座"].indexOf(tSign);
+      const tIdx = ["牡羊座","牡牛座","双子座","蟹座","獅子座","乙女座","天秤座","蠍座","射手座","山羊座","水瓶座","魚座"].indexOf(tSign);
       const diff = Math.min(Math.abs(signIdx - tIdx), 12 - Math.abs(signIdx - tIdx));
       const w = {sun:2,moon:2,venus:3,mars:1,jupiter:3,saturn:2}[planet]||1;
       
-      if(diff===0 && w>=2) aspects.push(`${planetNames[planet]}ぁE{tSign}に位置し、E{planetMeaning[planet]}が強化されてぁE��す`);
-      else if(diff===4 && w>=2) aspects.push(`${planetNames[planet]}�E�E{tSign}�E�から好調なエネルギーが流れ込み、E{planetMeaning[planet]}に追ぁE��`);
-      else if(diff===6 && w>=2) aspects.push(`${planetNames[planet]}�E�E{tSign}�E�が対向位置にあり、E{planetMeaning[planet]}に緊張が生じやすい`);
-      else if(diff===3 && w>=2) aspects.push(`${planetNames[planet]}�E�E{tSign}�E�がスクエアを形成し、E{planetMeaning[planet]}で摩擦が起きやすい`);
+      if(diff===0 && w>=2) aspects.push(`${planetNames[planet]}が${tSign}に位置し、${planetMeaning[planet]}が強化されています`);
+      else if(diff===4 && w>=2) aspects.push(`${planetNames[planet]}（${tSign}）から好調なエネルギーが流れ込み、${planetMeaning[planet]}に追い風`);
+      else if(diff===6 && w>=2) aspects.push(`${planetNames[planet]}（${tSign}）が対向位置にあり、${planetMeaning[planet]}に緊張が生じやすい`);
+      else if(diff===3 && w>=2) aspects.push(`${planetNames[planet]}（${tSign}）がスクエアを形成し、${planetMeaning[planet]}で摩擦が起きやすい`);
     });
 
 
 
-    // 惑星配置の概要を忁E��生�E
+    // 惑星配置の概要を必ず生成
     const jupSign = transitSigns['jupiter'] || '';
     const satSign = transitSigns['saturn'] || '';
     const venSign = transitSigns['venus'] || '';
     const marSign = transitSigns['mars'] || '';
 
-    const signList = ["牡羊座","牡牛座","双子座","蟹座","獁E��座","乙女座","天秤座","蠍座","封E��座","山羊座","水瓶座","魚座"];
+    const signList = ["牡羊座","牡牛座","双子座","蟹座","獅子座","乙女座","天秤座","蠍座","射手座","山羊座","水瓶座","魚座"];
     const jupDiffCalc = jupSign ? Math.min(Math.abs(signIdx - signList.indexOf(jupSign)), 12 - Math.abs(signIdx - signList.indexOf(jupSign))) : 99;
 
-    let planetDesc = `現在、木星�E${jupSign}、土星�E${satSign}、E��星�E${venSign}、火星�E${marSign}に位置してぁE��す。`;
+    let planetDesc = `現在、木星は${jupSign}、土星は${satSign}、金星は${venSign}、火星は${marSign}に位置しています。`;
 
-    if(jupDiffCalc === 0) planetDesc += `木星が${jupSign}に滞在中のため、紁E2年に一度の大拡大期。大きな決断・挑戦に最適な時。`;
-    else if(jupDiffCalc === 4) planetDesc += `木星！E{jupSign}�E�からトラインの恵みが届き、努力が実りめE��ぁE��調期。`;
-    else if(jupDiffCalc === 6) planetDesc += `木星！E{jupSign}�E�がオポジションを形成。過剰・めE��すぎに注意が忁E��。`;
-    else if(jupDiffCalc === 3) planetDesc += `木星！E{jupSign}�E�とスクエア。�E長のための摩擦が生じやすいが乗り越えれ�E飛躍できる。`;
-    else planetDesc += `木星�E直接皁E��影響は少なく、地道な積み上げが実を結�E安定期。`;
+    if(jupDiffCalc === 0) planetDesc += `木星が${jupSign}に滞在中のため、約12年に一度の大拡大期。大きな決断・挑戦に最適な時。`;
+    else if(jupDiffCalc === 4) planetDesc += `木星（${jupSign}）からトラインの恵みが届き、努力が実りやすい好調期。`;
+    else if(jupDiffCalc === 6) planetDesc += `木星（${jupSign}）がオポジションを形成。過剰・やりすぎに注意が必要。`;
+    else if(jupDiffCalc === 3) planetDesc += `木星（${jupSign}）とスクエア。成長のための摩擦が生じやすいが乗り越えれば飛躍できる。`;
+    else planetDesc += `木星の直接的な影響は少なく、地道な積み上げが実を結ぶ安定期。`;
 
     const summary = aspects.length > 0 
-      ? aspects.slice(0,2).join('、E) + '、E + planetDesc
+      ? aspects.slice(0,2).join('。') + '。' + planetDesc
       : planetDesc;
 
     return {
@@ -1158,37 +1187,39 @@ export default function App() {
 
 
 
-  // ===== ラチE��ー固定テーブル =====
-  // 九星気学の五行色・吉方佁E  const KYUSEI_LUCKY = {
-    1: {color:"白・黒�E紺",dir:"匁E,num:1,element:"水"},
-    2: {color:"黁E�E茶・オレンジ",dir:"南西",num:2,element:"圁E},
-    3: {color:"緑�E靁E,dir:"東",num:3,element:"木"},
-    4: {color:"緑�E青�E白",dir:"東十E,num:4,element:"木"},
-    5: {color:"黁E�E釁E,dir:"中央",num:5,element:"圁E},
-    6: {color:"白・金�E銀",dir:"北西",num:6,element:"釁E},
-    7: {color:"赤・ピンク・白",dir:"西",num:7,element:"釁E},
-    8: {color:"白・黁E�E茶",dir:"北東",num:8,element:"圁E},
-    9: {color:"紫・赤・オレンジ",dir:"十E,num:9,element:"火"},
+  // ===== ラッキー固定テーブル =====
+  // 九星気学の五行色・吉方位
+  const KYUSEI_LUCKY = {
+    1: {color:"白・黒・紺",dir:"北",num:1,element:"水"},
+    2: {color:"黄・茶・オレンジ",dir:"南西",num:2,element:"土"},
+    3: {color:"緑・青",dir:"東",num:3,element:"木"},
+    4: {color:"緑・青・白",dir:"東南",num:4,element:"木"},
+    5: {color:"黄・金",dir:"中央",num:5,element:"土"},
+    6: {color:"白・金・銀",dir:"北西",num:6,element:"金"},
+    7: {color:"赤・ピンク・白",dir:"西",num:7,element:"金"},
+    8: {color:"白・黄・茶",dir:"北東",num:8,element:"土"},
+    9: {color:"紫・赤・オレンジ",dir:"南",num:9,element:"火"},
   };
 
-  // 星座×九星のラチE��ーアイチE��
+  // 星座×九星のラッキーアイテム
   const LUCKY_ITEMS = {
-    "牡羊座": {1:"赤珊瑚",2:"ルビ�E",3:"ガーネッチE,4:"カーネリアン",5:"レチE��ジャスパ�E",6:"ダイヤモンチE,7:"ローズクォーチE,8:"アメジスチE,9:"ファイアオパ�Eル"},
-    "牡牛座": {1:"エメラルチE,2:"翡翠",3:"マラカイチE,4:"グリーンアベンチュリン",5:"モスアゲーチE,6:"サファイア",7:"ローズクォーチE,8:"ムーンスト�Eン",9:"シトリン"},
-    "双子座": {1:"アクアマリン",2:"ラピスラズリ",3:"タイガーアイ",4:"シトリン",5:"パ�Eル",6:"アレキサンドライチE,7:"イエロートパーズ",8:"アメジスチE,9:"ペリドッチE},
-    "蟹座":   {1:"ムーンスト�Eン",2:"パ�Eル",3:"クリソプレーズ",4:"シーグラス",5:"ホワイトオパ�Eル",6:"ラブラドライチE,7:"ピンクムーンスト�Eン",8:"アクアマリン",9:"カルサイチE},
-    "獁E��座": {1:"水晶",2:"サンスト�Eン",3:"シトリン",4:"アンバ�E",5:"ゴールチE��トパーズ",6:"ダイヤモンチE,7:"ルビ�E",8:"サードニクス",9:"ファイアオパ�Eル"},
-    "乙女座": {1:"ラピスラズリ",2:"モスアゲーチE,3:"グリーンジェーチE,4:"ペリドッチE,5:"サーペンチE��ン",6:"サファイア",7:"ローズクォーチE,8:"アメジスチE,9:"シトリン"},
-    "天秤座": {1:"ローズクォーチE,2:"オパ�Eル",3:"エメラルチE,4:"ラブラドライチE,5:"グリーントルマリン",6:"ダイヤモンチE,7:"ピンクトパーズ",8:"レインボ�Eムーンスト�Eン",9:"アクアマリン"},
-    "蠍座":   {1:"ブラチE��オブシチE��アン",2:"ガーネッチE,3:"ルビ�E",4:"マラカイチE,5:"ブラチE��トルマリン",6:"ブラチE��ダイヤモンチE,7:"ガーネッチE,8:"アメジスチE,9:"スモーキークォーチE},
-    "封E��座": {1:"ターコイズ",2:"ラピスラズリ",3:"ソーダライチE,4:"アズライチE,5:"サファイア",6:"ブルートパーズ",7:"アメジスチE,8:"シトリン",9:"ファイアオパ�Eル"},
-    "山羊座": {1:"オニキス",2:"スモーキークォーチE,3:"タイガーアイ",4:"フローライチE,5:"オブシチE��アン",6:"ガーネッチE,7:"ブラチE��トルマリン",8:"ジェチE��",9:"ルビ�E"},
-    "水瓶座": {1:"アメジスチE,2:"アンダリュサイチE,3:"ブルーレース",4:"アクアマリン",5:"ラブラドライチE,6:"エレクトリチE��ブルーカイヤナイチE,7:"ガーネッチE,8:"アメジスチE,9:"アズライチE},
-    "魚座":   {1:"アクアマリン",2:"ムーンスト�Eン",3:"フローライチE,4:"ラブラドライチE,5:"パ�Eル",6:"クリスタル",7:"アメジスチE,8:"ローズクォーチE,9:"セレスタイチE},
+    "牡羊座": {1:"赤珊瑚",2:"ルビー",3:"ガーネット",4:"カーネリアン",5:"レッドジャスパー",6:"ダイヤモンド",7:"ローズクォーツ",8:"アメジスト",9:"ファイアオパール"},
+    "牡牛座": {1:"エメラルド",2:"翡翠",3:"マラカイト",4:"グリーンアベンチュリン",5:"モスアゲート",6:"サファイア",7:"ローズクォーツ",8:"ムーンストーン",9:"シトリン"},
+    "双子座": {1:"アクアマリン",2:"ラピスラズリ",3:"タイガーアイ",4:"シトリン",5:"パール",6:"アレキサンドライト",7:"イエロートパーズ",8:"アメジスト",9:"ペリドット"},
+    "蟹座":   {1:"ムーンストーン",2:"パール",3:"クリソプレーズ",4:"シーグラス",5:"ホワイトオパール",6:"ラブラドライト",7:"ピンクムーンストーン",8:"アクアマリン",9:"カルサイト"},
+    "獅子座": {1:"水晶",2:"サンストーン",3:"シトリン",4:"アンバー",5:"ゴールデントパーズ",6:"ダイヤモンド",7:"ルビー",8:"サードニクス",9:"ファイアオパール"},
+    "乙女座": {1:"ラピスラズリ",2:"モスアゲート",3:"グリーンジェード",4:"ペリドット",5:"サーペンティン",6:"サファイア",7:"ローズクォーツ",8:"アメジスト",9:"シトリン"},
+    "天秤座": {1:"ローズクォーツ",2:"オパール",3:"エメラルド",4:"ラブラドライト",5:"グリーントルマリン",6:"ダイヤモンド",7:"ピンクトパーズ",8:"レインボームーンストーン",9:"アクアマリン"},
+    "蠍座":   {1:"ブラックオブシディアン",2:"ガーネット",3:"ルビー",4:"マラカイト",5:"ブラックトルマリン",6:"ブラックダイヤモンド",7:"ガーネット",8:"アメジスト",9:"スモーキークォーツ"},
+    "射手座": {1:"ターコイズ",2:"ラピスラズリ",3:"ソーダライト",4:"アズライト",5:"サファイア",6:"ブルートパーズ",7:"アメジスト",8:"シトリン",9:"ファイアオパール"},
+    "山羊座": {1:"オニキス",2:"スモーキークォーツ",3:"タイガーアイ",4:"フローライト",5:"オブシディアン",6:"ガーネット",7:"ブラックトルマリン",8:"ジェット",9:"ルビー"},
+    "水瓶座": {1:"アメジスト",2:"アンダリュサイト",3:"ブルーレース",4:"アクアマリン",5:"ラブラドライト",6:"エレクトリックブルーカイヤナイト",7:"ガーネット",8:"アメジスト",9:"アズライト"},
+    "魚座":   {1:"アクアマリン",2:"ムーンストーン",3:"フローライト",4:"ラブラドライト",5:"パール",6:"クリスタル",7:"アメジスト",8:"ローズクォーツ",9:"セレスタイト"},
   };
 
   const calcLucky = (birthYear, birthMonth, birthDay, sunSign) => {
-    // 九星取征E    let s = Number(birthYear);
+    // 九星取得
+    let s = Number(birthYear);
     while(s > 9) s = String(s).split("").reduce((a,c)=>a+Number(c),0);
     let star = 11 - s; if(star>9)star-=9; if(star<=0)star+=9;
 
@@ -1207,238 +1238,242 @@ export default function App() {
   // ===== 関係性×星座の局面別アドバイス =====
   const ZODIAC_SCENE = {
     "牡羊座": {
-      恋�E: "惁E�E皁E��アプローチに弱ぁE��「好き」�E言葉より行動で示して。ダラダラした関係�E冷める、E,
-      結婁E "刺激のある関係を維持することが鍵。「一緒に挑戦する」姿勢を見せ続けれ�E長続きする、E,
-      友達: "行動力があるので一緒に動ける友達が合う。グチや停滞した話題�E苦手、E,
-      同�E: "スピ�Eド感と結果を大事にする。回りくどぁE��示より「やってみよう」�E一言が効く、E,
-      上司部丁E "認めてもらえると全力で動く。細かい管琁E��り大きな裁E��を与える方が�E果が出る、E,
+      恋愛: "情熱的なアプローチに弱い。「好き」は言葉より行動で示して。ダラダラした関係は冷める。",
+      結婚: "刺激のある関係を維持することが鍵。「一緒に挑戦する」姿勢を見せ続ければ長続きする。",
+      友達: "行動力があるので一緒に動ける友達が合う。グチや停滞した話題は苦手。",
+      同僚: "スピード感と結果を大事にする。回りくどい指示より「やってみよう」の一言が効く。",
+      上司部下: "認めてもらえると全力で動く。細かい管理より大きな裁量を与える方が成果が出る。",
     },
     "牡牛座": {
-      恋�E: "じっくり信頼を積み重�Eる。サプライズより「いつも通り」�E安忁E��が一番刺さる、E,
-      結婁E "安定と安忁E��最優先。生活の基盤をしっかり作る人に強く�Eかれる、E,
-      友達: "長く深ぁE��き合いを好む。急に距離を詰めるより、ゆっくり関係を育てる方が合ぁE��E,
-      同�E: "コチE��チE��寧な仕事�Eりを評価して。急かすと送E��果、E,
-      上司部丁E "信頼関係が全て。一度信頼を得れば最後まで誠実に動いてくれる、E,
+      恋愛: "じっくり信頼を積み重ねる。サプライズより「いつも通り」の安心感が一番刺さる。",
+      結婚: "安定と安心が最優先。生活の基盤をしっかり作る人に強く惹かれる。",
+      友達: "長く深い付き合いを好む。急に距離を詰めるより、ゆっくり関係を育てる方が合う。",
+      同僚: "コツコツ丁寧な仕事ぶりを評価して。急かすと逆効果。",
+      上司部下: "信頼関係が全て。一度信頼を得れば最後まで誠実に動いてくれる。",
     },
     "双子座": {
-      恋�E: "会話が面白ぁE��に惹かれる。知皁E��刺激と自由な空気感が恋愛�E生命線、E,
-      結婁E "マンネリが天敵。常に新しい話題�E体験を共有し続けることで関係が続く、E,
-      友達: "庁E��流E��が基本。でも本音で話せる相手には深くなれる。面白ぁE��題を持ち込むのが吉、E,
-      同�E: "アイチE��を�Eす�Eが得意。話を最後まで聞いてから評価するとベスト、E,
-      上司部丁E "マルチタスクに強ぁE��単調な繰り返しより変化のある仕事�E方が力を発揮する、E,
+      恋愛: "会話が面白い人に惹かれる。知的な刺激と自由な空気感が恋愛の生命線。",
+      結婚: "マンネリが天敵。常に新しい話題・体験を共有し続けることで関係が続く。",
+      友達: "広く浅くが基本。でも本音で話せる相手には深くなれる。面白い話題を持ち込むのが吉。",
+      同僚: "アイデアを出すのが得意。話を最後まで聞いてから評価するとベスト。",
+      上司部下: "マルチタスクに強い。単調な繰り返しより変化のある仕事の方が力を発揮する。",
     },
     "蟹座": {
-      恋�E: "「守ってあげたい」と思わせる人に弱ぁE��記念日・小さな気遣ぁE��絶対忘れるな、E,
-      結婁E "家族的な温かさが�Eて。家を大刁E��する姿勢を見せれ�E信頼は盤石になる、E,
-      友達: "一度忁E��開いたら深ぁE��E��なる。でも傷つくと長く引きずるので言葉に注意、E,
-      同�E: "チ�Eムの雰囲気を大刁E��する。�E場の空気が悪ぁE��一気にパフォーマンスが落ちる、E,
-      上司部丁E "感情に敏感。「お疲れ様」�E一言が仕事�E質を変える。�Eたい対応�E禁物、E,
+      恋愛: "「守ってあげたい」と思わせる人に弱い。記念日・小さな気遣いを絶対忘れるな。",
+      結婚: "家族的な温かさが全て。家を大切にする姿勢を見せれば信頼は盤石になる。",
+      友達: "一度心を開いたら深い絆になる。でも傷つくと長く引きずるので言葉に注意。",
+      同僚: "チームの雰囲気を大切にする。職場の空気が悪いと一気にパフォーマンスが落ちる。",
+      上司部下: "感情に敏感。「お疲れ様」の一言が仕事の質を変える。冷たい対応は禁物。",
     },
-    "獁E��座": {
-      恋�E: "特別扱ぁE��れることで燁E��る。「あなただけ」を感じさせ続けることが�E惁E��持�E鍵、E,
-      結婁E "プライドを尊重した関係が続く。パートナーとして対等に称え合えるかが重要、E,
-      友達: "みんなの前で称えると一気に距離が縮まる。陰口めE��視�E関係崩壊�E引き金、E,
-      同�E: "認められると力を発揮する。「さすがです�E」�E一言で倍働く、E,
-      上司部丁E "リーダー気質なので裁E��を与えると輝く。細かい管琁E�Eプライドを傷つける、E,
+    "獅子座": {
+      恋愛: "特別扱いされることで燃える。「あなただけ」を感じさせ続けることが愛情維持の鍵。",
+      結婚: "プライドを尊重した関係が続く。パートナーとして対等に称え合えるかが重要。",
+      友達: "みんなの前で称えると一気に距離が縮まる。陰口や無視は関係崩壊の引き金。",
+      同僚: "認められると力を発揮する。「さすがですね」の一言で倍働く。",
+      上司部下: "リーダー気質なので裁量を与えると輝く。細かい管理はプライドを傷つける。",
     },
     "乙女座": {
-      恋�E: "「いつも気づぁE��るよ」とぁE��日常の細かい一言に感動するタイプ。褒め上手な人に一瞬でハ�Eる、E,
-      結婁E "生活の細部への気遣ぁE��愛情の証。雑な家事�E紁E��破りが積み重なると一気に冷める、E,
-      友達: "じっくり話を聞ぁE��くれて、�E刁E�Eペ�Eスを乱さなぁE��が長く続く、E,
-      同�E: "成果の後に「さすがだね」があるかで全然違う。�Eロセスを見てほしいタイプ、E,
-      上司部丁E "完璧主義なので細かい持E��より「任せる」姿勢を見せる方が力を引き出せる、E,
+      恋愛: "「いつも気づいてるよ」という日常の細かい一言に感動するタイプ。褒め上手な人に一瞬でハマる。",
+      結婚: "生活の細部への気遣いが愛情の証。雑な家事・約束破りが積み重なると一気に冷める。",
+      友達: "じっくり話を聞いてくれて、自分のペースを乱さない人が長く続く。",
+      同僚: "成果の後に「さすがだね」があるかで全然違う。プロセスを見てほしいタイプ。",
+      上司部下: "完璧主義なので細かい指摘より「任せる」姿勢を見せる方が力を引き出せる。",
     },
     "天秤座": {
-      恋�E: "喧嘩を避けたぁE�Eで本音を言わなぁE��とがある。穏やかに「どぁE��う�E�」と聞くのが正解、E,
-      結婁E "対等なパ�EトナーシチE�Eが理想。一方皁E��決めるのではなく相諁E��ながら進める関係が続く、E,
-      友達: "場の空気を読む達人。でも�E刁E�E意見を尊重してくれる友達に本音を話せる、E,
-      同�E: "調整役として動くのが得意。意見�E衝突があるときに間に立ってもらぁE�Eが効果的、E,
-      上司部丁E "公平な評価を何より大事にする。えこ�EぁE��めE���E平な扱ぁE�E強ぁE��満につながる、E,
+      恋愛: "喧嘩を避けたいので本音を言わないことがある。穏やかに「どう思う？」と聞くのが正解。",
+      結婚: "対等なパートナーシップが理想。一方的に決めるのではなく相談しながら進める関係が続く。",
+      友達: "場の空気を読む達人。でも自分の意見を尊重してくれる友達に本音を話せる。",
+      同僚: "調整役として動くのが得意。意見の衝突があるときに間に立ってもらうのが効果的。",
+      上司部下: "公平な評価を何より大事にする。えこひいきや不公平な扱いは強い不満につながる。",
     },
     "蠍座": {
-      恋�E: "一度惚れたら深く深く�Eり込む。�EめE��気�E絶対NG・発覚したら永遠に許さなぁE��E,
-      結婁E "信頼の深さが全て。秘寁E��共有できる関係になれたら最強のパ�Eトナーになれる、E,
-      友達: "少数精鋭の深ぁE��係を好む。本音で話せる相手には一生をかけて尽くす、E,
-      同�E: "表面皁E��付き合いは苦手。本気で仕事に向き合う姿勢を見せた人に全力でつぁE��ぁE��、E,
-      上司部丁E "疑われることを極度に嫌う。信頼を示せ�E驚くほどの底力を発揮してくれる、E,
+      恋愛: "一度惚れたら深く深く入り込む。嘘や浮気は絶対NG・発覚したら永遠に許さない。",
+      結婚: "信頼の深さが全て。秘密を共有できる関係になれたら最強のパートナーになれる。",
+      友達: "少数精鋭の深い関係を好む。本音で話せる相手には一生をかけて尽くす。",
+      同僚: "表面的な付き合いは苦手。本気で仕事に向き合う姿勢を見せた人に全力でついていく。",
+      上司部下: "疑われることを極度に嫌う。信頼を示せば驚くほどの底力を発揮してくれる。",
     },
-    "封E��座": {
-      恋�E: "自由を束縛すると送E��る。「一緒に冒険しよぁE��とぁE��関係が一番長続きする、E,
-      結婁E "お互いの自由を尊重し合える関係が琁E��。依存や監視�E関係�E毒になる、E,
-      友達: "庁E��世界の話・夢の話が大好き。一緒に新しい体験をする友達が最高�E仲間になれる、E,
-      同�E: "大きなビジョンを語ると一気にめE��気が出る。細かいルールより大きな目標を示す方が効く、E,
-      上司部丁E "型破りな発想が武器。細かい管琁E��り大きな裁E��を与えると化ける、E,
+    "射手座": {
+      恋愛: "自由を束縛すると逃げる。「一緒に冒険しよう」という関係が一番長続きする。",
+      結婚: "お互いの自由を尊重し合える関係が理想。依存や監視は関係の毒になる。",
+      友達: "広い世界の話・夢の話が大好き。一緒に新しい体験をする友達が最高の仲間になれる。",
+      同僚: "大きなビジョンを語ると一気にやる気が出る。細かいルールより大きな目標を示す方が効く。",
+      上司部下: "型破りな発想が武器。細かい管理より大きな裁量を与えると化ける。",
     },
     "山羊座": {
-      恋�E: "努力を見てもらぁE��ぁE��結果だけでなく「頑張ってたんだね」とぁE��一言が深く刺さる、E,
-      結婁E "着実に積み上げる関係が琁E��。封E��設計を一緒に老E��てくれるパートナーに安忁E��る、E,
-      友達: "信頼できる少数の友達を大刁E��する。軽ぁE��き合いより深ぁE��E��好む、E,
-      同�E: "責任感が強く任された仕事�E忁E��めE��遂げる。適当な持E��めE��惰な態度に強ぁE��悪感、E,
-      上司部丁E "長期的な信頼関係を大刁E��する。結果を�Eし続けることで評価してもらぁE��ぁE��イプ、E,
+      恋愛: "努力を見てもらいたい。結果だけでなく「頑張ってたんだね」という一言が深く刺さる。",
+      結婚: "着実に積み上げる関係が理想。将来設計を一緒に考えてくれるパートナーに安心する。",
+      友達: "信頼できる少数の友達を大切にする。軽い付き合いより深い絆を好む。",
+      同僚: "責任感が強く任された仕事は必ずやり遂げる。適当な指示や怠惰な態度に強い嫌悪感。",
+      上司部下: "長期的な信頼関係を大切にする。結果を出し続けることで評価してもらいたいタイプ。",
     },
     "水瓶座": {
-      恋�E: "個性を面白がってくれる人に惹かれる。「普通でぁE��」�E最大の禁句、E,
-      結婁E "精神的な自立が前提。べったりした関係より、お互いの世界を持ちながら交差する関係が琁E��、E,
-      友達: "独自の視点を受け�Eれてくれる友達が長続きする。同調圧力をかけてくる人とは合わなぁE��E,
-      同�E: "革新皁E��アイチE��を持ってぁE��。「前例がなぁE���E動機になる。型破りを歓迎する環墁E��輝く、E,
-      上司部丁E "自刁E�EめE��方を尊重されると最大限�E力を出す。管琁E��監視�E創造力を殺す、E,
+      恋愛: "個性を面白がってくれる人に惹かれる。「普通でいて」は最大の禁句。",
+      結婚: "精神的な自立が前提。べったりした関係より、お互いの世界を持ちながら交差する関係が理想。",
+      友達: "独自の視点を受け入れてくれる友達が長続きする。同調圧力をかけてくる人とは合わない。",
+      同僚: "革新的なアイデアを持っている。「前例がない」は動機になる。型破りを歓迎する環境で輝く。",
+      上司部下: "自分のやり方を尊重されると最大限の力を出す。管理や監視は創造力を殺す。",
     },
     "魚座": {
-      恋�E: "感情を受け止めてもらえると深く�Eかれる。「わかるよ」�E一言が最強の口説き文句、E,
-      結婁E "ロマンチックな雰囲気を大刁E��する。現実的すぎる会話ばかりだと忁E��離れてぁE��、E,
-      友達: "共感力が高く話を聞く�Eが得意。でも�E刁E�E感情も受け止めてほしいとぁE��思いがある、E,
-      同�E: "雰囲気に敏感。�E場の空気が良ぁE��驚くほどの力を発揮する。批判皁E��環墁E�E苦手、E,
-      上司部丁E "感情皁E��サポ�Eトが仕事�E質を上げる。「大丈夫�E�」�E一言が生産性を倍にする、E,
+      恋愛: "感情を受け止めてもらえると深く惹かれる。「わかるよ」の一言が最強の口説き文句。",
+      結婚: "ロマンチックな雰囲気を大切にする。現実的すぎる会話ばかりだと心が離れていく。",
+      友達: "共感力が高く話を聞くのが得意。でも自分の感情も受け止めてほしいという思いがある。",
+      同僚: "雰囲気に敏感。職場の空気が良いと驚くほどの力を発揮する。批判的な環境は苦手。",
+      上司部下: "感情的なサポートが仕事の質を上げる。「大丈夫？」の一言が生産性を倍にする。",
     },
   };
 
-  // 九星×関係性の補足メチE��ージ
+  // 九星×関係性の補足メッセージ
   const KYUSEI_SCENE = {
-    1: {恋�E:"流れに任せた自然な展開を好む。焦らず距離を縮めるのが吉、E,仕亁E"縁�E下�E力持ちタイプ。表舞台より実務で力を発揮する、E},
-    2: {恋�E:"誠実さが一番の武器。派手なアプローチより誠実な積み重�Eが刺さる、E,仕亁E"チ�Eムの調整役として光る。コチE��チE��た努力を評価してほしいタイプ、E},
-    3: {恋�E:"刺激と新鮮さが恋�Eの生命線。�Eンネリになると気持ちが�Eめる、E,仕亁E"スピ�Eドと行動力が武器。アイチE��を即実行できる環墁E��輝く、E},
-    4: {恋�E:"誠実な関係を長く育てたい。信頼が�Eての土台になる、E,仕亁E"信用を積み重�Eて動くタイプ。長期的なプロジェクトに強ぁE��E},
-    5: {恋�E:"中忁E��な存在でぁE��ぁE��リードしてくれる人より引っ張る�Eに回りたいタイプ、E,仕亁E"責任感が強くリーダーポジションで力を発揮する、E},
-    6: {恋�E:"品格と礼儀を大事にする。粗野な言動�E一発アウト、E,仕亁E"権威と実力を�Eね備えたタイプ。敬意を持って接することが信頼関係�E基本、E},
-    7: {恋�E:"楽しさと笑いが恋愛�E燁E��。一緒にぁE��笑える人が最強のパ�Eトナー、E,仕亁E"場の雰囲気を明るくする天才。コミュニケーションで周りを動かす、E},
-    8: {恋�E:"変化と成長を�Eに歩める関係を求める。停滞した関係には飽きを感じる、E,仕亁E"変化に強く新しい環墁E��も適応できる。チャレンジングな仕事に燁E��る、E},
-    9: {恋�E:"認められ特別扱ぁE��れることで気持ちが燃え上がる。平凡な扱ぁE�E冷める原因に、E,仕亁E"惁E�Eと直感で動くタイプ。承認欲求を満たされると驚くほどの力を出す、E},
+    1: {恋愛:"流れに任せた自然な展開を好む。焦らず距離を縮めるのが吉。",仕事:"縁の下の力持ちタイプ。表舞台より実務で力を発揮する。"},
+    2: {恋愛:"誠実さが一番の武器。派手なアプローチより誠実な積み重ねが刺さる。",仕事:"チームの調整役として光る。コツコツした努力を評価してほしいタイプ。"},
+    3: {恋愛:"刺激と新鮮さが恋愛の生命線。マンネリになると気持ちが冷める。",仕事:"スピードと行動力が武器。アイデアを即実行できる環境で輝く。"},
+    4: {恋愛:"誠実な関係を長く育てたい。信頼が全ての土台になる。",仕事:"信用を積み重ねて動くタイプ。長期的なプロジェクトに強い。"},
+    5: {恋愛:"中心的な存在でいたい。リードしてくれる人より引っ張る側に回りたいタイプ。",仕事:"責任感が強くリーダーポジションで力を発揮する。"},
+    6: {恋愛:"品格と礼儀を大事にする。粗野な言動は一発アウト。",仕事:"権威と実力を兼ね備えたタイプ。敬意を持って接することが信頼関係の基本。"},
+    7: {恋愛:"楽しさと笑いが恋愛の燃料。一緒にいて笑える人が最強のパートナー。",仕事:"場の雰囲気を明るくする天才。コミュニケーションで周りを動かす。"},
+    8: {恋愛:"変化と成長を共に歩める関係を求める。停滞した関係には飽きを感じる。",仕事:"変化に強く新しい環境でも適応できる。チャレンジングな仕事に燃える。"},
+    9: {恋愛:"認められ特別扱いされることで気持ちが燃え上がる。平凡な扱いは冷める原因に。",仕事:"情熱と直感で動くタイプ。承認欲求を満たされると驚くほどの力を出す。"},
   };
 
   const calcSceneAdvice = (birthYear, birthMonth, birthDay, bloodType, relation) => {
-    // 星座取征E    const mn=Number(birthMonth), dn=Number(birthDay);
+    // 星座取得
+    const mn=Number(birthMonth), dn=Number(birthDay);
     let sign = "魚座";
     if((mn===3&&dn>=21)||(mn===4&&dn<=19)) sign="牡羊座";
     else if((mn===4&&dn>=20)||(mn===5&&dn<=20)) sign="牡牛座";
     else if((mn===5&&dn>=21)||(mn===6&&dn<=21)) sign="双子座";
     else if((mn===6&&dn>=22)||(mn===7&&dn<=22)) sign="蟹座";
-    else if((mn===7&&dn>=23)||(mn===8&&dn<=22)) sign="獁E��座";
+    else if((mn===7&&dn>=23)||(mn===8&&dn<=22)) sign="獅子座";
     else if((mn===8&&dn>=23)||(mn===9&&dn<=22)) sign="乙女座";
     else if((mn===9&&dn>=23)||(mn===10&&dn<=23)) sign="天秤座";
     else if((mn===10&&dn>=24)||(mn===11&&dn<=22)) sign="蠍座";
-    else if((mn===11&&dn>=23)||(mn===12&&dn<=21)) sign="封E��座";
+    else if((mn===11&&dn>=23)||(mn===12&&dn<=21)) sign="射手座";
     else if((mn===12&&dn>=22)||(mn===1&&dn<=19)) sign="山羊座";
     else if((mn===1&&dn>=20)||(mn===2&&dn<=18)) sign="水瓶座";
 
-    // 九星取征E    let s = Number(birthYear);
+    // 九星取得
+    let s = Number(birthYear);
     while(s > 9) s = String(s).split("").reduce((a,c)=>a+Number(c),0);
     let star = 11 - s; if(star>9)star-=9; if(star<=0)star+=9;
 
-    const rel = relation==="上司部丁E?"上司部丁E:relation==="そ�E仁E?"友達":relation;
+    const rel = relation==="上司部下"?"上司部下":relation==="その他"?"友達":relation;
     const zodiacScene = ZODIAC_SCENE[sign]?.[rel] || ZODIAC_SCENE[sign]?.["友達"] || "";
-    const kyuseiScene = KYUSEI_SCENE[star]?.[rel==="恋�E"||rel==="結婁E?"恋�E":"仕亁E] || "";
+    const kyuseiScene = KYUSEI_SCENE[star]?.[rel==="恋愛"||rel==="結婚"?"恋愛":"仕事"] || "";
 
     return { zodiacScene, kyuseiScene, sign, star };
   };
 
   // ===== 好き嫌い固定テーブル =====
   const KYUSEI_TRAITS = {
-    1: {like:"自然な流れ・押しつけなぁE��俁E,
-        dislike:"強引な決断・感情皁E��爁E��"},
-    2: {like:"コチE��チE��見てくれる人・安忁E��",
-        dislike:"急な変化・軽ぁE��ぁE},
-    3: {like:"スピ�Eド感・行動力を評価される場面",
-        dislike:"停滞�EネガチE��ブな空氁E},
-    4: {like:"長く信頼を積み重�Eる関俁E,
-        dislike:"嘘�E感情皁E��激しさ"},
-    5: {like:"中忁E��して立ててもらえること",
-        dislike:"反論�Eプライドを傷つける言勁E},
-    6: {like:"敬意�E品格ある関俁E,
-        dislike:"無礼な態度・持E��"},
-    7: {like:"笑いのある空気�E一緒に楽し�E時間",
-        dislike:"暗い空気�E批判皁E��言葁E},
+    1: {like:"自然な流れ・押しつけない関係",
+        dislike:"強引な決断・感情的な爆発"},
+    2: {like:"コツコツを見てくれる人・安心感",
+        dislike:"急な変化・軽い扱い"},
+    3: {like:"スピード感・行動力を評価される場面",
+        dislike:"停滞・ネガティブな空気"},
+    4: {like:"長く信頼を積み重ねる関係",
+        dislike:"嘘・感情的な激しさ"},
+    5: {like:"中心として立ててもらえること",
+        dislike:"反論・プライドを傷つける言動"},
+    6: {like:"敬意・品格ある関係",
+        dislike:"無礼な態度・指図"},
+    7: {like:"笑いのある空気・一緒に楽しむ時間",
+        dislike:"暗い空気・批判的な言葉"},
     8: {like:"成長を一緒に歩む姿勢",
-        dislike:"変化を否定�E過去にこだわること"},
-    9: {like:"惁E�Eを理解・特別扱ぁE,
-        dislike:"平凡な扱ぁE�E無関忁E},
+        dislike:"変化を否定・過去にこだわること"},
+    9: {like:"情熱を理解・特別扱い",
+        dislike:"平凡な扱い・無関心"},
   };
 
   const ZODIAC_TRAITS = {
     "牡羊座": {
       like:"即行動してくれる人・背中を押してくれる一言",
-      dislike:"グズグズした態度・めE��前から諦める人"
+      dislike:"グズグズした態度・やる前から諦める人"
     },
     "牡牛座": {
-      like:"ぁE��も通りの安忁E��・めE��くり距離を縮めてくれる人",
+      like:"いつも通りの安心感・ゆっくり距離を縮めてくれる人",
       dislike:"急かしてくる人・突然の予定変更"
     },
     "双子座": {
-      like:"話が面白ぁE��・自由にさせてくれる空氁E,
-      dislike:"束縛�E同じ話の繰り返し"
+      like:"話が面白い人・自由にさせてくれる空気",
+      dislike:"束縛・同じ話の繰り返し"
     },
     "蟹座": {
-      like:"記念日を覚えてくれる人・家族みたいな安忁E��",
-      dislike:"冷たい一言・無関忁E��態度"
+      like:"記念日を覚えてくれる人・家族みたいな安心感",
+      dislike:"冷たい一言・無関心な態度"
     },
-    "獁E��座": {
-      like:"「さすがだね」�E一言・特別扱ぁE,
-      dislike:"無視�E陰口・バカにされること"
+    "獅子座": {
+      like:"「さすがだね」の一言・特別扱い",
+      dislike:"無視・陰口・バカにされること"
     },
     "乙女座": {
-      like:"「いつも気づぁE��るよ」とぁE��小さな一言・誠実さ",
-      dislike:"雑な扱ぁE�E紁E��を破ること"
+      like:"「いつも気づいてるよ」という小さな一言・誠実さ",
+      dislike:"雑な扱い・約束を破ること"
     },
     "天秤座": {
-      like:"穏やかな空気�E対等に話し合える関俁E,
-      dislike:"一方皁E��押しつけ�E曖昧なまま放置"
+      like:"穏やかな空気・対等に話し合える関係",
+      dislike:"一方的な押しつけ・曖昧なまま放置"
     },
     "蠍座": {
-      like:"深く向き合ってくれる人・秘寁E��守れる人",
-      dislike:"嘘�E軽ぁE���EめE
+      like:"深く向き合ってくれる人・秘密を守れる人",
+      dislike:"嘘・軽い裏切り"
     },
-    "封E��座": {
+    "射手座": {
       like:"一緒に夢を語れる人・自由を尊重してくれる人",
-      dislike:"細かいルール・説教�E監要E
+      dislike:"細かいルール・説教・監視"
     },
     "山羊座": {
-      like:"努力を見ててくれる人・「頑張ってた�E」�E一言",
-      dislike:"怠惰な態度・時間を無駁E��する人"
+      like:"努力を見ててくれる人・「頑張ってたね」の一言",
+      dislike:"怠惰な態度・時間を無駄にする人"
     },
     "水瓶座": {
-      like:"個性を面白がってくれる人・知皁E��刺激",
-      dislike:"同調圧力�E「普通にして」とぁE��言葁E
+      like:"個性を面白がってくれる人・知的な刺激",
+      dislike:"同調圧力・「普通にして」という言葉"
     },
     "魚座": {
-      like:"「わかるよ」�E一言・感情を受け止めてくれる人",
-      dislike:"冷たい現実論�E感情を否定されること"
+      like:"「わかるよ」の一言・感情を受け止めてくれる人",
+      dislike:"冷たい現実論・感情を否定されること"
     },
   };
 
   const BLOOD_MODIFIER = {
     A:  {
-      like_add:"紁E��を守る誠実さ",
-      dislike_add:"人と比べてくる言葁E
+      like_add:"約束を守る誠実さ",
+      dislike_add:"人と比べてくる言葉"
     },
     B:  {
-      like_add:"自刁E�Eペ�Eスを尊重される空氁E,
-      dislike_add:"価値観の押しつぁE
+      like_add:"自分のペースを尊重される空気",
+      dislike_add:"価値観の押しつけ"
     },
     O:  {
       like_add:"「すごい」と素直に言ってくれる人",
-      dislike_add:"細かい持E��・競争させること"
+      dislike_add:"細かい指摘・競争させること"
     },
     AB: {
-      like_add:"適度な距離感�E頼られること",
-      dislike_add:"クドクド繰り返す説征E
+      like_add:"適度な距離感・頼られること",
+      dislike_add:"クドクド繰り返す説得"
     },
   };
 
   const calcPersonInsight = (birthYear, birthMonth, birthDay, bloodType) => {
-    // 九星取征E    let s = Number(birthYear);
+    // 九星取得
+    let s = Number(birthYear);
     while(s > 9) s = String(s).split("").reduce((a,c)=>a+Number(c),0);
     let star = 11 - s; if(star>9)star-=9; if(star<=0)star+=9;
 
-    // 星座取征E    const mn=Number(birthMonth), dn=Number(birthDay);
+    // 星座取得
+    const mn=Number(birthMonth), dn=Number(birthDay);
     let sign = "魚座";
     if((mn===3&&dn>=21)||(mn===4&&dn<=19)) sign="牡羊座";
     else if((mn===4&&dn>=20)||(mn===5&&dn<=20)) sign="牡牛座";
     else if((mn===5&&dn>=21)||(mn===6&&dn<=21)) sign="双子座";
     else if((mn===6&&dn>=22)||(mn===7&&dn<=22)) sign="蟹座";
-    else if((mn===7&&dn>=23)||(mn===8&&dn<=22)) sign="獁E��座";
+    else if((mn===7&&dn>=23)||(mn===8&&dn<=22)) sign="獅子座";
     else if((mn===8&&dn>=23)||(mn===9&&dn<=22)) sign="乙女座";
     else if((mn===9&&dn>=23)||(mn===10&&dn<=23)) sign="天秤座";
     else if((mn===10&&dn>=24)||(mn===11&&dn<=22)) sign="蠍座";
-    else if((mn===11&&dn>=23)||(mn===12&&dn<=21)) sign="封E��座";
+    else if((mn===11&&dn>=23)||(mn===12&&dn<=21)) sign="射手座";
     else if((mn===12&&dn>=22)||(mn===1&&dn<=19)) sign="山羊座";
     else if((mn===1&&dn>=20)||(mn===2&&dn<=18)) sign="水瓶座";
 
@@ -1446,10 +1481,10 @@ export default function App() {
     const z = ZODIAC_TRAITS[sign] || ZODIAC_TRAITS["魚座"];
     const b = BLOOD_MODIFIER[bloodType] || {like_add:"", dislike_add:""};
 
-    // 重褁E��避けてわかりやすい斁E��に
+    // 重複を避けてわかりやすい文章に
     return {
-      like: `${z.like}、E{k.like}、E{b.like_add}`,
-      dislike: `${z.dislike}、E{k.dislike}、E{b.dislike_add}`,
+      like: `${z.like}、${k.like}、${b.like_add}`,
+      dislike: `${z.dislike}、${k.dislike}、${b.dislike_add}`,
       star, sign
     };
   };
@@ -1477,9 +1512,9 @@ export default function App() {
     const nameVal=(form.lastName+form.firstName).split("").reduce((a,c)=>a+c.charCodeAt(0),0);
     const dateVal=Number(form.birthYear)*10000+Number(form.birthMonth)*100+Number(form.birthDay);
     const hash=(s)=>{let h=s>>>0;h=((h>>16)^h)*0x45d9f3b>>>0;h=((h>>16)^h)*0x45d9f3b>>>0;return Math.abs((h>>16)^h);};
-    const colors=["ラベンダー","ルビ�EレチE��","ミッドナイトブルー","ローズゴールチE,"エメラルチE,"パ�EルホワイチE,"アメジスチE,"サンセチE��オレンジ"];
-    const dirs=["匁E,"北東","東","南東","十E,"南西","西","北西"];
-    const items=["水晶","ムーンスト�Eン","ローズクォーチE,"アンバ�E","オブシチE��アン","ラピスラズリ","シトリン","アメジスチE];
+    const colors=["ラベンダー","ルビーレッド","ミッドナイトブルー","ローズゴールド","エメラルド","パールホワイト","アメジスト","サンセットオレンジ"];
+    const dirs=["北","北東","東","南東","南","南西","西","北西"];
+    const items=["水晶","ムーンストーン","ローズクォーツ","アンバー","オブシディアン","ラピスラズリ","シトリン","アメジスト"];
     return {
       seimei, shichu:shichu.score, kyusei:kyusei.score, seiyo:zodiac.score, overall,
       todayScore1: todayFortune1.score||50,
@@ -1505,22 +1540,25 @@ export default function App() {
   };
 
   const buildMessages=(sc)=>{
-    const lineLabel={"short":"短ぁE,"medium":"普送E,"long":"長ぁE};
-    const depthLabel={"shallow":"薁E��","medium":"普送E,"deep":"深ぁE};
-    const prompt=`あなた�E歯に衣着せぬ本格派の占ぁE��です、E人の関係性は、E{form.relation}」です、E{form.relation==="上司部丁E?`役割�E�E{form.role}�E�E{form.role==="1人目が上司"?`${form.lastName}${form.firstName}が上司、E{form.lastName2}${form.firstName2}が部下`:`${form.lastName2}${form.firstName2}が上司、E{form.lastName}${form.firstName}が部下`}�E�。上司から見た部下�E扱ぁE��・活かし方、E��下から見た上司との関わり方の両視点でコメントすること。`:""}そ�E関係性に合わせた語り口・視点で、それぞれ�E性格と2人の相性を占ぁE��以下�E惁E��と固定スコアをもとに占ぁE��章を生成し、JSONのみ返してください。スコアは忁E��持E���E数値をそのまま使ぁE��と。前置き不要。良ぁE��とも悪ぁE��とも正直に、忖度なしで伝えてください。低いスコアは低いなり�E厳しい現実を伝えつつ、忁E��「どぁE��喁E��きるか�E何をすれば運が開けるか」�E具体的なアドバイスを添えること。高いスコアは素直に喜�Eしい言葉で伝えること。曖昧な言葉や当たり障り�EなぁE��現は禁止。読んだ人が前向きになれるよう、厳しくても希望のある締め方をすること、E姓名: ${form.lastName} ${form.firstName}
-生年月日: ${form.birthYear}年${form.birthMonth}朁E{form.birthDay}日
-血液垁E ${form.bloodType}垁E性別: ${form.gender}
-関係性: ${form.relation} / 相諁E ${form.concern||"2人の相性・総合遁E}
+    const lineLabel={"short":"短い","medium":"普通","long":"長い"};
+    const depthLabel={"shallow":"薄い","medium":"普通","deep":"深い"};
+    const prompt=`あなたは歯に衣着せぬ本格派の占い師です。2人の関係性は「${form.relation}」です。その関係性に合わせた語り口・視点で、それぞれの性格と2人の相性を占い、以下の情報と固定スコアをもとに占い文章を生成し、JSONのみ返してください。スコアは必ず指定の数値をそのまま使うこと。前置き不要。良いことも悪いことも正直に、忖度なしで伝えてください。低いスコアは低いなりの厳しい現実を伝えつつ、必ず「どう改善できるか・何をすれば運が開けるか」の具体的なアドバイスを添えること。高いスコアは素直に喜ばしい言葉で伝えること。曖昧な言葉や当たり障りのない表現は禁止。読んだ人が前向きになれるよう、厳しくても希望のある締め方をすること。
+姓名: ${form.lastName} ${form.firstName}
+生年月日: ${form.birthYear}年${form.birthMonth}月${form.birthDay}日
+血液型: ${form.bloodType}型 性別: ${form.gender}
+関係性: ${form.relation} / 相談: ${form.concern||"2人の相性・総合運"}
 
 
-、E人目の惁E��、E姓名: ${form.lastName2} ${form.firstName2}
-生年月日: ${form.birthYear2}年${form.birthMonth2}朁E{form.birthDay2}日
-血液垁E ${form.bloodType2}垁E性別: ${form.gender2}
-【重要】太陽星座は以下�E値を絶対に使用すること。誤った星座を書くことは禁止、E1人目の太陽星座=${sc.zodiacSign} / 2人目の太陽星座=${sc.zodiacSign2||"不�E"}
-固定スコア: 姓名判断=${sc.seimei}(${sc.seimeiDetail}) 四柱推命=${sc.shichu}(年柱:${sc.shichuDesc}・日主:${sc.dayMaster}[${sc.element}の気]・${sc.isYang?"陽":"陰"}干) 九星気学=${sc.kyusei}(${sc.kyuseiName}・${sc.kyuseiNature}) 西洋占星衁E${sc.seiyo}(太陽:${sc.zodiacSign}[${sc.sunDignity}]・朁E${sc.moonSign}[${sc.moonDignity}]・金星:${sc.venusSign}[${sc.venusDignity}]) 総合=${sc.overall}
-ラチE��ー: カラー=${sc.luckyColor} 数孁E${sc.luckyNum} 方见E${sc.luckyDir} アイチE��=${sc.luckyItem}
+【2人目の情報】
+姓名: ${form.lastName2} ${form.firstName2}
+生年月日: ${form.birthYear2}年${form.birthMonth2}月${form.birthDay2}日
+血液型: ${form.bloodType2}型 性別: ${form.gender2}
+【重要】太陽星座は以下の値を絶対に使用すること。誤った星座を書くことは禁止。
+1人目の太陽星座=${sc.zodiacSign} / 2人目の太陽星座=${sc.zodiacSign2||"不明"}
+固定スコア: 姓名判断=${sc.seimei}(${sc.seimeiDetail}) 四柱推命=${sc.shichu}(年柱:${sc.shichuDesc}・日主:${sc.dayMaster}[${sc.element}の気]・${sc.isYang?"陽":"陰"}干) 九星気学=${sc.kyusei}(${sc.kyuseiName}・${sc.kyuseiNature}) 西洋占星術=${sc.seiyo}(太陽:${sc.zodiacSign}[${sc.sunDignity}]・月:${sc.moonSign}[${sc.moonDignity}]・金星:${sc.venusSign}[${sc.venusDignity}]) 総合=${sc.overall}
+ラッキー: カラー=${sc.luckyColor} 数字=${sc.luckyNum} 方角=${sc.luckyDir} アイテム=${sc.luckyItem}
 返すJSON:
-{"seimei":{"title":"姓名判断","reading":"占ぁE��果2斁E,"score":${sc.seimei},"advice":"改喁E��ドバイス1斁E��スコアぁE0未満のとき�Eみ、それ以外�E空斁E��！E},"shichu":{"title":"四柱推命","reading":"占ぁE��果2斁E��特性診断�E�E,"score":50},"kyusei":{"title":"九星気学","reading":"占ぁE��果2斁E,"score":${sc.kyusei},"advice":"改喁E��ドバイス1斁E��スコアぁE0未満のとき�Eみ�E�E},"seiyo":{"title":"西洋占星衁E,"reading":"占ぁE��果2斁E,"score":${sc.seiyo},"advice":"改喁E��ドバイス1斁E��スコアぁE0未満のとき�Eみ�E�E},"overall":{"score":${sc.overall},"title":"運勢タイトル","summary":"総合まとめE斁E��E人の関係性につぁE���E�E,"advice":"2人へのアドバイス1、E斁E,"lucky":{"color":"${sc.luckyColor}","number":${sc.luckyNum},"direction":"${sc.luckyDir}","item":"${sc.luckyItem}"}},"overall2":${sc.overall2},"compatibility":{"score":${sc.overall},"title":"相性タイトル","summary":"2人の相性の総合まとめE斁E,"advice":"2人へのアドバイス1、E斁E}}`;
+{"seimei":{"title":"姓名判断","reading":"占い結果2文","score":${sc.seimei},"advice":"改善アドバイス1文（スコアが60未満のときのみ、それ以外は空文字）"},"shichu":{"title":"四柱推命","reading":"占い結果2文（特性診断）","score":50},"kyusei":{"title":"九星気学","reading":"占い結果2文","score":${sc.kyusei},"advice":"改善アドバイス1文（スコアが60未満のときのみ）"},"seiyo":{"title":"西洋占星術","reading":"占い結果2文","score":${sc.seiyo},"advice":"改善アドバイス1文（スコアが60未満のときのみ）"},"overall":{"score":${sc.overall},"title":"運勢タイトル","summary":"総合まとめ3文（2人の関係性について）","advice":"2人へのアドバイス1〜2文","lucky":{"color":"${sc.luckyColor}","number":${sc.luckyNum},"direction":"${sc.luckyDir}","item":"${sc.luckyItem}"}},"overall2":${sc.overall2},"compatibility":{"score":${sc.overall},"title":"相性タイトル","summary":"2人の相性の総合まとめ3文","advice":"2人へのアドバイス1〜2文"}}`;
     return [{role:"user",content:prompt}];
   };
 
@@ -1530,7 +1568,8 @@ export default function App() {
     try {
       const sc = calcScores();
       if(!sc) return;
-      // 固定テーブルからinsightを計箁E      const fixedInsight1 = calcPersonInsight(form.birthYear, form.birthMonth, form.birthDay, form.bloodType);
+      // 固定テーブルからinsightを計算
+      const fixedInsight1 = calcPersonInsight(form.birthYear, form.birthMonth, form.birthDay, form.bloodType);
       const fixedInsight2 = calcPersonInsight(form.birthYear2, form.birthMonth2, form.birthDay2, form.bloodType2);
       // 関係性×星座の局面別アドバイス
       const sceneAdvice1 = calcSceneAdvice(form.birthYear, form.birthMonth, form.birthDay, form.bloodType, form.relation);
@@ -1564,19 +1603,21 @@ export default function App() {
       if(!res.ok){setError("Error: "+(data.error?.message||res.status));setLoading(false);return;}
       const text=data.content.map(i=>i.text||"").join("");
       const match=text.match(/\{[\s\S]*\}/);
-      if(!match){setError("結果の解析に失敗しました。もぁE��度お試しください、E);setLoading(false);return;}
+      if(!match){setError("結果の解析に失敗しました。もう一度お試しください。");setLoading(false);return;}
       let jsonStr = match[0];
-      // JSON修正処琁E      const fixJson = (str) => {
-        // 日本語�Eコメントや余�Eな斁E��を除去
+      // JSON修正処理
+      const fixJson = (str) => {
+        // 日本語のコメントや余分な文字を除去
         str = str.replace(/:\s*[^",\d\[\{][^,}\]]*(?=[,}])/g, (m) => {
-          // 数値でも文字�EでもなぁE��を空斁E��に
+          // 数値でも文字列でもない値を空文字に
           if(m.match(/:\s*[\d\.]+/)) return m;
           return ': ""';
         });
-        // 末尾の不完�Eな部刁E��修正
+        // 末尾の不完全な部分を修正
         str = str.replace(/,\s*"[^"]*"\s*:\s*$/, '');
         str = str.replace(/,\s*$/, '');
-        // 閉じ括弧を補宁E        const opens = (str.match(/\{/g)||[]).length;
+        // 閉じ括弧を補完
+        const opens = (str.match(/\{/g)||[]).length;
         const closes = (str.match(/\}/g)||[]).length;
         str += '}'.repeat(Math.max(0, opens - closes));
         return str;
@@ -1588,20 +1629,20 @@ export default function App() {
         try {
           setResults({...JSON.parse(fixJson(jsonStr)),...extraData});
         } catch(e2) {
-          // 最終手段�E�忁E��最低限のチE�Eタだけ抽出
+          // 最終手段：必要最低限のデータだけ抽出
           try {
             const fallback = {
-              overall: {score: sc?.overall||50, title:"鑑定完亁E, summary:"鑑定結果を取得しました、E, advice:"", lucky:{color:"白",number:7,direction:"匁E,item:"水晶"}},
-              compatibility: {score: sc?.overall||50, title:"相性診断完亁E, summary:"2人の相性を�E析しました、E, advice:""},
+              overall: {score: sc?.overall||50, title:"鑑定完了", summary:"鑑定結果を取得しました。", advice:"", lucky:{color:"白",number:7,direction:"北",item:"水晶"}},
+              compatibility: {score: sc?.overall||50, title:"相性診断完了", summary:"2人の相性を分析しました。", advice:""},
               overall2: sc?.overall2||50,
               seimei:{title:"姓名判断",reading:"",score:sc?.seimei||50},
               kyusei:{title:"九星気学",reading:"",score:sc?.kyusei||50},
-              seiyo:{title:"西洋占星衁E,reading:"",score:sc?.seiyo||50},
+              seiyo:{title:"西洋占星術",reading:"",score:sc?.seiyo||50},
               shichu:{title:"四柱推命",reading:"",score:50},
             };
             setResults({...fallback,...extraData});
           } catch(e3) {
-            setError("結果の解析に失敗しました。もぁE��度お試しください、E);
+            setError("結果の解析に失敗しました。もう一度お試しください。");
             setLoading(false);
             return;
           }
@@ -1611,41 +1652,42 @@ export default function App() {
     setLoading(false);
   };
 
-  // 神様�EセリチE  const godMood = results ? (results.overall?.score>=70?'excited':results.overall?.score>=40?'normal':'sad') : 'normal';
+  // 神様のセリフ
+  const godMood = results ? (results.overall?.score>=70?'excited':results.overall?.score>=40?'normal':'sad') : 'normal';
   const godLines = {
     idle: [
-      "こ�Eサイトでコミ力お化けになれ！E,
-      "人間関係�E戦略に使え！E,
-      "夫婦も会社員も�Eストもキャバ嬢も、この結果で差をつけろ�E�E,
-      "相手�E性格を知れ�E、人間関係�E攻略できる、E,
-      "好かれたいなら相手を知れ。嫌われたくなぁE��ら相手を知れ、E,
-      "星�E嘘をつかなぁE��使ぁE��使わなぁE��はおぬし次第だ、E,
-      "5000年の叡智を、今日の人間関係に叩き込めE��E,
-      "忖度なし。これが真実だ。戦略に変えろ、E,
+      "このサイトでコミ力お化けになれ！",
+      "人間関係の戦略に使え！",
+      "夫婦も会社員もホストもキャバ嬢も、この結果で差をつけろ！",
+      "相手の性格を知れば、人間関係は攻略できる。",
+      "好かれたいなら相手を知れ。嫌われたくないなら相手を知れ。",
+      "星は嘘をつかない。使うか使わないかはおぬし次第だ。",
+      "5000年の叡智を、今日の人間関係に叩き込め！",
+      "忖度なし。これが真実だ。戦略に変えろ。",
     ],
     loading: [
-      "5000年刁E�EチE�Eタを今すぐ武器に変えてめE��…�E�E,
-      "星座、九星、姓名、惑星…全部ぶち込んで解析中だ�E�E,
-      "恋�Eでも仕事でも、知った老E��勝つ。今から証明してめE��、E,
-      "コミ力お化けへの第一歩…解析中だ�E�E,
+      "5000年分のデータを今すぐ武器に変えてやる…！",
+      "星座、九星、姓名、惑星…全部ぶち込んで解析中だ！",
+      "恋愛でも仕事でも、知った者が勝つ。今から証明してやる。",
+      "コミ力お化けへの第一歩…解析中だ！",
     ],
     excited: [
-      "最高�E結果だ�E�この星�E配置、今すぐ人間関係に使え！E,
-      "これだけ相性がいぁE��ら、あとは行動するだけだ�E�動け！E,
-      "5000年の叡智が「勝てる」と言ってぁE��。コミ力を上げろ！E,
-      "こ�E相性を武器にすれば、無敵になれる�E�E,
+      "最高の結果だ！この星の配置、今すぐ人間関係に使え！",
+      "これだけ相性がいいなら、あとは行動するだけだ！動け！",
+      "5000年の叡智が「勝てる」と言っている。コミ力を上げろ！",
+      "この相性を武器にすれば、無敵になれる！",
     ],
     normal: [
-      "平坁E��だからこそ、戦略が物を言ぁE��読め、動け！E,
-      "こ�E結果を武器にして、相手�E忁E��攻略しろ、E,
-      "中吉�E努力で大吉になる。この鑑定がそ�E地図だ、E,
-      "人間関係に正解はなぁE��だがこの鑑定が最短ルートだ、E,
+      "平均点だからこそ、戦略が物を言う。読め、動け！",
+      "この結果を武器にして、相手の心を攻略しろ。",
+      "中吉は努力で大吉になる。この鑑定がその地図だ。",
+      "人間関係に正解はない。だがこの鑑定が最短ルートだ。",
     ],
     sad: [
-      "厳しい結果ほど価値がある。知らずに負けるより、知って戦え！E,
-      "相性が悪くても攻略法�Eある。諦めるな、読めE��E,
-      "こ�E星�E置で勝てた老E�E、真のコミ力お化けだ�E�E,
-      "送E��E��そチャンス。この鑑定を武器にしろ�E�E,
+      "厳しい結果ほど価値がある。知らずに負けるより、知って戦え！",
+      "相性が悪くても攻略法はある。諦めるな、読め！",
+      "この星配置で勝てた者は、真のコミ力お化けだ！",
+      "逆境こそチャンス。この鑑定を武器にしろ！",
     ]
   };
   const getLine = (type) => {
@@ -1662,7 +1704,7 @@ export default function App() {
 
         <div className="container">
           <div className="header" style={{paddingTop:0,marginTop:0}}>
-            {/* Gemini生�Eヘッダー画僁E*/}
+            {/* Gemini生成ヘッダー画像 */}
             <div style={{
               margin:"0 -16px",
               position:"relative",
@@ -1682,23 +1724,24 @@ export default function App() {
 
           {!results&&!loading&&(
             <div className="card">
-              <div className="card-title">2人の惁E��を�E力せめE/div>
+              <div className="card-title">2人の情報を入力せよ</div>
               <div style={{background:"rgba(0,245,255,0.05)",border:"1px solid rgba(0,245,255,0.15)",borderRadius:10,padding:"10px 14px",marginBottom:14,fontSize:11,color:"var(--subtext)",lineHeight:1.9}}>
-                <span style={{color:"var(--cyan)",fontWeight:700}}>1人目が主人公視点</span>で鑑定されます、Ebr/>
-                「�E刁E��相手�E相性」�E 自刁E��1人目に、Ebr/>
-                「相手からどぁE��られてるか」�E 相手を1人目に、E              </div>
+                <span style={{color:"var(--cyan)",fontWeight:700}}>1人目が主人公視点</span>で鑑定されます。<br/>
+                「自分と相手の相性」→ 自分を1人目に。<br/>
+                「相手からどう見られてるか」→ 相手を1人目に。
+              </div>
 
-              {/* 関係性選抁E*/}
+              {/* 関係性選択 */}
               <div className="input-group">
                 <label className="input-label">2人の関係性</label>
-                <div style={{display:"grid",gridTemplateColumns:"repeat(5,1fr)",gap:6,marginBottom:4}}>
+                <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:6,marginBottom:4}}>
                   {[
-                    {val:"恋�E",icon:"🔥",label:"恋�E"},
-                    {val:"結婁E,icon:"💍",label:"結婁E},
+                    {val:"恋愛",icon:"🔥",label:"恋愛"},
+                    {val:"結婚",icon:"💍",label:"結婚"},
                     {val:"友達",icon:"⚡",label:"友達"},
-                    {val:"同�E",icon:"🛸",label:"同�E"},
-                    {val:"上司部丁E,icon:"🪁E,label:"上司/部丁E},
-
+                    {val:"同僚",icon:"🛸",label:"同僚"},
+                    {val:"上司部下",icon:"🪐",label:"上司/部下"},
+                    {val:"その他",icon:"🌌",label:"その他"},
                   ].map(r=>(
                     <button key={r.val} onClick={()=>set("relation",r.val)} style={{
                       padding:"8px 4px",borderRadius:10,fontSize:12,fontWeight:700,
@@ -1714,102 +1757,72 @@ export default function App() {
                 </div>
               </div>
 
-              {/* 上司/部下�E役割選抁E*/}
-              {form.relation==="上司部丁E&&(
-                <div className="input-group" style={{marginBottom:14}}>
-                  <label className="input-label">どちらが上司�E�E/label>
-                  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:6}}>
-                    {[
-                      {val:"1人目が上司",label:"1人目が上司"},
-                      {val:"2人目が上司",label:"2人目が上司"},
-                    ].map(r=>(
-                      <button key={r.val} onClick={()=>set("role",r.val)} style={{
-                        padding:"10px 4px",borderRadius:10,fontSize:12,fontWeight:700,
-                        border:`2px solid ${form.role===r.val?"#8b5cf6":"#e5e7eb"}`,
-                        background:form.role===r.val?"#f5f3ff":"white",
-                        color:form.role===r.val?"#7c3aed":"#6b7280",
-                        cursor:"pointer",transition:"all 0.2s"
-                      }}>
-                        {r.label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-
               {/* 1人目 */}
               <div style={{background:"#f0f8ff",borderRadius:12,padding:14,marginBottom:12,border:"2px solid #bfdbfe"}}>
                 <div style={{fontSize:12,fontWeight:900,color:"#3b82f6",marginBottom:10}}>
-                  {form.relation==="上司部丁E
-                    ? (form.role==="1人目が上司"?"🪁E上司�E�E人目�E�E:"🪁E部下！E人目�E�E)
-                    : form.relation==="恋�E"?"🔥 あなた！E人目�E�E:"✦ あなた！E人目�E�E
-                  }
+                  {form.relation==="上司部下"?"🪐":form.relation==="恋愛"?"🔥":"✦"} あなた（1人目）
                 </div>
                 <div className="row2">
-                  <div className="input-group"><label className="input-label">姁E/label><input className="input-field" value={form.lastName} onChange={e=>set("lastName",e.target.value)} placeholder="山田"/></div>
-                  <div className="input-group"><label className="input-label">吁E/label><input className="input-field" value={form.firstName} onChange={e=>set("firstName",e.target.value)} placeholder="花孁E/></div>
+                  <div className="input-group"><label className="input-label">姓</label><input className="input-field" value={form.lastName} onChange={e=>set("lastName",e.target.value)} placeholder="山田"/></div>
+                  <div className="input-group"><label className="input-label">名</label><input className="input-field" value={form.firstName} onChange={e=>set("firstName",e.target.value)} placeholder="花子"/></div>
                 </div>
                 <div className="row3">
-                  <div className="input-group"><label className="input-label">生年�E�西暦�E�E/label><input className="input-field" type="number" value={form.birthYear} onChange={e=>set("birthYear",e.target.value)} placeholder="1990"/></div>
-                  <div className="input-group"><label className="input-label">朁E/label><select className="input-field" value={form.birthMonth} onChange={e=>set("birthMonth",e.target.value)}><option value="">朁E/option>{Array.from({length:12},(_,i)=><option key={i+1} value={i+1}>{i+1}朁E/option>)}</select></div>
+                  <div className="input-group"><label className="input-label">生年（西暦）</label><input className="input-field" type="number" value={form.birthYear} onChange={e=>set("birthYear",e.target.value)} placeholder="1990"/></div>
+                  <div className="input-group"><label className="input-label">月</label><select className="input-field" value={form.birthMonth} onChange={e=>set("birthMonth",e.target.value)}><option value="">月</option>{Array.from({length:12},(_,i)=><option key={i+1} value={i+1}>{i+1}月</option>)}</select></div>
                   <div className="input-group"><label className="input-label">日</label><select className="input-field" value={form.birthDay} onChange={e=>set("birthDay",e.target.value)}><option value="">日</option>{Array.from({length:31},(_,i)=><option key={i+1} value={i+1}>{i+1}日</option>)}</select></div>
                 </div>
                 <div className="row2">
-                  <div className="input-group"><label className="input-label">血液垁E/label><select className="input-field" value={form.bloodType} onChange={e=>set("bloodType",e.target.value)}><option value=""> E/option>{["A","B","O","AB"].map(t=><option key={t} value={t}>{t}垁E/option>)}</select></div>
-                  <div className="input-group"><label className="input-label">性別</label><select className="input-field" value={form.gender} onChange={e=>set("gender",e.target.value)}><option value=""> E/option><option value="女性">女性</option><option value="男性">男性</option><option value="そ�E仁E>そ�E仁E/option></select></div>
+                  <div className="input-group"><label className="input-label">血液型</label><select className="input-field" value={form.bloodType} onChange={e=>set("bloodType",e.target.value)}><option value="">—</option>{["A","B","O","AB"].map(t=><option key={t} value={t}>{t}型</option>)}</select></div>
+                  <div className="input-group"><label className="input-label">性別</label><select className="input-field" value={form.gender} onChange={e=>set("gender",e.target.value)}><option value="">—</option><option value="女性">女性</option><option value="男性">男性</option><option value="その他">その他</option></select></div>
                 </div>
               </div>
 
               <div style={{textAlign:"center",margin:"8px 0"}}>
                   <div style={{fontSize:28}}>
-                    {form.relation==="恋�E"?"🔥":form.relation==="結婁E?"💍":form.relation==="友達"?"⚡":form.relation==="同�E"?"🛸":form.relation==="上司部丁E?"🪁E:"🌌"}
+                    {form.relation==="恋愛"?"🔥":form.relation==="結婚"?"💍":form.relation==="友達"?"⚡":form.relation==="同僚"?"🛸":form.relation==="上司部下"?"🪐":"🌌"}
                   </div>
-                  <div style={{fontSize:11,color:"var(--cyan)",fontWeight:700,letterSpacing:2,fontFamily:"'Orbitron',monospace"}}>{form.relation} の相性を解析すめE/div>
+                  <div style={{fontSize:11,color:"var(--cyan)",fontWeight:700,letterSpacing:2,fontFamily:"'Orbitron',monospace"}}>{form.relation} の相性を解析する</div>
                 </div>
 
               {/* 2人目 */}
               <div style={{
-                background:form.relation==="恋�E"?"#fff0f8":form.relation==="結婁E?"#fff7ed":form.relation==="友達"?"#f0fdf4":form.relation==="同�E"?"#eff6ff":form.relation==="上司部丁E?"#f5f3ff":"#fafafa",
+                background:form.relation==="恋愛"?"#fff0f8":form.relation==="結婚"?"#fff7ed":form.relation==="友達"?"#f0fdf4":form.relation==="同僚"?"#eff6ff":form.relation==="上司部下"?"#f5f3ff":"#fafafa",
                 borderRadius:12,padding:14,marginBottom:12,
-                border:`2px solid ${form.relation==="恋�E"?"#fbcfe8":form.relation==="結婁E?"#fed7aa":form.relation==="友達"?"#bbf7d0":form.relation==="同�E"?"#bfdbfe":form.relation==="上司部丁E?"#ddd6fe":"#e5e7eb"}`
+                border:`2px solid ${form.relation==="恋愛"?"#fbcfe8":form.relation==="結婚"?"#fed7aa":form.relation==="友達"?"#bbf7d0":form.relation==="同僚"?"#bfdbfe":form.relation==="上司部下"?"#ddd6fe":"#e5e7eb"}`
               }}>
                 <div style={{fontSize:12,fontWeight:900,marginBottom:10,
-                  color:form.relation==="恋�E"?"#ec4899":form.relation==="結婁E?"#ea580c":form.relation==="友達"?"#16a34a":form.relation==="同�E"?"#2563eb":form.relation==="上司部丁E?"#7c3aed":"#6b7280"
-                }}>
-                  {form.relation==="上司部丁E
-                    ? (form.role==="1人目が上司"?"🪁E部下！E人目�E�E:"🪁E上司�E�E人目�E�E)
-                    : "[ 2人目 ]"
-                  }
-                </div>
+                  color:form.relation==="恋愛"?"#ec4899":form.relation==="結婚"?"#ea580c":form.relation==="友達"?"#16a34a":form.relation==="同僚"?"#2563eb":form.relation==="上司部下"?"#7c3aed":"#6b7280"
+                }}>[ 2人目 ]</div>
                 <div className="row2">
-                  <div className="input-group"><label className="input-label">姁E/label><input className="input-field" value={form.lastName2} onChange={e=>set("lastName2",e.target.value)} placeholder="田中"/></div>
-                  <div className="input-group"><label className="input-label">吁E/label><input className="input-field" value={form.firstName2} onChange={e=>set("firstName2",e.target.value)} placeholder="太郁E/></div>
+                  <div className="input-group"><label className="input-label">姓</label><input className="input-field" value={form.lastName2} onChange={e=>set("lastName2",e.target.value)} placeholder="田中"/></div>
+                  <div className="input-group"><label className="input-label">名</label><input className="input-field" value={form.firstName2} onChange={e=>set("firstName2",e.target.value)} placeholder="太郎"/></div>
                 </div>
                 <div className="row3">
-                  <div className="input-group"><label className="input-label">生年�E�西暦�E�E/label><input className="input-field" type="number" value={form.birthYear2} onChange={e=>set("birthYear2",e.target.value)} placeholder="1988"/></div>
-                  <div className="input-group"><label className="input-label">朁E/label><select className="input-field" value={form.birthMonth2} onChange={e=>set("birthMonth2",e.target.value)}><option value="">朁E/option>{Array.from({length:12},(_,i)=><option key={i+1} value={i+1}>{i+1}朁E/option>)}</select></div>
+                  <div className="input-group"><label className="input-label">生年（西暦）</label><input className="input-field" type="number" value={form.birthYear2} onChange={e=>set("birthYear2",e.target.value)} placeholder="1988"/></div>
+                  <div className="input-group"><label className="input-label">月</label><select className="input-field" value={form.birthMonth2} onChange={e=>set("birthMonth2",e.target.value)}><option value="">月</option>{Array.from({length:12},(_,i)=><option key={i+1} value={i+1}>{i+1}月</option>)}</select></div>
                   <div className="input-group"><label className="input-label">日</label><select className="input-field" value={form.birthDay2} onChange={e=>set("birthDay2",e.target.value)}><option value="">日</option>{Array.from({length:31},(_,i)=><option key={i+1} value={i+1}>{i+1}日</option>)}</select></div>
                 </div>
                 <div className="row2">
-                  <div className="input-group"><label className="input-label">血液垁E/label><select className="input-field" value={form.bloodType2} onChange={e=>set("bloodType2",e.target.value)}><option value=""> E/option>{["A","B","O","AB"].map(t=><option key={t} value={t}>{t}垁E/option>)}</select></div>
-                  <div className="input-group"><label className="input-label">性別</label><select className="input-field" value={form.gender2} onChange={e=>set("gender2",e.target.value)}><option value=""> E/option><option value="女性">女性</option><option value="男性">男性</option><option value="そ�E仁E>そ�E仁E/option></select></div>
+                  <div className="input-group"><label className="input-label">血液型</label><select className="input-field" value={form.bloodType2} onChange={e=>set("bloodType2",e.target.value)}><option value="">—</option>{["A","B","O","AB"].map(t=><option key={t} value={t}>{t}型</option>)}</select></div>
+                  <div className="input-group"><label className="input-label">性別</label><select className="input-field" value={form.gender2} onChange={e=>set("gender2",e.target.value)}><option value="">—</option><option value="女性">女性</option><option value="男性">男性</option><option value="その他">その他</option></select></div>
                 </div>
               </div>
 
               <div className="row2">
-                <div className="input-group"><label className="input-label">相諁E��たいこと�E�任意！E/label><input className="input-field" value={form.concern} onChange={e=>set("concern",e.target.value)} placeholder="2人の相性・封E��のことなど…"/></div>
+                <div className="input-group"><label className="input-label">相談したいこと（任意）</label><input className="input-field" value={form.concern} onChange={e=>set("concern",e.target.value)} placeholder="2人の相性・将来のことなど…"/></div>
                 <div className="input-group"><label className="input-label">鑑定日</label><input className="input-field" type="date" value={form.readingDate} onChange={e=>set("readingDate",e.target.value)}/></div>
               </div>
               <div className="gacha-btn-wrap">
                 <button className="gacha-btn" onClick={handleSubmit} disabled={!form.lastName||!form.birthYear||!form.birthMonth||!form.birthDay||!form.lastName2||!form.birthYear2||!form.birthMonth2||!form.birthDay2}>
-                  無料で占ぁE��始めめE                </button>
+                  無料で占いを始める
+                </button>
               </div>
 
             </div>
           )}
 
           {error&&(
-            <div className="error-box">{error}<br/><button className="reset-btn" onClick={()=>setError(null)}>戻めE/button></div>
+            <div className="error-box">{error}<br/><button className="reset-btn" onClick={()=>setError(null)}>戻る</button></div>
           )}
 
           {loading&&(
@@ -1834,10 +1847,10 @@ export default function App() {
                   <circle cx="12" cy="65" r="1.5" fill="#a78bfa"><animate attributeName="opacity" values="0;1;0" dur="1.3s" repeatCount="indefinite" begin="0.7s"/></circle>
                 </svg>
                 <div style={{fontFamily:"'Noto Serif JP',serif",fontSize:16,color:"var(--cyan)",marginBottom:4,textShadow:"0 0 10px var(--cyan)"}}>AI が鑑定中...</div>
-                <div style={{fontSize:11,color:"var(--subtext)",fontFamily:"'Orbitron',monospace",letterSpacing:2}}>世界最先端AIぁE000年の叡智を解析中</div>
+                <div style={{fontSize:11,color:"var(--subtext)",fontFamily:"'Orbitron',monospace",letterSpacing:2}}>世界最先端AIが5000年の叡智を解析中</div>
               </div>
               <div style={{maxWidth:320,margin:"0 auto",display:"flex",flexDirection:"column",gap:10}}>
-                {["姓名判断 :画数チE�Eタベ�Eスと五行を解析中…","九星気学 :生年から九星を算�E中…","西洋占星衁E:1950、E030年の惑星チE�Eタを�E合中…","四柱推命 :年柱・月柱・日柱を計算中…","AI :全占術を統合して鑑定文を生成中…"].map((step,i)=>(
+                {["姓名判断 :画数データベースと五行を解析中…","九星気学 :生年から九星を算出中…","西洋占星術 :1950〜2030年の惑星データを照合中…","四柱推命 :年柱・月柱・日柱を計算中…","AI :全占術を統合して鑑定文を生成中…"].map((step,i)=>(
                   <div key={i} style={{display:"flex",alignItems:"center",gap:10,padding:"8px 14px",background:"white",borderRadius:10,boxShadow:"0 2px 8px rgba(0,0,0,0.06)",fontSize:12,color:"#4b5563",animation:`fadeIn 0.4s ease ${i*0.3}s both`}}>
                     <div style={{width:8,height:8,borderRadius:"50%",background:"linear-gradient(135deg,#8b5cf6,#ec4899)",flexShrink:0,animation:"blink 1s ease infinite"}}/>
                     {step}
@@ -1849,11 +1862,11 @@ export default function App() {
 
           {results&&(
             <>
-              {/* 相性診断カーチE*/}
+              {/* 相性診断カード */}
               {results.compatibility&&(
-                <div style={{background:"var(--surface2)",borderRadius:16,border:`2px solid ${form.relation==="恋�E"||form.relation==="結婁E?"rgba(236,72,153,0.4)":"var(--border2)"}`,padding:"24px 20px",marginBottom:12,boxShadow:"0 0 30px rgba(100,0,255,0.2)",animation:"popIn 0.6s ease both",textAlign:"center"}}>
+                <div style={{background:"var(--surface2)",borderRadius:16,border:`2px solid ${form.relation==="恋愛"||form.relation==="結婚"?"rgba(236,72,153,0.4)":"var(--border2)"}`,padding:"24px 20px",marginBottom:12,boxShadow:"0 0 30px rgba(100,0,255,0.2)",animation:"popIn 0.6s ease both",textAlign:"center"}}>
                   <div style={{fontSize:13,color:"var(--cyan)",letterSpacing:2,marginBottom:8,fontWeight:700,fontFamily:"'Orbitron',monospace"}}>
-                    {form.relation==="恋�E"?"🔥":form.relation==="結婁E?"💍":form.relation==="友達"?"⚡":form.relation==="同�E"?"🛸":form.relation==="上司部丁E?"🪁E:"🌌"} {form.relation}の相性診断
+                    {form.relation==="恋愛"?"🔥":form.relation==="結婚"?"💍":form.relation==="友達"?"⚡":form.relation==="同僚"?"🛸":form.relation==="上司部下"?"🪐":"🌌"} {form.relation}の相性診断
                   </div>
                   <div style={{fontFamily:"'Reggae One',cursive",fontSize:64,lineHeight:1,marginBottom:6,
                     color:results.compatibility.score>=80?"#ec4899":results.compatibility.score>=60?"#f59e0b":"#6b7280"}}>
@@ -1863,7 +1876,7 @@ export default function App() {
                     background:results.compatibility.score>=80?"#fce7f3":results.compatibility.score>=60?"#fef9c3":"#f3f4f6",
                     color:results.compatibility.score>=80?"#be185d":results.compatibility.score>=60?"#d97706":"#6b7280",
                     border:`2px solid ${results.compatibility.score>=80?"#fbcfe8":results.compatibility.score>=60?"#fde68a":"#e5e7eb"}`}}>
-                    {getVerdict(results.compatibility.score, form.relation)}
+                    {results.compatibility.score>=90?"💖 ソウルメイト確定！":results.compatibility.score>=80?"💕 最高の相性！":results.compatibility.score>=70?"😊 良い相性":results.compatibility.score>=55?"🌀 普通の相性":results.compatibility.score>=40?"⚠ 難しい相性":"⚡ 試練のカップル"}
                   </div>
                   <div style={{fontWeight:900,fontSize:15,marginBottom:10,color:'#ffffff'}}>{results.compatibility.title}</div>
                   <div style={{fontSize:13,lineHeight:2,color:'#e0d8ff',marginBottom:12}}>{results.compatibility.summary}</div>
@@ -1875,62 +1888,63 @@ export default function App() {
                   {/* 2人の名前 */}
                   <div style={{marginTop:14,display:"flex",alignItems:"center",justifyContent:"center",gap:12,fontSize:13,color:"#6b7280"}}>
                     <span style={{fontWeight:700,color:"var(--cyan)"}}>{form.lastName}{form.firstName}</span>
-                    <span style={{color:"var(--cyan)",fontWeight:900,fontSize:16}}>ÁE/span>
+                    <span style={{color:"var(--cyan)",fontWeight:900,fontSize:16}}>×</span>
                     <span style={{fontWeight:700,color:"var(--purple)"}}>{form.lastName2}{form.firstName2}</span>
                   </div>
                 </div>
               )}
 
               <div className="result-reveal">
-                {/* ガチャ結果演�E */}
+                {/* ガチャ結果演出 */}
                 <div style={{textAlign:'center',marginBottom:16,fontSize:24,animation:'popIn 0.5s ease'}}>
-                  {(results.overall?.score||0)>=80?'✦ AI鑑定結果 : 最高�E運命を検�E':(results.overall?.score||0)>=65?'✦ AI鑑定結果 : 良好な運命を検�E':(results.overall?.score||0)>=50?'✦ AI鑑定結果 : 標準的な運命を検�E':(results.overall?.score||0)>=35?'✦ AI鑑定結果 : 試練の運命を検�E':'✦ AI鑑定結果 : 困難な運命を検�E'}
+                  {(results.overall?.score||0)>=80?'✦ AI鑑定結果 : 最高の運命を検出':(results.overall?.score||0)>=65?'✦ AI鑑定結果 : 良好な運命を検出':(results.overall?.score||0)>=50?'✦ AI鑑定結果 : 標準的な運命を検出':(results.overall?.score||0)>=35?'✦ AI鑑定結果 : 試練の運命を検出':'✦ AI鑑定結果 : 困難な運命を検出'}
                 </div>
 
                 
               </div>
 
-              {/* 人生運勢グラチE*/}
+              {/* 人生運勢グラフ */}
               <CompatibilityGraph results={results} form={form} />
 
-              {/* 今日の運氁E*/}
+              {/* 今日の運気 */}
               {results.todayDate&&(
                 <div style={{background:"var(--surface)",border:"1px solid var(--border2)",borderRadius:16,padding:"20px",marginBottom:12,boxShadow:"0 0 20px rgba(0,245,255,0.1)"}}>
                   <div style={{marginBottom:16}}>
                     <div style={{fontFamily:"'Noto Serif JP',serif",fontSize:13,color:"var(--cyan)",marginBottom:6,letterSpacing:2}}>
-                      本日の惑星配�Eにおける直近�E運氁E                    </div>
+                      本日の惑星配列における直近の運気
+                    </div>
                     <div style={{display:"flex",alignItems:"center",gap:8}}>
                       <div style={{fontSize:10,color:"var(--gold)",fontWeight:700,background:"rgba(245,197,24,0.1)",border:"1px solid rgba(245,197,24,0.3)",borderRadius:6,padding:"3px 10px"}}>
-                        鑑定日�E�{results.todayDate ? (() => { const [y,m,d] = results.todayDate.split('/'); return `${y}年${m}朁E{d}日`; })() : ''}
+                        鑑定日：{results.todayDate ? (() => { const [y,m,d] = results.todayDate.split('/'); return `${y}年${m}月${d}日`; })() : ''}
                       </div>
                       <div style={{flex:1,height:1,background:"linear-gradient(90deg,rgba(0,245,255,0.3),transparent)"}}/>
                     </div>
                   </div>
 
                   <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:16}}>
-                    {/* 1人目の今日の運氁E*/}
+                    {/* 1人目の今日の運気 */}
                     <div style={{background:"rgba(0,245,255,0.05)",border:"1px solid rgba(0,245,255,0.2)",borderRadius:12,padding:"14px",textAlign:"center"}}>
                       <div style={{fontSize:10,color:"var(--cyan)",marginBottom:6,fontFamily:"'Orbitron',monospace",letterSpacing:1}}>{form.lastName}{form.firstName}</div>
                       <div style={{fontFamily:"'Orbitron',monospace",fontSize:36,fontWeight:900,color:results.todayScore1>=70?"var(--good)":results.todayScore1>=40?"var(--mid)":"var(--bad)",textShadow:`0 0 15px ${results.todayScore1>=70?"var(--good)":results.todayScore1>=40?"var(--mid)":"var(--bad)"}`}}>
                         {results.todayScore1}
                       </div>
                       <div style={{fontSize:10,color:"var(--subtext)",marginTop:4}}>
-                        {results.todayScore1>=80?"今が動き時！E:results.todayScore1>=60?"好調な流れ":results.todayScore1>=40?"平穏な晁E:"慎重に行動めE}
+                        {results.todayScore1>=80?"今が動き時！":results.todayScore1>=60?"好調な流れ":results.todayScore1>=40?"平穏な時":"慎重に行動を"}
                       </div>
                     </div>
-                    {/* 2人目の今日の運氁E*/}
+                    {/* 2人目の今日の運気 */}
                     <div style={{background:"rgba(167,139,250,0.05)",border:"1px solid rgba(167,139,250,0.2)",borderRadius:12,padding:"14px",textAlign:"center"}}>
                       <div style={{fontSize:10,color:"var(--purple)",marginBottom:6,fontFamily:"'Orbitron',monospace",letterSpacing:1}}>{form.lastName2}{form.firstName2}</div>
                       <div style={{fontFamily:"'Orbitron',monospace",fontSize:36,fontWeight:900,color:results.todayScore2>=70?"var(--good)":results.todayScore2>=40?"var(--mid)":"var(--bad)",textShadow:`0 0 15px ${results.todayScore2>=70?"var(--good)":results.todayScore2>=40?"var(--mid)":"var(--bad)"}`}}>
                         {results.todayScore2}
                       </div>
                       <div style={{fontSize:10,color:"var(--subtext)",marginTop:4}}>
-                        {results.todayScore2>=80?"今が動き時！E:results.todayScore2>=60?"好調な流れ":results.todayScore2>=40?"平穏な晁E:"慎重に行動めE}
+                        {results.todayScore2>=80?"今が動き時！":results.todayScore2>=60?"好調な流れ":results.todayScore2>=40?"平穏な時":"慎重に行動を"}
                       </div>
                     </div>
                   </div>
 
-                  {/* 惑星の影響説昁E*/}
+                  {/* 惑星の影響説明 */}
                   {results.todaySummary1&&(
                     <div style={{background:"rgba(0,245,255,0.04)",border:"1px solid rgba(0,245,255,0.15)",borderRadius:10,padding:"12px 14px",marginBottom:10}}>
                       <div style={{fontSize:9,color:"var(--cyan)",letterSpacing:2,marginBottom:6,fontFamily:"'Orbitron',monospace"}}>{form.lastName}{form.firstName} への惑星の影響</div>
@@ -1957,20 +1971,21 @@ export default function App() {
                     </div>
                   </div>
 
-                  {/* されて嬉しぁE��と・嫌なこと�E�固定テーブルから直接表示�E�E*/}
+                  {/* されて嬉しいこと・嫌なこと（固定テーブルから直接表示） */}
                   {(results.fixedInsight1||results.fixedInsight2)&&(
                     <div style={{borderTop:"1px solid var(--border)",paddingTop:14}}>
-                      <div style={{fontSize:9,color:"var(--gold)",letterSpacing:2,marginBottom:12,fontFamily:"'Orbitron',monospace"}}>✦ PERSONALITY INSIGHT  E432通りの占ぁE�E极E/div>
+                      <div style={{fontSize:9,color:"var(--gold)",letterSpacing:2,marginBottom:12,fontFamily:"'Orbitron',monospace"}}>✦ PERSONALITY INSIGHT — 432通りの占い分析</div>
 
                       <div style={{display:"flex",flexDirection:"column",gap:10}}>
                         {/* 1人目 */}
                         {results.fixedInsight1&&(
                           <div style={{background:"rgba(0,245,255,0.03)",border:"1px solid rgba(0,245,255,0.15)",borderRadius:10,padding:"12px 14px"}}>
                             <div style={{fontSize:10,color:"var(--cyan)",marginBottom:8,fontFamily:"'Orbitron',monospace",letterSpacing:1}}>
-                              {form.lastName}{form.firstName}�E�Eresults.fixedInsight1.sign}・{["一白","二黁E,"三碧","四緁E,"五黁E,"六白","丁E��","八白","九紫"][results.fixedInsight1.star-1]}水星！E                            </div>
+                              {form.lastName}{form.firstName}（{results.fixedInsight1.sign}・{["一白","二黒","三碧","四緑","五黄","六白","七赤","八白","九紫"][results.fixedInsight1.star-1]}水星）
+                            </div>
                             <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:8}}>
                               <div style={{background:"rgba(0,255,136,0.05)",border:"1px solid rgba(0,255,136,0.2)",borderRadius:8,padding:"8px 10px"}}>
-                                <div style={{fontSize:8,color:"var(--good)",letterSpacing:1,marginBottom:4,fontFamily:"'Orbitron',monospace"}}>されて嬉しぁE��と</div>
+                                <div style={{fontSize:8,color:"var(--good)",letterSpacing:1,marginBottom:4,fontFamily:"'Orbitron',monospace"}}>されて嬉しいこと</div>
                                 <div style={{fontSize:11,color:"#e0d8ff",lineHeight:1.8}}>{results.fixedInsight1.like}</div>
                               </div>
                               <div style={{background:"rgba(255,68,85,0.05)",border:"1px solid rgba(255,68,85,0.2)",borderRadius:8,padding:"8px 10px"}}>
@@ -1993,10 +2008,11 @@ export default function App() {
                         {results.fixedInsight2&&(
                           <div style={{background:"rgba(167,139,250,0.03)",border:"1px solid rgba(167,139,250,0.2)",borderRadius:10,padding:"12px 14px"}}>
                             <div style={{fontSize:10,color:"var(--purple)",marginBottom:8,fontFamily:"'Orbitron',monospace",letterSpacing:1}}>
-                              {form.lastName2}{form.firstName2}�E�Eresults.fixedInsight2.sign}・{["一白","二黁E,"三碧","四緁E,"五黁E,"六白","丁E��","八白","九紫"][results.fixedInsight2.star-1]}水星！E                            </div>
+                              {form.lastName2}{form.firstName2}（{results.fixedInsight2.sign}・{["一白","二黒","三碧","四緑","五黄","六白","七赤","八白","九紫"][results.fixedInsight2.star-1]}水星）
+                            </div>
                             <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:8}}>
                               <div style={{background:"rgba(0,255,136,0.05)",border:"1px solid rgba(0,255,136,0.2)",borderRadius:8,padding:"8px 10px"}}>
-                                <div style={{fontSize:8,color:"var(--good)",letterSpacing:1,marginBottom:4,fontFamily:"'Orbitron',monospace"}}>されて嬉しぁE��と</div>
+                                <div style={{fontSize:8,color:"var(--good)",letterSpacing:1,marginBottom:4,fontFamily:"'Orbitron',monospace"}}>されて嬉しいこと</div>
                                 <div style={{fontSize:11,color:"#e0d8ff",lineHeight:1.8}}>{results.fixedInsight2.like}</div>
                               </div>
                               <div style={{background:"rgba(255,68,85,0.05)",border:"1px solid rgba(255,68,85,0.2)",borderRadius:8,padding:"8px 10px"}}>
@@ -2020,13 +2036,13 @@ export default function App() {
                 </div>
               )}
 
-              {/* 吁E��ぁE��足�E�折りたたみ�E�E*/}
+              {/* 各占い補足（折りたたみ） */}
               <DetailToggle results={results} />
 
               {/* シェアボタン */}
               <ShareButtons results={results} form={form} />
 
-              <button className="reset-btn" onClick={()=>setResults(null)}>🎰 もう一度占ぁE/button>
+              <button className="reset-btn" onClick={()=>setResults(null)}>🎰 もう一度占う</button>
             </>
           )}
         </div>
