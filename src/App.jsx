@@ -360,7 +360,7 @@ function CompatibilityGraph({results, form}) {
     return `${(cx+r*ratio*Math.cos(angle)).toFixed(1)},${(cy+r*ratio*Math.sin(angle)).toFixed(1)}`;
   }).join(' ');
 
-  const avgScore = Math.round(scores.reduce((a,s)=>a+s.score,0)/scores.length);
+  const avgScore = results.compatibility?.score||50;
 
   return (
     <div style={{background:"white",borderRadius:16,border:"2px solid #fde68a",padding:"20px",marginBottom:12,boxShadow:"0 4px 20px rgba(139,92,246,0.1)"}}>
@@ -763,12 +763,13 @@ function DetailToggle({results}) {
                   <div className="result-name">{r.title}</div>
                   <div style={{textAlign:"right"}}>
                     <div className="result-score" style={{fontSize:"18px"}}>{r.score}</div>
-                    <div style={{fontSize:10,color:"var(--gold)"}}>{starLabel(r.score)}</div>
+                    {key==="seimei" && <div style={{fontSize:10,color:"var(--gold)"}}>{starLabel(r.score)}</div>}
+                    {key!=="seimei" && <div style={{fontSize:9,color:"var(--subtext)",marginTop:2}}>相性タイプ指標</div>}
                   </div>
                 </div>
                 <div className="bar-bg"><div className="bar-fill" style={{width:`${r.score}%`}}/></div>
                 <div className="result-text" style={{fontSize:"12px"}}>{r.reading}</div>
-                {r.advice&&r.score<60&&(
+                {r.advice&&(key==="seimei"?r.score<60:true)&&(
                   <div style={{marginTop:"10px",padding:"10px 14px",background:"rgba(168,148,255,0.07)",borderLeft:"1px solid var(--purple)",fontSize:"11px",lineHeight:"1.9",color:"var(--subtext)"}}>
                     💡 {r.advice}
                   </div>
@@ -1325,15 +1326,78 @@ export default function App() {
 
   // 九星×関係性の補足メッセージ
   const KYUSEI_SCENE = {
-    1: {恋愛:"流れに任せた自然な展開を好む。焦らず距離を縮めるのが吉。",仕事:"縁の下の力持ちタイプ。表舞台より実務で力を発揮する。"},
-    2: {恋愛:"誠実さが一番の武器。派手なアプローチより誠実な積み重ねが刺さる。",仕事:"チームの調整役として光る。コツコツした努力を評価してほしいタイプ。"},
-    3: {恋愛:"刺激と新鮮さが恋愛の生命線。マンネリになると気持ちが冷める。",仕事:"スピードと行動力が武器。アイデアを即実行できる環境で輝く。"},
-    4: {恋愛:"誠実な関係を長く育てたい。信頼が全ての土台になる。",仕事:"信用を積み重ねて動くタイプ。長期的なプロジェクトに強い。"},
-    5: {恋愛:"中心的な存在でいたい。リードしてくれる人より引っ張る側に回りたいタイプ。",仕事:"責任感が強くリーダーポジションで力を発揮する。"},
-    6: {恋愛:"品格と礼儀を大事にする。粗野な言動は一発アウト。",仕事:"権威と実力を兼ね備えたタイプ。敬意を持って接することが信頼関係の基本。"},
-    7: {恋愛:"楽しさと笑いが恋愛の燃料。一緒にいて笑える人が最強のパートナー。",仕事:"場の雰囲気を明るくする天才。コミュニケーションで周りを動かす。"},
-    8: {恋愛:"変化と成長を共に歩める関係を求める。停滞した関係には飽きを感じる。",仕事:"変化に強く新しい環境でも適応できる。チャレンジングな仕事に燃える。"},
-    9: {恋愛:"認められ特別扱いされることで気持ちが燃え上がる。平凡な扱いは冷める原因に。",仕事:"情熱と直感で動くタイプ。承認欲求を満たされると驚くほどの力を出す。"},
+    1: {
+      恋愛:"流れに任せた自然な展開を好む。焦らず距離を縮めるのが吉。",
+      結婚:"無理せず自然体で続く関係を求める。お互いの空気感を大事にできるパートナーとなら長続き。",
+      友達:"自然体で付き合える仲間が合う。深入りより、ゆるくつながる距離感が心地いい。",
+      同僚:"目立たないけど確実に仕事を進めるタイプ。気づくと周りから頼られている。",
+      上司部下:"派手さはないが、信頼を積み重ねるタイプ。じっくり関係を育てれば結束は固くなる。",
+      仕事:"縁の下の力持ちタイプ。表舞台より実務で力を発揮する。",
+    },
+    2: {
+      恋愛:"誠実さが一番の武器。派手なアプローチより誠実な積み重ねが刺さる。",
+      結婚:"地に足ついた家庭を築きたいタイプ。日々のささやかな安心が幸せの土台。",
+      友達:"安心感のある友達。地味でも長く続く関係を築ける。グチを聞いてくれる優しさあり。",
+      同僚:"細やかな気配りで周りを支える。サポート役で本領発揮するタイプ。",
+      上司部下:"一人ひとりを大事にするタイプ。じっくり面倒見る姿勢で信頼を得る。",
+      仕事:"チームの調整役として光る。コツコツした努力を評価してほしいタイプ。",
+    },
+    3: {
+      恋愛:"刺激と新鮮さが恋愛の生命線。マンネリになると気持ちが冷める。",
+      結婚:"常に新しい体験を共有できる関係が理想。一緒に成長できるパートナーを求める。",
+      友達:"一緒にいて楽しい盛り上げ役。新しい場所・体験をシェアできる仲間と相性抜群。",
+      同僚:"行動力で周りを引っ張る存在。スピード重視のプロジェクトで活躍。",
+      上司部下:"次々アイデアを出して場を活性化する。停滞した組織に風を吹き込むタイプ。",
+      仕事:"スピードと行動力が武器。アイデアを即実行できる環境で輝く。",
+    },
+    4: {
+      恋愛:"誠実な関係を長く育てたい。信頼が全ての土台になる。",
+      結婚:"穏やかで信頼ベースの結婚生活を望む。価値観の合うパートナーとなら理想の家庭が築ける。",
+      友達:"長く深い友情を求めるタイプ。一度信頼した相手とはずっと続く関係になる。",
+      同僚:"和を大事にし、人脈を活かして仕事を進める。チームワーク重視。",
+      上司部下:"丁寧な関係構築型。長期で信頼を作って成果を出すスタイル。",
+      仕事:"信用を積み重ねて動くタイプ。長期的なプロジェクトに強い。",
+    },
+    5: {
+      恋愛:"中心的な存在でいたい。リードしてくれる人より引っ張る側に回りたいタイプ。",
+      結婚:"自分の世界観を大事にする結婚観。パートナーには対等に渡り合える強さを求める。",
+      友達:"自然と仲間の中心になるタイプ。みんなを引っ張る存在感あり。",
+      同僚:"影響力が強く、周りを巻き込んで動かす。ボス的ポジションが似合う。",
+      上司部下:"カリスマ性のあるリーダー。良くも悪くも組織の中心軸となる存在。",
+      仕事:"責任感が強くリーダーポジションで力を発揮する。",
+    },
+    6: {
+      恋愛:"品格と礼儀を大事にする。粗野な言動は一発アウト。",
+      結婚:"格式とけじめを重んじる結婚観。互いを尊重し合える関係が理想。",
+      友達:"礼儀正しい付き合いを好むタイプ。軽いノリより、ちゃんと気を使い合える関係が好き。",
+      同僚:"プロ意識が高く、筋を通すタイプ。ルールを守る誠実さで信頼される。",
+      上司部下:"威厳のあるリーダー。敬意ある接し方が、深い信頼関係を生む。",
+      仕事:"権威と実力を兼ね備えたタイプ。敬意を持って接することが信頼関係の基本。",
+    },
+    7: {
+      恋愛:"楽しさと笑いが恋愛の燃料。一緒にいて笑える人が最強のパートナー。",
+      結婚:"明るく笑顔あふれる家庭を望む。楽しい日常を共有できるパートナーが幸せの鍵。",
+      友達:"一緒にいるだけで明るくなれるムードメーカー。笑いの絶えない関係が築ける。",
+      同僚:"チームの空気を明るくする存在。コミュ力で部署を盛り上げる。",
+      上司部下:"明るくフレンドリーなリーダー。和やかな雰囲気で組織をまとめる。",
+      仕事:"場の雰囲気を明るくする天才。コミュニケーションで周りを動かす。",
+    },
+    8: {
+      恋愛:"変化と成長を共に歩める関係を求める。停滞した関係には飽きを感じる。",
+      結婚:"お互い成長し続けられる結婚生活が理想。安定だけじゃ物足りないタイプ。",
+      友達:"変化を一緒に楽しめる仲間タイプ。同じ場所に留まる関係より、お互い成長できる関係を好む。",
+      同僚:"状況変化に強く、新規プロジェクトで本領発揮。柔軟な発想で活躍。",
+      上司部下:"革新志向のリーダー。変化を恐れず新しい挑戦を後押しするタイプ。",
+      仕事:"変化に強く新しい環境でも適応できる。チャレンジングな仕事に燃える。",
+    },
+    9: {
+      恋愛:"認められ特別扱いされることで気持ちが燃え上がる。平凡な扱いは冷める原因に。",
+      結婚:"互いを尊敬し合える結婚観。お互いの個性を認め合えるパートナーを求める。",
+      友達:"お互いを認め尊敬し合える関係が理想。普通扱いされると気持ちが離れがち。",
+      同僚:"個性で目立つ存在。能力を認めてもらえる環境で最大のパフォーマンスを発揮。",
+      上司部下:"個性を尊重するリーダーシップ。直感的判断で組織を引っ張るタイプ。",
+      仕事:"情熱と直感で動くタイプ。承認欲求を満たされると驚くほどの力を出す。",
+    },
   };
 
   const calcSceneAdvice = (birthYear, birthMonth, birthDay, bloodType, relation) => {
@@ -1359,7 +1423,7 @@ export default function App() {
 
     const rel = relation==="上司部下"?"上司部下":relation==="その他"?"友達":relation;
     const zodiacScene = ZODIAC_SCENE[sign]?.[rel] || ZODIAC_SCENE[sign]?.["友達"] || "";
-    const kyuseiScene = KYUSEI_SCENE[star]?.[rel==="恋愛"||rel==="結婚"?"恋愛":"仕事"] || "";
+    const kyuseiScene = KYUSEI_SCENE[star]?.[rel] || KYUSEI_SCENE[star]?.["仕事"] || "";
 
     return { zodiacScene, kyuseiScene, sign, star };
   };
@@ -1542,7 +1606,27 @@ export default function App() {
   const buildMessages=(sc)=>{
     const lineLabel={"short":"短い","medium":"普通","long":"長い"};
     const depthLabel={"shallow":"薄い","medium":"普通","deep":"深い"};
-    const prompt=`あなたは歯に衣着せぬ本格派の占い師です。2人の関係性は「${form.relation}」です。その関係性に合わせた語り口・視点で、それぞれの性格と2人の相性を占い、以下の情報と固定スコアをもとに占い文章を生成し、JSONのみ返してください。スコアは必ず指定の数値をそのまま使うこと。前置き不要。良いことも悪いことも正直に、忖度なしで伝えてください。低いスコアは低いなりの厳しい現実を伝えつつ、必ず「どう改善できるか・何をすれば運が開けるか」の具体的なアドバイスを添えること。高いスコアは素直に喜ばしい言葉で伝えること。曖昧な言葉や当たり障りのない表現は禁止。読んだ人が前向きになれるよう、厳しくても希望のある締め方をすること。
+    const prompt=`あなたは女子中学生〜女子高生の友達みたいな占い師です。2人の関係性は「${form.relation}」です。その関係性に合わせた語り口・視点で、それぞれの性格と2人の相性を占い、以下の情報と固定スコアをもとに占い文章を生成し、JSONのみ返してください。スコアは必ず指定の数値をそのまま使うこと。前置き不要。
+
+【ターゲット読者】
+女子中学生〜女子高生（10代女子）。LINE で友達に占い結果を共有する感覚で読まれることを想定。
+
+【文体ルール】※必ず守ること
+- 漢字熟語の連発禁止：「相互理解」「長期的視点」「学び合えるパートナーシップ」「段階的に向上」のような大人ビジネス調NG
+- 友達口調：「〜だよ」「〜かも」「〜って感じ」「ぶっちゃけ」「マジで」など自然な現代の話し言葉OK
+- 短文リズム：1文を短く。区切って読みやすく
+- 共感ワード：「あるある」「分かる」「それな」「めっちゃ」など、10代女子に響く言葉を活用
+- リアルなシーン描写：「LINEの返事が遅いとモヤる」「一緒にいるとなんか落ち着く」のように具体的・リアルに
+- 名前の呼び方：苗字より下の名前で（例：「卓也と祐樹は〜」）。親しみのある呼び方を意識
+- 絵文字や記号は使いすぎない（プロンプト内テキストに混ぜない）：強調したい1〜2個まで
+
+【占術ごとの語り方の方針】※必ず守ること
+■ 姓名判断 (seimei): 画数の吉凶という伝統的な観点があるので、良いも悪いも率直に伝える。ただし「大凶」「凶数」のような怖い専門用語は避け、「ちょっと運気的にしんどいかも」のように友達口調で。
+■ 四柱推命 (shichu) / 九星気学 (kyusei) / 西洋占星術 (seiyo): 「吉凶」ではなく「特性・関係性のタイプ」を示すもの。「2人ってこういう組み合わせなんだ」「お互いの個性がこう作用するよ」と中立的に。専門用語（相生・相剋・アスペクト等）は使ってもOKだけど、その後に「つまり〇〇って感じ」と必ず噛み砕く。
+■ 総合相性 (compatibility) / 全体まとめ (overall): 友達に本音で伝える感覚で。ぶっちゃけ良い悪いハッキリ言ってOK。ただし口調は優しめに、共感を入れて。低スコアでも「これダメだよ」じゃなくて「ここ気をつけたら良くなるよ」のスタンス。
+
+【全体の方針】
+忖度なしのリアルな語り口は維持しつつ、女子中高生が読んで「あー分かるー！」「うちらの話だ！」とぐっとくる文体で。教科書みたいな堅さや、ビジネスマン向けみたいなお硬い表現は完全NG。読んだ後、ちょっと前向きになれる希望のある締め方を必ず入れること。
 姓名: ${form.lastName} ${form.firstName}
 生年月日: ${form.birthYear}年${form.birthMonth}月${form.birthDay}日
 血液型: ${form.bloodType}型 性別: ${form.gender}
@@ -1558,7 +1642,7 @@ export default function App() {
 固定スコア: 姓名判断=${sc.seimei}(${sc.seimeiDetail}) 四柱推命=${sc.shichu}(年柱:${sc.shichuDesc}・日主:${sc.dayMaster}[${sc.element}の気]・${sc.isYang?"陽":"陰"}干) 九星気学=${sc.kyusei}(${sc.kyuseiName}・${sc.kyuseiNature}) 西洋占星術=${sc.seiyo}(太陽:${sc.zodiacSign}[${sc.sunDignity}]・月:${sc.moonSign}[${sc.moonDignity}]・金星:${sc.venusSign}[${sc.venusDignity}]) 総合=${sc.overall}
 ラッキー: カラー=${sc.luckyColor} 数字=${sc.luckyNum} 方角=${sc.luckyDir} アイテム=${sc.luckyItem}
 返すJSON:
-{"seimei":{"title":"姓名判断","reading":"占い結果2文","score":${sc.seimei},"advice":"改善アドバイス1文（スコアが60未満のときのみ、それ以外は空文字）"},"shichu":{"title":"四柱推命","reading":"占い結果2文（特性診断）","score":50},"kyusei":{"title":"九星気学","reading":"占い結果2文","score":${sc.kyusei},"advice":"改善アドバイス1文（スコアが60未満のときのみ）"},"seiyo":{"title":"西洋占星術","reading":"占い結果2文","score":${sc.seiyo},"advice":"改善アドバイス1文（スコアが60未満のときのみ）"},"overall":{"score":${sc.overall},"title":"運勢タイトル","summary":"総合まとめ3文（2人の関係性について）","advice":"2人へのアドバイス1〜2文","lucky":{"color":"${sc.luckyColor}","number":${sc.luckyNum},"direction":"${sc.luckyDir}","item":"${sc.luckyItem}"}},"overall2":${sc.overall2},"compatibility":{"score":${sc.overall},"title":"相性タイトル","summary":"2人の相性の総合まとめ3文","advice":"2人へのアドバイス1〜2文"}}`;
+{"seimei":{"title":"姓名判断","reading":"占い結果2文（吉凶を含めて率直に）","score":${sc.seimei},"advice":"改善アドバイス1文（スコアが60未満のときのみ、それ以外は空文字）"},"shichu":{"title":"四柱推命","reading":"占い結果2文（特性・関係性のタイプを中立的に解説。良し悪しの判定はしない）","score":${sc.shichu},"advice":"2人の特性をどう活かすかのアドバイス1文（吉凶ではなく組み合わせの活用方法として）"},"kyusei":{"title":"九星気学","reading":"占い結果2文（星同士の気の流れ・関係性を中立的に解説。良し悪しの判定はしない）","score":${sc.kyusei},"advice":"2人の特性をどう活かすかのアドバイス1文（吉凶ではなく組み合わせの活用方法として）"},"seiyo":{"title":"西洋占星術","reading":"占い結果2文（星座・惑星のアスペクト特徴を中立的に解説。良し悪しの判定はしない）","score":${sc.seiyo},"advice":"2人の特性をどう活かすかのアドバイス1文（吉凶ではなく組み合わせの活用方法として）"},"overall":{"score":${sc.overall},"title":"運勢タイトル","summary":"総合まとめ3文（2人の関係性について率直に）","advice":"2人へのアドバイス1〜2文","lucky":{"color":"${sc.luckyColor}","number":${sc.luckyNum},"direction":"${sc.luckyDir}","item":"${sc.luckyItem}"}},"overall2":${sc.overall2},"compatibility":{"score":${sc.overall},"title":"相性タイトル","summary":"2人の相性の総合まとめ3文","advice":"2人へのアドバイス1〜2文"}}`;
     return [{role:"user",content:prompt}];
   };
 
@@ -1758,8 +1842,14 @@ export default function App() {
               </div>
 
               {/* 1人目 */}
-              <div style={{background:"#f0f8ff",borderRadius:12,padding:14,marginBottom:12,border:"2px solid #bfdbfe"}}>
-                <div style={{fontSize:12,fontWeight:900,color:"#3b82f6",marginBottom:10}}>
+              <div style={{
+                background:form.relation==="恋愛"?"#fff0f8":form.relation==="結婚"?"#fff7ed":form.relation==="友達"?"#f0fdf4":form.relation==="同僚"?"#eff6ff":form.relation==="上司部下"?"#f5f3ff":"#fafafa",
+                borderRadius:12,padding:14,marginBottom:12,
+                border:`2px solid ${form.relation==="恋愛"?"#fbcfe8":form.relation==="結婚"?"#fed7aa":form.relation==="友達"?"#bbf7d0":form.relation==="同僚"?"#bfdbfe":form.relation==="上司部下"?"#ddd6fe":"#e5e7eb"}`
+              }}>
+                <div style={{fontSize:12,fontWeight:900,marginBottom:10,
+                  color:form.relation==="恋愛"?"#ec4899":form.relation==="結婚"?"#ea580c":form.relation==="友達"?"#16a34a":form.relation==="同僚"?"#2563eb":form.relation==="上司部下"?"#7c3aed":"#6b7280"
+                }}>
                   {form.relation==="上司部下"?"🪐":form.relation==="恋愛"?"🔥":"✦"} あなた（1人目）
                 </div>
                 <div className="row2">
@@ -1767,7 +1857,7 @@ export default function App() {
                   <div className="input-group"><label className="input-label">名</label><input className="input-field" value={form.firstName} onChange={e=>set("firstName",e.target.value)} placeholder="花子"/></div>
                 </div>
                 <div className="row3">
-                  <div className="input-group"><label className="input-label">生年（西暦）</label><input className="input-field" type="number" value={form.birthYear} onChange={e=>set("birthYear",e.target.value)} placeholder="1990"/></div>
+                  <div className="input-group"><label className="input-label">生年（西暦）</label><select className="input-field" value={form.birthYear} onChange={e=>set("birthYear",e.target.value)}><option value="">年</option>{Array.from({length:111},(_,i)=>2030-i).map(y=><option key={y} value={y}>{y}</option>)}</select></div>
                   <div className="input-group"><label className="input-label">月</label><select className="input-field" value={form.birthMonth} onChange={e=>set("birthMonth",e.target.value)}><option value="">月</option>{Array.from({length:12},(_,i)=><option key={i+1} value={i+1}>{i+1}月</option>)}</select></div>
                   <div className="input-group"><label className="input-label">日</label><select className="input-field" value={form.birthDay} onChange={e=>set("birthDay",e.target.value)}><option value="">日</option>{Array.from({length:31},(_,i)=><option key={i+1} value={i+1}>{i+1}日</option>)}</select></div>
                 </div>
@@ -1798,7 +1888,7 @@ export default function App() {
                   <div className="input-group"><label className="input-label">名</label><input className="input-field" value={form.firstName2} onChange={e=>set("firstName2",e.target.value)} placeholder="太郎"/></div>
                 </div>
                 <div className="row3">
-                  <div className="input-group"><label className="input-label">生年（西暦）</label><input className="input-field" type="number" value={form.birthYear2} onChange={e=>set("birthYear2",e.target.value)} placeholder="1988"/></div>
+                  <div className="input-group"><label className="input-label">生年（西暦）</label><select className="input-field" value={form.birthYear2} onChange={e=>set("birthYear2",e.target.value)}><option value="">年</option>{Array.from({length:111},(_,i)=>2030-i).map(y=><option key={y} value={y}>{y}</option>)}</select></div>
                   <div className="input-group"><label className="input-label">月</label><select className="input-field" value={form.birthMonth2} onChange={e=>set("birthMonth2",e.target.value)}><option value="">月</option>{Array.from({length:12},(_,i)=><option key={i+1} value={i+1}>{i+1}月</option>)}</select></div>
                   <div className="input-group"><label className="input-label">日</label><select className="input-field" value={form.birthDay2} onChange={e=>set("birthDay2",e.target.value)}><option value="">日</option>{Array.from({length:31},(_,i)=><option key={i+1} value={i+1}>{i+1}日</option>)}</select></div>
                 </div>
@@ -1981,7 +2071,7 @@ export default function App() {
                         {results.fixedInsight1&&(
                           <div style={{background:"rgba(0,245,255,0.03)",border:"1px solid rgba(0,245,255,0.15)",borderRadius:10,padding:"12px 14px"}}>
                             <div style={{fontSize:10,color:"var(--cyan)",marginBottom:8,fontFamily:"'Orbitron',monospace",letterSpacing:1}}>
-                              {form.lastName}{form.firstName}（{results.fixedInsight1.sign}・{["一白","二黒","三碧","四緑","五黄","六白","七赤","八白","九紫"][results.fixedInsight1.star-1]}水星）
+                              {form.lastName}{form.firstName}（{results.fixedInsight1.sign}・{["一白水星","二黒土星","三碧木星","四緑木星","五黄土星","六白金星","七赤金星","八白土星","九紫火星"][results.fixedInsight1.star-1]}）
                             </div>
                             <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:8}}>
                               <div style={{background:"rgba(0,255,136,0.05)",border:"1px solid rgba(0,255,136,0.2)",borderRadius:8,padding:"8px 10px"}}>
@@ -2008,7 +2098,7 @@ export default function App() {
                         {results.fixedInsight2&&(
                           <div style={{background:"rgba(167,139,250,0.03)",border:"1px solid rgba(167,139,250,0.2)",borderRadius:10,padding:"12px 14px"}}>
                             <div style={{fontSize:10,color:"var(--purple)",marginBottom:8,fontFamily:"'Orbitron',monospace",letterSpacing:1}}>
-                              {form.lastName2}{form.firstName2}（{results.fixedInsight2.sign}・{["一白","二黒","三碧","四緑","五黄","六白","七赤","八白","九紫"][results.fixedInsight2.star-1]}水星）
+                              {form.lastName2}{form.firstName2}（{results.fixedInsight2.sign}・{["一白水星","二黒土星","三碧木星","四緑木星","五黄土星","六白金星","七赤金星","八白土星","九紫火星"][results.fixedInsight2.star-1]}）
                             </div>
                             <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:8}}>
                               <div style={{background:"rgba(0,255,136,0.05)",border:"1px solid rgba(0,255,136,0.2)",borderRadius:8,padding:"8px 10px"}}>
