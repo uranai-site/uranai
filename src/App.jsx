@@ -739,8 +739,55 @@ const FORTUNE_META = {
 };
 const starLabel = s=>s>=90?"★★★★★":s>=75?"★★★★☆":s>=60?"★★★☆☆":s>=40?"★★☆☆☆":"★☆☆☆☆";
 
-function DetailToggle({results}) {
+// ===== Phase 2 - ステップD: 広告バナー（無料プラン専用） =====
+function AdBanner({userPlan="free", variant="banner", onUpgrade}) {
+  // 無料プランのみ表示
+  if (userPlan !== "free") return null;
+  // バナー or 正方形
+  const isBanner = variant === "banner";
+  return (
+    <div style={{
+      margin:"16px 0",
+      background:"linear-gradient(135deg,rgba(252,211,77,0.06),rgba(245,158,11,0.04))",
+      border:"1px dashed rgba(245,158,11,0.4)",
+      borderRadius:10,
+      padding:"10px 14px",
+      position:"relative"
+    }}>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:6}}>
+        <span style={{fontSize:8,color:"#fbbf24",letterSpacing:1.5,fontFamily:"'Orbitron',monospace",fontWeight:700}}>SPONSORED · 広告</span>
+        <button
+          onClick={onUpgrade}
+          style={{background:"transparent",border:"1px solid rgba(167,139,250,0.4)",color:"#a78bfa",fontSize:9,padding:"2px 8px",borderRadius:6,cursor:"pointer"}}
+          title="ベーシックプランで広告非表示"
+        >
+          広告を消す 💎
+        </button>
+      </div>
+      <div style={{
+        background:"rgba(0,0,0,0.3)",
+        border:"1px solid rgba(255,255,255,0.08)",
+        borderRadius:8,
+        padding:isBanner?"22px 16px":"36px 16px",
+        textAlign:"center",
+        color:"#888",
+        fontSize:11,
+        lineHeight:1.7
+      }}>
+        <div style={{fontSize:isBanner?28:36,marginBottom:6}}>📢</div>
+        <div style={{fontWeight:700,color:"#aaa",marginBottom:4}}>広告スペース</div>
+        <div style={{fontSize:9,color:"#666"}}>
+          {isBanner?"ここに広告バナーが表示されます":"ここにスクエア広告が表示されます"}
+          <br/>(AdSense / Amazonアソシエイト 等で差し替え予定)
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function DetailToggle({results, userPlan="free", onUpgrade}) {
   const [open, setOpen] = useState(false);
+  const isLocked = userPlan === "free";
   return (
     <div style={{marginBottom:"16px"}}>
       <button
@@ -750,29 +797,58 @@ function DetailToggle({results}) {
         onMouseOut={e=>e.currentTarget.style.borderColor="var(--border)"}
       >
         <span style={{fontSize:"10px",opacity:0.5}}>{open?"▲":"▼"}</span>
-        各占術の詳細を{open?"閉じる":"見る"}
+        各占術の詳細を{open?"閉じる":"見る"}{isLocked && " 🔒"}
       </button>
       {open&&(
         <div style={{marginTop:"10px"}}>
           {FORTUNE_KEYS.map((key,i)=>{
             const r=results[key];const m=FORTUNE_META[key];if(!r)return null;
+            // 無料プラン: 最初の1占術だけプレビュー、残りはロック
+            const isFreeLocked = isLocked && i > 0;
             return(
-              <div key={key} className="result-card" style={{animationDelay:`${i*0.06}s`,padding:"16px 20px"}}>
+              <div key={key} className="result-card" style={{animationDelay:`${i*0.06}s`,padding:"16px 20px",position:"relative"}}>
                 <div className="result-header" style={{marginBottom:"10px"}}>
                   <div className="result-icon" style={{width:"28px",height:"28px",fontSize:"11px"}}>{m.icon}</div>
                   <div className="result-name">{r.title}</div>
                   <div style={{textAlign:"right"}}>
-                    <div className="result-score" style={{fontSize:"18px"}}>{r.score}</div>
-                    {key==="seimei" && <div style={{fontSize:10,color:"var(--gold)"}}>{starLabel(r.score)}</div>}
-                    {key!=="seimei" && <div style={{fontSize:9,color:"var(--subtext)",marginTop:2}}>相性タイプ指標</div>}
+                    {isFreeLocked ? (
+                      <>
+                        <div className="result-score" style={{fontSize:"18px",color:"var(--subtext)",letterSpacing:2}}>??</div>
+                        <div style={{fontSize:9,color:"var(--subtext)",marginTop:2}}>🔒 ロック中</div>
+                      </>
+                    ) : (
+                      <>
+                        <div className="result-score" style={{fontSize:"18px"}}>{r.score}</div>
+                        {key==="seimei" && <div style={{fontSize:10,color:"var(--gold)"}}>{starLabel(r.score)}</div>}
+                        {key!=="seimei" && <div style={{fontSize:9,color:"var(--subtext)",marginTop:2}}>相性タイプ指標</div>}
+                      </>
+                    )}
                   </div>
                 </div>
-                <div className="bar-bg"><div className="bar-fill" style={{width:`${r.score}%`}}/></div>
-                <div className="result-text" style={{fontSize:"12px"}}>{r.reading}</div>
-                {r.advice&&(key==="seimei"?r.score<60:true)&&(
-                  <div style={{marginTop:"10px",padding:"10px 14px",background:"rgba(168,148,255,0.07)",borderLeft:"1px solid var(--purple)",fontSize:"11px",lineHeight:"1.9",color:"var(--subtext)"}}>
-                    💡 {r.advice}
+                {!isFreeLocked && <div className="bar-bg"><div className="bar-fill" style={{width:`${r.score}%`}}/></div>}
+                {isFreeLocked ? (
+                  <div style={{marginTop:"12px",padding:"20px 14px",background:"rgba(167,139,250,0.08)",border:"1px dashed rgba(167,139,250,0.4)",borderRadius:8,textAlign:"center"}}>
+                    <div style={{fontSize:24,marginBottom:8}}>🔒</div>
+                    <div style={{fontSize:12,color:"#e0d8ff",marginBottom:4,fontWeight:700}}>点数も鑑定文もベーシックプランで</div>
+                    <div style={{fontSize:10,color:"var(--subtext)",marginBottom:10,lineHeight:1.7}}>
+                      残り3占術の点数・詳しい鑑定文・<br/>改善アドバイスが全部見れるよ
+                    </div>
+                    <button
+                      onClick={()=>onUpgrade&&onUpgrade()}
+                      style={{background:"linear-gradient(135deg,#a78bfa,#7c3aed)",color:"#fff",border:"none",borderRadius:8,padding:"8px 18px",fontSize:11,fontWeight:700,cursor:"pointer",boxShadow:"0 2px 8px rgba(124,58,237,0.4)"}}
+                    >
+                      💎 アップグレードして全部見る
+                    </button>
                   </div>
+                ) : (
+                  <>
+                    <div className="result-text" style={{fontSize:"12px"}}>{r.reading}</div>
+                    {r.advice&&(key==="seimei"?r.score<60:true)&&(
+                      <div style={{marginTop:"10px",padding:"10px 14px",background:"rgba(168,148,255,0.07)",borderLeft:"1px solid var(--purple)",fontSize:"11px",lineHeight:"1.9",color:"var(--subtext)"}}>
+                        💡 {r.advice}
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
             );
@@ -796,6 +872,104 @@ export default function App() {
   const [results,setResults]=useState(null);
   const [error,setError]=useState(null);
   const set=(k,v)=>setForm(f=>({...f,[k]:v}));
+
+  // ===== Phase 2: プラン管理 =====
+  // ユーザーのプラン状態 (free | basic | premium)
+  const [userPlan, setUserPlan] = useState(() => {
+    if (typeof window === "undefined") return "free";
+    return localStorage.getItem("uranai_plan") || "free";
+  });
+  const changePlan = (plan) => {
+    setUserPlan(plan);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("uranai_plan", plan);
+    }
+  };
+  // デバッグパネル開閉
+  const [showDebugPanel, setShowDebugPanel] = useState(false);
+
+  // ===== Phase 2: 鑑定回数制限（1日1回） =====
+  // 制限到達モーダル
+  const [showLimitModal, setShowLimitModal] = useState(false);
+  // 今日の日付文字列（YYYY-MM-DD）
+  const todayStr = () => {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  };
+  // 今日すでに無料プランで占ったか？
+  const hasUsedTodayFortune = () => {
+    if (typeof window === "undefined") return false;
+    return localStorage.getItem("uranai_last_fortune_date") === todayStr();
+  };
+  // 占いを実行したことを記録
+  const markFortuneUsed = () => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem("uranai_last_fortune_date", todayStr());
+    }
+  };
+  // デバッグ用: 制限リセット
+  const resetDailyLimit = () => {
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("uranai_last_fortune_date");
+    }
+  };
+
+  // ===== Phase 2: アップグレード画面 =====
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+
+  // ===== Phase 2: プレミアム単発購入 =====
+  const [premiumPurchases, setPremiumPurchases] = useState(() => {
+    if (typeof window === "undefined") return {};
+    try { return JSON.parse(localStorage.getItem("uranai_purchases") || "{}"); }
+    catch { return {}; }
+  });
+  const purchasePremium = (itemKey) => {
+    const updated = {...premiumPurchases, [itemKey]: true};
+    setPremiumPurchases(updated);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("uranai_purchases", JSON.stringify(updated));
+    }
+  };
+  const hasPurchased = (itemKey) => {
+    if (userPlan === "premium") return true;
+    return premiumPurchases[itemKey] === true;
+  };
+  const [showLifeTurningModal, setShowLifeTurningModal] = useState(false);
+  const [showPdfModal, setShowPdfModal] = useState(false);
+  // 人生の転機鑑定: 誰の鑑定か (1 or 2)
+  const [lifeTurningPerson, setLifeTurningPerson] = useState(1);
+
+  // ===== Phase 2 - ステップE: 鑑定履歴 =====
+  const [fortuneHistory, setFortuneHistory] = useState(() => {
+    if (typeof window === "undefined") return [];
+    try { return JSON.parse(localStorage.getItem("uranai_history") || "[]"); }
+    catch { return []; }
+  });
+  const [showHistoryModal, setShowHistoryModal] = useState(false);
+  const saveToHistory = (formData, resultData) => {
+    if (typeof window === "undefined") return;
+    const entry = {
+      id: Date.now(),
+      date: new Date().toISOString(),
+      person1: `${formData.lastName||""}${formData.firstName||""}`,
+      person2: `${formData.lastName2||""}${formData.firstName2||""}`,
+      relation: formData.relation||"",
+      score: resultData?.compatibility?.score || 0,
+      title: resultData?.compatibility?.title || "",
+      summary: (resultData?.compatibility?.summary||"").slice(0,80),
+    };
+    setFortuneHistory(prev => {
+      const updated = [entry, ...prev].slice(0, 50);
+      localStorage.setItem("uranai_history", JSON.stringify(updated));
+      return updated;
+    });
+  };
+  const clearHistory = () => {
+    setFortuneHistory([]);
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("uranai_history");
+    }
+  };
 
   // ===== 本格占い計算（吉凶を正確に反映）=====
 
@@ -1648,6 +1822,15 @@ export default function App() {
 
   const handleSubmit=async()=>{
     if(!form.lastName||!form.birthYear||!form.birthMonth||!form.birthDay||!form.lastName2||!form.birthYear2||!form.birthMonth2||!form.birthDay2)return;
+    // Phase 2: 無料プランは1日1回まで
+    if(userPlan==="free" && hasUsedTodayFortune()){
+      setShowLimitModal(true);
+      return;
+    }
+    // 占い実行を記録（無料プランのみ）
+    if(userPlan==="free"){
+      markFortuneUsed();
+    }
     setLoading(true);setResults(null);setError(null);
     try {
       const sc = calcScores();
@@ -1670,12 +1853,21 @@ export default function App() {
         zodiacSign: sc.zodiacSign||'',
         zodiacSign2: sc.zodiacSign2||'',
         jinElement: sc.jinElement||'',
+        souElement: sc.souElement||'',
         soushouPartners: sc.soushouPartners||[],
         soukokuWarning: sc.soukokuWarning||[],
         fixedInsight1: fixedInsight1,
         fixedInsight2: fixedInsight2,
         sceneAdvice1: sceneAdvice1,
         sceneAdvice2: sceneAdvice2,
+        // ===== Phase 2 ステップF用：プレミアム鑑定で使う詳細データ =====
+        seimeiDetail: sc.seimeiDetail||'',
+        shichuDesc: sc.shichuDesc||'',
+        dayMaster: sc.dayMaster||'',
+        element: sc.element||'',
+        isYang: sc.isYang||false,
+        kyuseiName: sc.kyuseiName||'',
+        kyuseiNature: sc.kyuseiNature||'',
       };
       const messages = buildMessages(sc);
       const res=await fetch("/api/fortune",{
@@ -1707,11 +1899,15 @@ export default function App() {
         return str;
       };
       try {
-        setResults({...JSON.parse(jsonStr),...extraData});
+        const parsedResults = {...JSON.parse(jsonStr),...extraData};
+        setResults(parsedResults);
+        saveToHistory(form, parsedResults);
         window.scrollTo({top:0,behavior:'smooth'});
       } catch(e1) {
         try {
-          setResults({...JSON.parse(fixJson(jsonStr)),...extraData});
+          const parsedResults = {...JSON.parse(fixJson(jsonStr)),...extraData};
+          setResults(parsedResults);
+          saveToHistory(form, parsedResults);
         } catch(e2) {
           // 最終手段：必要最低限のデータだけ抽出
           try {
@@ -1906,6 +2102,28 @@ export default function App() {
                 <button className="gacha-btn" onClick={handleSubmit} disabled={!form.lastName||!form.birthYear||!form.birthMonth||!form.birthDay||!form.lastName2||!form.birthYear2||!form.birthMonth2||!form.birthDay2}>
                   無料で占いを始める
                 </button>
+                <div style={{textAlign:"center",marginTop:14,display:"flex",justifyContent:"center",gap:14,flexWrap:"wrap"}}>
+                  <button
+                    onClick={()=>setShowUpgradeModal(true)}
+                    style={{
+                      background:"transparent",color:"var(--purple)",border:"none",
+                      fontSize:11,cursor:"pointer",padding:"6px 12px",
+                      textDecoration:"underline",letterSpacing:1,fontFamily:"sans-serif"
+                    }}
+                  >
+                    💎 プラン一覧を見る
+                  </button>
+                  <button
+                    onClick={()=>setShowHistoryModal(true)}
+                    style={{
+                      background:"transparent",color:"var(--cyan)",border:"none",
+                      fontSize:11,cursor:"pointer",padding:"6px 12px",
+                      textDecoration:"underline",letterSpacing:1,fontFamily:"sans-serif"
+                    }}
+                  >
+                    📜 鑑定履歴を見る {fortuneHistory.length>0&&`(${fortuneHistory.length})`}
+                  </button>
+                </div>
               </div>
 
             </div>
@@ -2067,35 +2285,64 @@ export default function App() {
                       <div style={{fontSize:9,color:"var(--gold)",letterSpacing:2,marginBottom:12,fontFamily:"'Orbitron',monospace"}}>✦ PERSONALITY INSIGHT — 432通りの占い分析</div>
 
                       <div style={{display:"flex",flexDirection:"column",gap:10}}>
-                        {/* 1人目 */}
+                        {/* 1人目（無料プランはティザー表示） */}
                         {results.fixedInsight1&&(
-                          <div style={{background:"rgba(0,245,255,0.03)",border:"1px solid rgba(0,245,255,0.15)",borderRadius:10,padding:"12px 14px"}}>
+                          <div style={{background:"rgba(0,245,255,0.03)",border:"1px solid rgba(0,245,255,0.15)",borderRadius:10,padding:"12px 14px",position:"relative"}}>
                             <div style={{fontSize:10,color:"var(--cyan)",marginBottom:8,fontFamily:"'Orbitron',monospace",letterSpacing:1}}>
                               {form.lastName}{form.firstName}（{results.fixedInsight1.sign}・{["一白水星","二黒土星","三碧木星","四緑木星","五黄土星","六白金星","七赤金星","八白土星","九紫火星"][results.fixedInsight1.star-1]}）
                             </div>
                             <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:8}}>
                               <div style={{background:"rgba(0,255,136,0.05)",border:"1px solid rgba(0,255,136,0.2)",borderRadius:8,padding:"8px 10px"}}>
                                 <div style={{fontSize:8,color:"var(--good)",letterSpacing:1,marginBottom:4,fontFamily:"'Orbitron',monospace"}}>されて嬉しいこと</div>
-                                <div style={{fontSize:11,color:"#e0d8ff",lineHeight:1.8}}>{results.fixedInsight1.like}</div>
+                                <div style={{fontSize:11,color:"#e0d8ff",lineHeight:1.8}}>
+                                  {userPlan==="free"
+                                    ? <>{(results.fixedInsight1.like||"").slice(0,28)}<span style={{color:"#a78bfa",fontWeight:700}}>…続きはベーシックで</span></>
+                                    : results.fixedInsight1.like}
+                                </div>
                               </div>
                               <div style={{background:"rgba(255,68,85,0.05)",border:"1px solid rgba(255,68,85,0.2)",borderRadius:8,padding:"8px 10px"}}>
                                 <div style={{fontSize:8,color:"var(--bad)",letterSpacing:1,marginBottom:4,fontFamily:"'Orbitron',monospace"}}>されて嫌なこと</div>
-                                <div style={{fontSize:11,color:"#e0d8ff",lineHeight:1.8}}>{results.fixedInsight1.dislike}</div>
+                                <div style={{fontSize:11,color:"#e0d8ff",lineHeight:1.8}}>
+                                  {userPlan==="free"
+                                    ? <>{(results.fixedInsight1.dislike||"").slice(0,28)}<span style={{color:"#a78bfa",fontWeight:700}}>…続きはベーシックで</span></>
+                                    : results.fixedInsight1.dislike}
+                                </div>
                               </div>
                             </div>
                             {/* 関係性別の局面アドバイス */}
                             {results.sceneAdvice1?.zodiacScene&&(
                               <div style={{background:"rgba(245,197,24,0.05)",border:"1px solid rgba(245,197,24,0.2)",borderRadius:8,padding:"8px 10px"}}>
                                 <div style={{fontSize:8,color:"var(--gold)",letterSpacing:1,marginBottom:4,fontFamily:"'Orbitron',monospace"}}>{form.relation?.toUpperCase()} SCENE</div>
-                                <div style={{fontSize:11,color:"#e0d8ff",lineHeight:1.9}}>{results.sceneAdvice1.zodiacScene}</div>
-                                {results.sceneAdvice1.kyuseiScene&&<div style={{fontSize:10,color:"var(--subtext)",marginTop:4,lineHeight:1.8}}>{results.sceneAdvice1.kyuseiScene}</div>}
+                                <div style={{fontSize:11,color:"#e0d8ff",lineHeight:1.9}}>
+                                  {userPlan==="free"
+                                    ? <>{(results.sceneAdvice1.zodiacScene||"").slice(0,30)}<span style={{color:"#a78bfa",fontWeight:700}}>…続きはベーシックで</span></>
+                                    : results.sceneAdvice1.zodiacScene}
+                                </div>
+                                {results.sceneAdvice1.kyuseiScene&&userPlan!=="free"&&<div style={{fontSize:10,color:"var(--subtext)",marginTop:4,lineHeight:1.8}}>{results.sceneAdvice1.kyuseiScene}</div>}
                               </div>
                             )}
                           </div>
                         )}
 
-                        {/* 2人目 */}
-                        {results.fixedInsight2&&(
+                        {/* 2人目（無料プランではロック） */}
+                        {results.fixedInsight2&&userPlan==="free"?(
+                          <div style={{background:"rgba(167,139,250,0.06)",border:"1px dashed rgba(167,139,250,0.4)",borderRadius:10,padding:"24px 14px",textAlign:"center"}}>
+                            <div style={{fontSize:32,marginBottom:8}}>🔒</div>
+                            <div style={{fontSize:11,color:"var(--purple)",marginBottom:6,fontFamily:"'Orbitron',monospace",letterSpacing:1}}>
+                              {form.lastName2}{form.firstName2} のパーソナリティ分析
+                            </div>
+                            <div style={{fontSize:13,color:"#fff",marginBottom:6,fontWeight:700}}>2人目の詳細はベーシックプランで</div>
+                            <div style={{fontSize:10,color:"var(--subtext)",marginBottom:12,lineHeight:1.7}}>
+                              相手のされて嬉しいこと/嫌なこと・<br/>関係シーンの解析が読めるよ
+                            </div>
+                            <button
+                              onClick={()=>setShowUpgradeModal(true)}
+                              style={{background:"linear-gradient(135deg,#a78bfa,#7c3aed)",color:"#fff",border:"none",borderRadius:8,padding:"8px 18px",fontSize:11,fontWeight:700,cursor:"pointer",boxShadow:"0 2px 8px rgba(124,58,237,0.4)"}}
+                            >
+                              💎 アップグレードして全部見る
+                            </button>
+                          </div>
+                        ):results.fixedInsight2&&(
                           <div style={{background:"rgba(167,139,250,0.03)",border:"1px solid rgba(167,139,250,0.2)",borderRadius:10,padding:"12px 14px"}}>
                             <div style={{fontSize:10,color:"var(--purple)",marginBottom:8,fontFamily:"'Orbitron',monospace",letterSpacing:1}}>
                               {form.lastName2}{form.firstName2}（{results.fixedInsight2.sign}・{["一白水星","二黒土星","三碧木星","四緑木星","五黄土星","六白金星","七赤金星","八白土星","九紫火星"][results.fixedInsight2.star-1]}）
@@ -2127,15 +2374,948 @@ export default function App() {
               )}
 
               {/* 各占い補足（折りたたみ） */}
-              <DetailToggle results={results} />
+              <DetailToggle results={results} userPlan={userPlan} onUpgrade={()=>setShowUpgradeModal(true)} />
+
+              {/* ===== Phase 2 - ステップE: 月運勢セクション (基本/プレミアム解放) ===== */}
+              {(()=>{
+                const monthIdx = new Date().getMonth(); // 0-11
+                const monthName = `${monthIdx+1}月`;
+                const monthlyTemplates = {
+                  "牡羊座":["勢いに乗れる","新しい挑戦が向いてる","少し休めるタイミング","人間関係が動く","判断力が冴える","コツコツが実を結ぶ","運命の出会いがある","自分を見つめ直す時期","欲しいものが手に入る","健康に注意","計画を見直す","流れに身を任せて"],
+                  "牡牛座":["安定が大事","お金の流れが良い","食欲・物欲注意","愛情運上昇","コツコツ進む時期","美容運アップ","環境変化のチャンス","落ち着いて行動","信頼関係構築","ご褒美の月","守りの姿勢で","新しい始まり"],
+                  "双子座":["情報がカギ","コミュ運アップ","学びの時期","SNSで縁が動く","旅行・移動運◎","友人増える","知識が武器に","アイデア湧く","臨機応変に対応","会話を大切に","計画立てる","新しい出会い"],
+                  "蟹座":["家族運上昇","感情の起伏注意","守るより攻める","料理運がいい","身近な人を大切に","感受性が冴える","直感を信じて","居場所を作る","愛情を深める","休息の時期","古い友人と再会","母性発揮"],
+                  "獅子座":["注目される月","リーダー運◎","自信を持って","クリエイティブ運","恋愛運上昇","華やかな場へ","認められる","ドラマチック","パワー充電","プライドより素直に","表現力アップ","主役の月"],
+                  "乙女座":["細部に注意","健康管理大事","効率重視で吉","完璧を求めすぎず","スキルアップ","整理整頓運","批判より建設","コツコツ努力","清潔感大事","計画通りに","役立つ情報入る","自己改善"],
+                  "天秤座":["バランス大事","パートナー運","美意識アップ","対人関係◎","選択を迫られる","華やかな場","公平さ重視","笑顔で吉","美容運アップ","調和を大事に","スタイル見直し","縁が広がる"],
+                  "蠍座":["集中力アップ","深い縁ができる","直感が冴える","秘密が明かされる","執着を手放す","変容の時期","信頼関係深化","リサーチ運","欲望と向き合う","深い愛情","内省の月","再生の予感"],
+                  "射手座":["自由に動く","旅行運上昇","新しい世界","学び・哲学運","遠くに縁","ポジティブ運","挑戦の月","枠を超える","教える側に","希望が見える","拡大の時","冒険心"],
+                  "山羊座":["努力が実る","責任を持つ","昇進・成果","目標達成","堅実が吉","信頼を得る","長期計画","結果が出る","真面目さが武器","評価される","継続が力","土台作り"],
+                  "水瓶座":["独自性発揮","革新の時期","友情運◎","新しい発想","自由を求める","SNS運アップ","変わり者で吉","未来志向","ネットワーク","型破りが吉","発明・アイデア","個性的に"],
+                  "魚座":["直感が冴える","癒しの時期","芸術運アップ","スピリチュアル","優しさ発揮","夢を信じる","海・水の縁","共感力アップ","奉仕の心","インスピレーション","現実逃避注意","愛で包む"],
+                };
+                const m1=results.fixedInsight1?.sign?monthlyTemplates[results.fixedInsight1.sign]?.[monthIdx]:null;
+                const m2=results.fixedInsight2?.sign?monthlyTemplates[results.fixedInsight2.sign]?.[monthIdx]:null;
+                if(!m1&&!m2)return null;
+                const isLocked = userPlan==="free";
+                return (
+                  <div style={{
+                    marginTop:20,
+                    background:"linear-gradient(135deg,rgba(124,58,237,0.06),rgba(167,139,250,0.04))",
+                    border:`1px solid ${isLocked?"rgba(167,139,250,0.3)":"rgba(167,139,250,0.4)"}`,
+                    borderRadius:14,padding:"18px 16px"
+                  }}>
+                    <div style={{textAlign:"center",marginBottom:14}}>
+                      <div style={{fontSize:10,color:"var(--purple)",letterSpacing:3,marginBottom:4,fontFamily:"'Orbitron',monospace"}}>✦ MONTHLY FORTUNE ✦</div>
+                      <div style={{fontSize:14,fontWeight:900,color:"#fff"}}>📅 今月（{monthName}）の運勢</div>
+                      <div style={{fontSize:10,color:"var(--subtext)",marginTop:4}}>2人それぞれの太陽星座から見た{monthName}のテーマ</div>
+                    </div>
+                    {isLocked ? (
+                      <div style={{textAlign:"center",padding:"24px 16px",background:"rgba(0,0,0,0.3)",border:"1px dashed rgba(167,139,250,0.4)",borderRadius:10}}>
+                        <div style={{fontSize:32,marginBottom:8}}>🔒</div>
+                        <div style={{fontSize:12,color:"#fff",fontWeight:700,marginBottom:6}}>月運勢はベーシックプランで</div>
+                        <div style={{fontSize:10,color:"var(--subtext)",marginBottom:12,lineHeight:1.7}}>2人の今月のテーマがそれぞれ読めるよ</div>
+                        <button
+                          onClick={()=>setShowUpgradeModal(true)}
+                          style={{background:"linear-gradient(135deg,#a78bfa,#7c3aed)",color:"#fff",border:"none",borderRadius:8,padding:"8px 18px",fontSize:11,fontWeight:700,cursor:"pointer"}}
+                        >
+                          💎 アップグレードして見る
+                        </button>
+                      </div>
+                    ) : (
+                      <div style={{display:"flex",flexDirection:"column",gap:10}}>
+                        {m1&&(
+                          <div style={{background:"rgba(0,245,255,0.05)",border:"1px solid rgba(0,245,255,0.2)",borderRadius:10,padding:"12px 14px"}}>
+                            <div style={{fontSize:10,color:"var(--cyan)",marginBottom:4,fontFamily:"'Orbitron',monospace",letterSpacing:1}}>{form.lastName}{form.firstName}（{results.fixedInsight1.sign}）</div>
+                            <div style={{fontSize:13,color:"#fff",fontWeight:700,marginBottom:6}}>「{m1}」</div>
+                            <div style={{fontSize:11,color:"#e0d8ff",lineHeight:1.8}}>
+                              {monthName}は{results.fixedInsight1.sign}にとって「{m1}」がキーワード。この流れを意識して動くと運が開けるよ。
+                            </div>
+                          </div>
+                        )}
+                        {m2&&(
+                          <div style={{background:"rgba(167,139,250,0.05)",border:"1px solid rgba(167,139,250,0.2)",borderRadius:10,padding:"12px 14px"}}>
+                            <div style={{fontSize:10,color:"var(--purple)",marginBottom:4,fontFamily:"'Orbitron',monospace",letterSpacing:1}}>{form.lastName2}{form.firstName2}（{results.fixedInsight2.sign}）</div>
+                            <div style={{fontSize:13,color:"#fff",fontWeight:700,marginBottom:6}}>「{m2}」</div>
+                            <div style={{fontSize:11,color:"#e0d8ff",lineHeight:1.8}}>
+                              {monthName}は{results.fixedInsight2.sign}にとって「{m2}」がキーワード。
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                );
+              })()}
+
+              {/* 広告枠1 (中盤) */}
+              <AdBanner userPlan={userPlan} variant="banner" onUpgrade={()=>setShowUpgradeModal(true)} />
+
+              {/* ===== Phase 2 - ステップF: プレミアム単発鑑定エリア ===== */}
+              <div style={{
+                marginTop:24,marginBottom:16,
+                background:"linear-gradient(135deg,rgba(245,197,24,0.05),rgba(245,197,24,0.02))",
+                border:"1px solid rgba(245,197,24,0.3)",
+                borderRadius:14,padding:"18px 16px"
+              }}>
+                <div style={{textAlign:"center",marginBottom:14}}>
+                  <div style={{fontSize:10,color:"var(--gold)",letterSpacing:3,marginBottom:4,fontFamily:"'Orbitron',monospace"}}>✦ PREMIUM READING ✦</div>
+                  <div style={{fontSize:14,fontWeight:900,color:"#fde047"}}>⭐ もっと深く知りたいなら</div>
+                  <div style={{fontSize:10,color:"var(--subtext)",marginTop:4,lineHeight:1.7}}>1回限りの単発購入。サブスクとは別枠で買える特別な鑑定。</div>
+                </div>
+
+                <div style={{display:"flex",flexDirection:"column",gap:10}}>
+                  {/* 人生の転機鑑定 */}
+                  <div style={{
+                    background:hasPurchased("lifeTurning")?"rgba(245,197,24,0.12)":"rgba(0,0,0,0.3)",
+                    border:`1.5px solid ${hasPurchased("lifeTurning")?"#fde047":"rgba(245,197,24,0.4)"}`,
+                    borderRadius:10,padding:"14px 14px"
+                  }}>
+                    <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:8,gap:10}}>
+                      <div style={{flex:1}}>
+                        <div style={{fontSize:13,fontWeight:900,color:"#fde047",marginBottom:4}}>🌟 人生の転機鑑定</div>
+                        <div style={{fontSize:10,color:"#e0d8ff",lineHeight:1.7}}>結婚適齢期・転職時期・引っ越し方位など、人生の重要な節目を深掘りで鑑定</div>
+                      </div>
+                      <div style={{textAlign:"right",flexShrink:0}}>
+                        {hasPurchased("lifeTurning")?
+                          <div style={{fontSize:9,color:"var(--good)",fontWeight:700}}>✓ 購入済み</div>:
+                          <><div style={{fontSize:16,fontWeight:900,color:"#fff"}}>¥500</div><div style={{fontSize:9,color:"#aaa"}}>1回</div></>
+                        }
+                      </div>
+                    </div>
+                    <button
+                      onClick={()=>setShowLifeTurningModal(true)}
+                      style={{
+                        width:"100%",
+                        background:hasPurchased("lifeTurning")?"linear-gradient(135deg,#fde047,#f59e0b)":"linear-gradient(135deg,rgba(245,197,24,0.3),rgba(245,158,11,0.3))",
+                        color:hasPurchased("lifeTurning")?"#000":"#fde047",
+                        border:hasPurchased("lifeTurning")?"none":"1px solid rgba(245,197,24,0.5)",
+                        borderRadius:8,padding:"10px",fontSize:11,fontWeight:900,cursor:"pointer"
+                      }}
+                    >
+                      {hasPurchased("lifeTurning")?"📖 鑑定結果を見る":"🌟 ¥500で詳しく見る"}
+                    </button>
+                  </div>
+
+                  {/* PDF鑑定書 */}
+                  <div style={{
+                    background:hasPurchased("pdf")?"rgba(245,197,24,0.12)":"rgba(0,0,0,0.3)",
+                    border:`1.5px solid ${hasPurchased("pdf")?"#fde047":"rgba(245,197,24,0.4)"}`,
+                    borderRadius:10,padding:"14px 14px"
+                  }}>
+                    <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:8,gap:10}}>
+                      <div style={{flex:1}}>
+                        <div style={{fontSize:13,fontWeight:900,color:"#fde047",marginBottom:4}}>📄 PDF鑑定書発行</div>
+                        <div style={{fontSize:10,color:"#e0d8ff",lineHeight:1.7}}>今回の鑑定結果を保存・印刷できるPDFに。手紙やプレゼントにも</div>
+                      </div>
+                      <div style={{textAlign:"right",flexShrink:0}}>
+                        {hasPurchased("pdf")?
+                          <div style={{fontSize:9,color:"var(--good)",fontWeight:700}}>✓ 購入済み</div>:
+                          <><div style={{fontSize:16,fontWeight:900,color:"#fff"}}>¥500</div><div style={{fontSize:9,color:"#aaa"}}>1回</div></>
+                        }
+                      </div>
+                    </div>
+                    <button
+                      onClick={()=>setShowPdfModal(true)}
+                      style={{
+                        width:"100%",
+                        background:hasPurchased("pdf")?"linear-gradient(135deg,#fde047,#f59e0b)":"linear-gradient(135deg,rgba(245,197,24,0.3),rgba(245,158,11,0.3))",
+                        color:hasPurchased("pdf")?"#000":"#fde047",
+                        border:hasPurchased("pdf")?"none":"1px solid rgba(245,197,24,0.5)",
+                        borderRadius:8,padding:"10px",fontSize:11,fontWeight:900,cursor:"pointer"
+                      }}
+                    >
+                      {hasPurchased("pdf")?"📥 PDFをダウンロード":"📄 ¥500でPDFを発行"}
+                    </button>
+                  </div>
+                </div>
+
+                <div style={{marginTop:12,fontSize:9,color:"#888",textAlign:"center",lineHeight:1.7}}>
+                  ※ 現在はデモ表示。実際の決済は今後実装予定です
+                </div>
+              </div>
 
               {/* シェアボタン */}
               <ShareButtons results={results} form={form} />
+
+              {/* 広告枠2 (下部) */}
+              <AdBanner userPlan={userPlan} variant="square" onUpgrade={()=>setShowUpgradeModal(true)} />
 
               <button className="reset-btn" onClick={()=>setResults(null)}>🎰 もう一度占う</button>
             </>
           )}
         </div>
+      </div>
+
+      {/* ===== Phase 2 - ステップE: 鑑定履歴モーダル ===== */}
+      {showHistoryModal && (
+        <div
+          onClick={()=>setShowHistoryModal(false)}
+          style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.88)",backdropFilter:"blur(8px)",zIndex:10001,display:"flex",alignItems:"flex-start",justifyContent:"center",padding:"24px 16px",overflowY:"auto",animation:"fadeIn 0.3s ease"}}
+        >
+          <div
+            onClick={e=>e.stopPropagation()}
+            style={{
+              maxWidth:520,width:"100%",
+              background:"linear-gradient(180deg,rgba(20,15,40,0.99),rgba(40,25,80,0.99))",
+              border:"2px solid rgba(0,245,255,0.4)",borderRadius:20,padding:"24px 20px",
+              boxShadow:"0 20px 80px rgba(0,245,255,0.2)",
+              fontFamily:"sans-serif",color:"#fff",position:"relative",
+              marginTop:"auto",marginBottom:"auto"
+            }}
+          >
+            <button onClick={()=>setShowHistoryModal(false)} style={{position:"absolute",top:14,right:16,background:"none",border:"none",color:"#aaa",fontSize:24,cursor:"pointer",lineHeight:1,padding:0}}>×</button>
+
+            <div style={{textAlign:"center",marginBottom:18}}>
+              <div style={{fontSize:11,color:"var(--cyan)",letterSpacing:3,marginBottom:6,fontFamily:"'Orbitron',monospace"}}>FORTUNE HISTORY</div>
+              <div style={{fontSize:18,fontWeight:900,marginBottom:4}}>📜 鑑定履歴</div>
+              <div style={{fontSize:10,color:"#aaa"}}>過去にあなたが占った相性鑑定</div>
+            </div>
+
+            {fortuneHistory.length===0?(
+              <div style={{textAlign:"center",padding:"40px 16px",color:"#888",fontSize:12,lineHeight:1.9}}>
+                まだ鑑定履歴がありません。<br/>
+                占いを実行すると自動で記録されます。
+              </div>
+            ):(
+              <>
+                {/* 無料プランは最新1件のみ・以降ロック */}
+                <div style={{display:"flex",flexDirection:"column",gap:10,maxHeight:"60vh",overflowY:"auto"}}>
+                  {fortuneHistory.map((entry,i)=>{
+                    const isLocked = userPlan==="free" && i >= 1;
+                    const dateStr = new Date(entry.date).toLocaleString("ja-JP",{year:"numeric",month:"short",day:"numeric",hour:"2-digit",minute:"2-digit"});
+                    const scoreColor = entry.score>=70?"#10b981":entry.score>=50?"#fbbf24":"#ef4444";
+                    if(isLocked){
+                      return (
+                        <div key={entry.id} style={{
+                          background:"rgba(0,0,0,0.3)",border:"1px dashed rgba(167,139,250,0.4)",borderRadius:10,
+                          padding:"12px 14px",position:"relative",overflow:"hidden"
+                        }}>
+                          <div style={{filter:"blur(4px)",opacity:0.4,pointerEvents:"none"}}>
+                            <div style={{fontSize:9,color:"#aaa",marginBottom:4}}>{dateStr}</div>
+                            <div style={{fontSize:13,fontWeight:700,marginBottom:4}}>███ × ███ ({entry.relation})</div>
+                          </div>
+                          <div style={{position:"absolute",inset:0,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:6,background:"rgba(20,15,40,0.6)"}}>
+                            <div style={{fontSize:18}}>🔒</div>
+                            <div style={{fontSize:10,color:"#fff",fontWeight:700}}>過去履歴はベーシックプランで</div>
+                          </div>
+                        </div>
+                      );
+                    }
+                    return (
+                      <div key={entry.id} style={{
+                        background:"rgba(0,245,255,0.04)",border:"1px solid rgba(0,245,255,0.2)",borderRadius:10,
+                        padding:"12px 14px"
+                      }}>
+                        <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:6,gap:10}}>
+                          <div style={{flex:1,minWidth:0}}>
+                            <div style={{fontSize:9,color:"#aaa",marginBottom:4,fontFamily:"'Orbitron',monospace",letterSpacing:1}}>{dateStr}</div>
+                            <div style={{fontSize:12,fontWeight:700,color:"#fff",marginBottom:2}}>
+                              {entry.person1} <span style={{color:"#a78bfa"}}>×</span> {entry.person2}
+                            </div>
+                            <div style={{fontSize:10,color:"#aaa"}}>関係性: {entry.relation}</div>
+                          </div>
+                          <div style={{textAlign:"center",flexShrink:0}}>
+                            <div style={{fontSize:22,fontWeight:900,color:scoreColor,fontFamily:"'Orbitron',monospace"}}>{entry.score}</div>
+                            <div style={{fontSize:8,color:"#aaa"}}>点</div>
+                          </div>
+                        </div>
+                        {entry.title&&<div style={{fontSize:11,color:"#e0d8ff",marginTop:4,padding:"6px 8px",background:"rgba(0,0,0,0.2)",borderRadius:6,fontWeight:700}}>{entry.title}</div>}
+                        {entry.summary&&<div style={{fontSize:10,color:"#aaa",marginTop:4,lineHeight:1.7}}>{entry.summary}{entry.summary.length>=80&&"..."}</div>}
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* 無料プランの場合のロック誘導 */}
+                {userPlan==="free" && fortuneHistory.length>1 && (
+                  <div style={{marginTop:14,padding:"14px 16px",background:"rgba(167,139,250,0.1)",border:"1px solid rgba(167,139,250,0.3)",borderRadius:10,textAlign:"center"}}>
+                    <div style={{fontSize:11,color:"#fff",marginBottom:8,fontWeight:700}}>過去 {fortuneHistory.length-1} 件の履歴がロックされてます</div>
+                    <button
+                      onClick={()=>{setShowHistoryModal(false);setShowUpgradeModal(true);}}
+                      style={{background:"linear-gradient(135deg,#a78bfa,#7c3aed)",color:"#fff",border:"none",borderRadius:8,padding:"8px 16px",fontSize:11,fontWeight:700,cursor:"pointer"}}
+                    >
+                      💎 ベーシックで全履歴を解放
+                    </button>
+                  </div>
+                )}
+
+                {/* 履歴クリアボタン (基本/プレミアムのみ表示、安全のため確認) */}
+                {userPlan!=="free" && fortuneHistory.length>0 && (
+                  <div style={{marginTop:14,textAlign:"center"}}>
+                    <button
+                      onClick={()=>{if(confirm("本当に履歴をすべて削除しますか？"))clearHistory();}}
+                      style={{background:"transparent",color:"#888",border:"1px solid #444",borderRadius:6,padding:"6px 12px",fontSize:10,cursor:"pointer"}}
+                    >
+                      🗑 履歴をすべて削除
+                    </button>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* ===== Phase 2 - ステップF: 人生の転機鑑定モーダル ===== */}
+      {showLifeTurningModal && (() => {
+        const currentYear = new Date().getFullYear();
+        const isP1 = lifeTurningPerson===1;
+        const lastN = isP1 ? form.lastName : form.lastName2;
+        const firstN = isP1 ? form.firstName : form.firstName2;
+        const bY = isP1 ? Number(form.birthYear) : Number(form.birthYear2);
+        const bM = isP1 ? Number(form.birthMonth) : Number(form.birthMonth2);
+        const bD = isP1 ? Number(form.birthDay) : Number(form.birthDay2);
+        const age = bY ? currentYear - bY : null;
+        // 各占術の詳細データを計算
+        const shichuData = (bY&&bM&&bD) ? calcShichu(bY,bM,bD) : null;
+        const seimeiData = (lastN&&firstN) ? calcSeimei(lastN,firstN) : null;
+        const personData = {
+          name:`${lastN||""}${firstN||""}`,
+          sign:isP1?results?.fixedInsight1?.sign:results?.fixedInsight2?.sign,
+          star:isP1?results?.fixedInsight1?.star:results?.fixedInsight2?.star,
+          starName:"",
+          age,
+          // 四柱推命 (calcShichuの実フィールド名に合わせる: dayElement / dayStem)
+          element:shichuData?.dayElement||"",
+          isYang:shichuData?.isYang||false,
+          dayMaster:shichuData?`${shichuData.dayStem}${shichuData.dayBranch}`:"",
+          shichuDesc:shichuData?`年柱:${shichuData.yearStem}${shichuData.yearBranch}・月柱:${shichuData.monthStem}${shichuData.monthBranch}・日柱:${shichuData.dayStem}${shichuData.dayBranch}`:"",
+          // 姓名判断
+          jinKaku:seimeiData?.jinKaku||0,
+          souKaku:seimeiData?.souKaku||0,
+          jinResult:seimeiData?.jinResult||"",
+          souResult:seimeiData?.souResult||"",
+          jinElement:seimeiData?getSeimeiElement(seimeiData.jinKaku):"",
+        };
+        personData.starName = personData.star?["一白水星","二黒土星","三碧木星","四緑木星","五黄土星","六白金星","七赤金星","八白土星","九紫火星"][personData.star-1]:"";
+
+        const ageGroup = !age ? "young" : age<25 ? "young" : age<40 ? "adult" : age<55 ? "middle" : "senior";
+
+        // ===== 九星別の年回りプロファイル（縁・パートナーシップ）=====
+        const kyuseiCycleData = {
+          1:{theme:"水の流れのように自然に育つ縁",keyYear:0,energy:"流動と直感"},
+          2:{theme:"誠実さと忍耐で育つ堅実な縁",keyYear:1,energy:"陰徳と支え"},
+          3:{theme:"刺激的で発展性のある縁",keyYear:0,energy:"発信と行動"},
+          4:{theme:"風通しの良い、柔らかな縁",keyYear:2,energy:"信用と縁の広がり"},
+          5:{theme:"中心的な存在として引き寄せる縁",keyYear:1,energy:"カリスマと統合"},
+          6:{theme:"格式と尊敬を伴う正統派の縁",keyYear:1,energy:"権威と誠実"},
+          7:{theme:"笑いと喜びを共有する縁",keyYear:0,energy:"喜悦と社交"},
+          8:{theme:"変化と成長を共にする縁",keyYear:2,energy:"変革と再生"},
+          9:{theme:"情熱と特別感のある華やかな縁",keyYear:0,energy:"輝きと表現"},
+        };
+        const kyusei = personData.star ? kyuseiCycleData[personData.star] : kyuseiCycleData[5];
+        const marriageStartYear = currentYear + kyusei.keyYear;
+        const marriageEndYear = marriageStartYear + 2;
+
+        // ===== 星座別のキャリア運（木星トランジット風）=====
+        const zodiacCareerData = {
+          "牡羊座":{phase:"開拓と新規挑戦",peakOffset:0,note:"行動力が報われる時期"},
+          "牡牛座":{phase:"継続と土台固め",peakOffset:2,note:"地道な積み重ねが評価される"},
+          "双子座":{phase:"学びと情報発信",peakOffset:1,note:"ネットワークが資産になる"},
+          "蟹座":{phase:"基盤の安定化",peakOffset:1,note:"足元を固める時期"},
+          "獅子座":{phase:"表現と発信",peakOffset:0,note:"自己発揮が運を開く"},
+          "乙女座":{phase:"スキルと専門性の深化",peakOffset:2,note:"質の追求が次に繋がる"},
+          "天秤座":{phase:"バランスと協調",peakOffset:1,note:"パートナーシップで広がる"},
+          "蠍座":{phase:"深化と再構築",peakOffset:2,note:"内側からの変容が外に響く"},
+          "射手座":{phase:"拡大と冒険",peakOffset:0,note:"枠を超える行動が吉"},
+          "山羊座":{phase:"目標達成と評価",peakOffset:1,note:"地位と責任が積み上がる"},
+          "水瓶座":{phase:"革新と独自路線",peakOffset:0,note:"型破りの発想が活きる"},
+          "魚座":{phase:"直感と創造",peakOffset:2,note:"癒しと創造性で道を拓く"},
+        };
+        const zodiacCareer = zodiacCareerData[personData.sign] || zodiacCareerData["牡羊座"];
+        const careerPeakYear = currentYear + zodiacCareer.peakOffset;
+
+        // ===== 九星別の吉方位 =====
+        const kyuseiDirections = {
+          1:{good:"南西・東",bad:"北東（五黄殺）"},
+          2:{good:"北・南",bad:"南西（暗剣殺）"},
+          3:{good:"南東・北",bad:"西（五黄殺）"},
+          4:{good:"南・北西",bad:"南東（暗剣殺）"},
+          5:{good:"東・南東",bad:"中央（年命殺）"},
+          6:{good:"北東・南",bad:"南西（五黄殺）"},
+          7:{good:"西・北東",bad:"東（暗剣殺）"},
+          8:{good:"南・西",bad:"北東（暗剣殺）"},
+          9:{good:"南西・北西",bad:"南（暗剣殺）"},
+        };
+        const dirs = personData.star ? kyuseiDirections[personData.star] : kyuseiDirections[5];
+
+        // ===== 干支別天中殺（生年から算出）=====
+        const eto = ["子","丑","寅","卯","辰","巳","午","未","申","酉","戌","亥"];
+        const tenchusatsu = [
+          {key:"戌亥天中殺",years:["戌","亥"],when:[10,11]},
+          {key:"申酉天中殺",years:["申","酉"],when:[8,9]},
+          {key:"午未天中殺",years:["午","未"],when:[6,7]},
+          {key:"辰巳天中殺",years:["辰","巳"],when:[4,5]},
+          {key:"寅卯天中殺",years:["寅","卯"],when:[2,3]},
+          {key:"子丑天中殺",years:["子","丑"],when:[0,1]},
+        ];
+        // 簡易: 生年の干支から該当グループを決める
+        let tenchu = tenchusatsu[0];
+        if (bY) {
+          const etoIdx = (bY - 4) % 12;
+          // どのグループに該当するか
+          for (const t of tenchusatsu) {
+            if (t.when.includes(etoIdx)) { tenchu = t; break; }
+          }
+        }
+        // 次の天中殺の年を計算（簡易）
+        const tenchuStartYear = (() => {
+          for (let y=currentYear+1; y<currentYear+15; y++) {
+            const idx = (y-4)%12;
+            if (tenchu.when.includes(idx)) return y;
+          }
+          return currentYear+5;
+        })();
+
+        // ===== タイトル&テキスト生成 =====
+        const marriageTitle = ageGroup==="young" || ageGroup==="adult"
+          ? `💍 ${personData.name}さんの結婚運`
+          : ageGroup==="middle"
+          ? `💞 ${personData.name}さんのパートナーシップ運`
+          : `🤝 ${personData.name}さんの人間関係・絆の転機`;
+        const marriageBase = ageGroup==="young"
+          ? `${personData.name}さんの結婚適齢期は ${marriageStartYear}年〜${marriageEndYear}年 あたり。`
+          : ageGroup==="adult"
+          ? `${personData.name}さんの結婚運の転機は ${marriageStartYear}年〜${marriageEndYear}年 あたり。`
+          : ageGroup==="middle"
+          ? `${personData.name}さんのパートナーシップの転機は ${marriageStartYear}年〜${marriageEndYear}年 あたり。`
+          : `${personData.name}さんの人間関係・絆の大きな節目は ${marriageStartYear}年〜${marriageEndYear}年 あたり。`;
+        const marriageText = `${marriageBase} ${personData.starName}は『${kyusei.energy}』の星なので、出会いは「${kyusei.theme}」がテーマ。${personData.sign}的には対人関係が動きやすく、特に${marriageStartYear+1}年は重要な縁の節目になりやすいよ。`;
+
+        const careerTitle = ageGroup==="young"
+          ? `🌱 ${personData.name}さんの将来・進路の転機`
+          : ageGroup==="adult"
+          ? `💼 ${personData.name}さんの転職・キャリアの転機`
+          : ageGroup==="middle"
+          ? `🎯 ${personData.name}さんのキャリア・人生の方向性`
+          : `🌅 ${personData.name}さんのライフワーク・新しい挑戦`;
+        const careerText = `${personData.sign}は今期『${zodiacCareer.phase}』のフェーズ。${careerPeakYear}年がピークの年で、${zodiacCareer.note}。${personData.starName}の動きとも合わさって、${careerPeakYear-1}年後半〜${careerPeakYear+1}年は決断と行動の好機。逆に${careerPeakYear+2}年は判断を急がず流れを観察する時期。`;
+
+        const moveTitle = `🏠 ${personData.name}さんの引っ越し方位`;
+        const moveText = `${personData.starName}にとって今年の吉方位は ${dirs.good}。60km以上離れた場所への移動が運を開きやすい。逆に ${dirs.bad} は要注意の方位なので、住居・職場の移動は避けた方が無難。`;
+
+        const fateBase = ageGroup==="young"
+          ? `次の天中殺期は${tenchuStartYear}年〜${tenchuStartYear+1}年で、新しいことを始めるより、これまでを整理する時期。今は「動く時」だよ。`
+          : ageGroup==="adult"
+          ? `次の天中殺期は${tenchuStartYear}年〜${tenchuStartYear+1}年。新しいことを始めるより、これまでを整理する時期。今は「動く」フェーズなので積極的に。`
+          : `${tenchuStartYear}年〜${tenchuStartYear+1}年は「振り返り」の時期。これまでの人生を統合する好機で、慌てて動くより内省を深めると運が開ける。`;
+        const fateText = `${personData.name}さんの天中殺は ${tenchu.key}（${bY?bY+"年生まれ":""}の干支から算出）。${fateBase}`;
+
+        // ===== 四柱推命ベース：五行と陰陽の運命 =====
+        const elementProfile = {
+          "木":{theme:"成長と発展",advice:"未来志向で枝葉を広げると吉。新しい学びや旅で運が開ける",conflict:"金気（剛・金属）に弱い。完璧主義の人とは距離感大事",ally:"水気（陰・流れ）と火気（陽・拡大）の人と相性◎"},
+          "火":{theme:"情熱と表現",advice:"自分の輝きを隠さないこと。表舞台に立つと運が開ける",conflict:"水気（冷・流れ）に弱い。ネガティブ環境を避ける",ally:"木気（成長）と土気（安定）の人と相性◎"},
+          "土":{theme:"安定と信頼",advice:"地に足をつけた継続が運を呼ぶ。コツコツが資産になる",conflict:"木気（伸長）に弱い。急かす人や変化を強要する環境は注意",ally:"火気（活力）と金気（堅実）の人と相性◎"},
+          "金":{theme:"完成と決断",advice:"質と精度を追求すると吉。曖昧さを排除した行動で運が開ける",conflict:"火気（熱・激）に弱い。感情的な環境は判断を曇らせる",ally:"土気（土台）と水気（柔軟）の人と相性◎"},
+          "水":{theme:"流動と知性",advice:"流れに逆らわず、状況に応じて柔軟に動くと吉",conflict:"土気（停滞）に弱い。固執した環境では才能が発揮されない",ally:"金気（明晰）と木気（成長）の人と相性◎"},
+        };
+        const elem = elementProfile[personData.element] || elementProfile["土"];
+        const yangText = personData.isYang?"陽干（外向き・発信型）":"陰干（内向き・受容型）";
+        const shichuTitle = `🌳 ${personData.name}さんの五行と陰陽の運命（四柱推命）`;
+        const shichuTextLong = `${personData.name}さんの日柱は ${personData.dayMaster||"-"}（${yangText}）、五行は『${personData.element}気』。${personData.element}気の人は『${elem.theme}』がテーマで、${elem.advice}。注意すべきは「${elem.conflict}」。一方で${elem.ally}。${personData.shichuDesc?`命式: ${personData.shichuDesc}`:""}`;
+
+        // ===== 姓名判断ベース：人格的な人生の鍵 =====
+        const jinElementProfile = {
+          "木":"伸びやかで純粋、人を惹きつける魅力。一方で曲げられない頑固さあり",
+          "火":"情熱的で表現力豊か、リーダー気質。短気と燃え尽きに注意",
+          "土":"温厚で信頼を集めるタイプ。決断の遅さや過保護に注意",
+          "金":"理知的で秩序を重んじる職人気質。批判的になりすぎないこと",
+          "水":"柔軟で適応力高い知性派。気分のムラと優柔不断に注意",
+        };
+        const jinElemDesc = jinElementProfile[personData.jinElement] || "バランスの取れた性格";
+        const seimeiTitle = `📛 ${personData.name}さんの名前から見た人生の鍵（姓名判断）`;
+        const seimeiTextLong = personData.jinKaku
+          ? `${personData.name}さんの人格 ${personData.jinKaku}画は「${personData.jinResult}」、総格 ${personData.souKaku}画は「${personData.souResult}」。人格の五行は『${personData.jinElement}』で、${jinElemDesc}。総格は人生後半の運勢を表すから、${personData.souKaku<20?"波乱を糧に":personData.souKaku<30?"バランスよく":"豊かに"}成長していくタイプだよ。`
+          : `${personData.name}さんの名前から見た人生のテーマは、姓名画数によって性格の核となる気質が決まる。詳しい鑑定にはお名前の入力が必要です。`;
+
+        return (
+        <div
+          onClick={()=>setShowLifeTurningModal(false)}
+          style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.88)",backdropFilter:"blur(8px)",zIndex:10001,display:"flex",alignItems:"flex-start",justifyContent:"center",padding:"24px 16px",overflowY:"auto",animation:"fadeIn 0.3s ease"}}
+        >
+          <div
+            onClick={e=>e.stopPropagation()}
+            style={{
+              maxWidth:520,width:"100%",
+              background:"linear-gradient(180deg,rgba(20,15,40,0.99),rgba(40,25,80,0.99))",
+              border:"2px solid rgba(245,197,24,0.5)",borderRadius:20,padding:"28px 22px",
+              boxShadow:"0 20px 80px rgba(245,197,24,0.3)",
+              fontFamily:"sans-serif",color:"#fff",position:"relative",
+              marginTop:"auto",marginBottom:"auto"
+            }}
+          >
+            <button onClick={()=>setShowLifeTurningModal(false)} style={{position:"absolute",top:14,right:16,background:"none",border:"none",color:"#aaa",fontSize:24,cursor:"pointer",lineHeight:1,padding:0}}>×</button>
+
+            <div style={{textAlign:"center",marginBottom:18}}>
+              <div style={{fontSize:48,marginBottom:8}}>🌟</div>
+              <div style={{fontSize:11,color:"#fde047",letterSpacing:3,marginBottom:6,fontFamily:"'Orbitron',monospace"}}>PREMIUM READING</div>
+              <div style={{fontSize:20,fontWeight:900,marginBottom:6}}>人生の転機鑑定</div>
+              <div style={{fontSize:11,color:"#aaa",lineHeight:1.7}}>個人の人生の重要な節目を深掘りする鑑定<br/>（1人ずつ別個に占う）</div>
+            </div>
+
+            {/* 誰の鑑定か選ぶタブ */}
+            <div style={{display:"flex",gap:6,marginBottom:14,background:"rgba(0,0,0,0.3)",padding:4,borderRadius:10}}>
+              {[
+                {p:1,name:`${form.lastName}${form.firstName}`,label:"1人目"},
+                {p:2,name:`${form.lastName2}${form.firstName2}`,label:"2人目"},
+              ].map(opt=>(
+                <button
+                  key={opt.p}
+                  onClick={()=>setLifeTurningPerson(opt.p)}
+                  style={{
+                    flex:1,
+                    background:lifeTurningPerson===opt.p?"linear-gradient(135deg,#fde047,#f59e0b)":"transparent",
+                    color:lifeTurningPerson===opt.p?"#000":"#fff",
+                    border:"none",borderRadius:8,padding:"8px 10px",
+                    fontSize:11,fontWeight:lifeTurningPerson===opt.p?900:500,cursor:"pointer"
+                  }}
+                >
+                  <div style={{fontSize:9,opacity:0.7}}>{opt.label}</div>
+                  <div>{opt.name||"-"}</div>
+                </button>
+              ))}
+            </div>
+
+            {hasPurchased("lifeTurning")?(
+              /* 購入済み: サンプル鑑定文を表示 */
+              <div style={{display:"flex",flexDirection:"column",gap:12}}>
+                <div style={{background:"rgba(124,58,237,0.1)",border:"1px solid rgba(167,139,250,0.3)",borderRadius:10,padding:"10px 12px"}}>
+                  <div style={{fontSize:9,color:"#a78bfa",letterSpacing:1,marginBottom:4,fontWeight:700}}>📊 鑑定の根拠</div>
+                  <div style={{fontSize:11,color:"#e0d8ff",lineHeight:1.7}}>
+                    <strong>{personData.name}</strong>さん（{personData.age?`${personData.age}歳`:""}）の生年月日から：<br/>
+                    本命星: <strong style={{color:"#fde047"}}>{personData.starName}</strong> / 太陽星座: <strong style={{color:"#fde047"}}>{personData.sign}</strong><br/>
+                    年齢・本命星・太陽星座の3要素から、{currentYear}年以降の「年回り」と「惑星トランジット」を分析
+                  </div>
+                </div>
+                <div style={{background:"rgba(245,197,24,0.08)",border:"1px solid rgba(245,197,24,0.3)",borderRadius:10,padding:"14px 16px"}}>
+                  <div style={{fontSize:11,color:"#fde047",fontWeight:700,marginBottom:6}}>{marriageTitle}</div>
+                  <div style={{fontSize:12,color:"#e0d8ff",lineHeight:1.9}}>{marriageText}</div>
+                </div>
+                <div style={{background:"rgba(245,197,24,0.08)",border:"1px solid rgba(245,197,24,0.3)",borderRadius:10,padding:"14px 16px"}}>
+                  <div style={{fontSize:11,color:"#fde047",fontWeight:700,marginBottom:6}}>{careerTitle}</div>
+                  <div style={{fontSize:12,color:"#e0d8ff",lineHeight:1.9}}>{careerText}</div>
+                </div>
+                <div style={{background:"rgba(245,197,24,0.08)",border:"1px solid rgba(245,197,24,0.3)",borderRadius:10,padding:"14px 16px"}}>
+                  <div style={{fontSize:11,color:"#fde047",fontWeight:700,marginBottom:6}}>{moveTitle}</div>
+                  <div style={{fontSize:12,color:"#e0d8ff",lineHeight:1.9}}>{moveText}</div>
+                </div>
+                <div style={{background:"rgba(245,197,24,0.08)",border:"1px solid rgba(245,197,24,0.3)",borderRadius:10,padding:"14px 16px"}}>
+                  <div style={{fontSize:11,color:"#fde047",fontWeight:700,marginBottom:6}}>{shichuTitle}</div>
+                  <div style={{fontSize:12,color:"#e0d8ff",lineHeight:1.9}}>{shichuTextLong}</div>
+                </div>
+                <div style={{background:"rgba(245,197,24,0.08)",border:"1px solid rgba(245,197,24,0.3)",borderRadius:10,padding:"14px 16px"}}>
+                  <div style={{fontSize:11,color:"#fde047",fontWeight:700,marginBottom:6}}>{seimeiTitle}</div>
+                  <div style={{fontSize:12,color:"#e0d8ff",lineHeight:1.9}}>{seimeiTextLong}</div>
+                </div>
+                <div style={{background:"rgba(245,197,24,0.08)",border:"1px solid rgba(245,197,24,0.3)",borderRadius:10,padding:"14px 16px"}}>
+                  <div style={{fontSize:11,color:"#fde047",fontWeight:700,marginBottom:6}}>🌅 {personData.name}さんの大殺界・天中殺</div>
+                  <div style={{fontSize:12,color:"#e0d8ff",lineHeight:1.9}}>{fateText}</div>
+                </div>
+                <div style={{background:"rgba(124,58,237,0.06)",border:"1px solid rgba(167,139,250,0.2)",borderRadius:10,padding:"10px 12px",fontSize:10,color:"#aaa",lineHeight:1.7}}>
+                  📐 <strong style={{color:"#a78bfa"}}>計算根拠（4占術ベース）</strong>：<br/>
+                  ・<strong style={{color:"#fde047"}}>姓名判断</strong>: 人格{personData.jinKaku||"-"}画・総格{personData.souKaku||"-"}画 / 五行={personData.jinElement||"-"}<br/>
+                  ・<strong style={{color:"#fde047"}}>四柱推命</strong>: 日干={personData.dayMaster||"-"} / 五行={personData.element||"-"} / {personData.isYang?"陽":"陰"}干<br/>
+                  ・<strong style={{color:"#fde047"}}>九星気学</strong>: 本命星={personData.starName||"-"} → 年回り・吉方位<br/>
+                  ・<strong style={{color:"#fde047"}}>西洋占星術</strong>: 太陽星座={personData.sign||"-"} → トランジット<br/>
+                  ・<strong style={{color:"#fde047"}}>干支</strong>: {bY?eto[(bY-4)%12]:"-"}年生 → 天中殺
+                </div>
+                <div style={{fontSize:9,color:"#888",textAlign:"center",lineHeight:1.7,marginTop:4}}>
+                  ※ デモ表示のサンプル鑑定文。本実装ではAIが個別生成します
+                </div>
+              </div>
+            ):(
+              /* 未購入: 詳しい説明＋購入誘導 */
+              <div>
+                {/* 何が読める？ */}
+                <div style={{background:"rgba(0,0,0,0.35)",border:"1px solid rgba(245,197,24,0.3)",borderRadius:10,padding:"14px 16px",marginBottom:12}}>
+                  <div style={{fontSize:10,color:"#fde047",fontWeight:700,letterSpacing:1,marginBottom:8}}>🔍 鑑定の中身（4項目）</div>
+                  <div style={{display:"flex",flexDirection:"column",gap:8,fontSize:11,color:"#e0d8ff",lineHeight:1.7}}>
+                    <div><strong style={{color:"#fde047"}}>💍 結婚運の深掘り</strong><br/>結婚適齢期がいつか・運命の出会いの時期</div>
+                    <div><strong style={{color:"#fde047"}}>💼 転職・キャリアの転機</strong><br/>動くべき時期・避けるべき時期の具体的アドバイス</div>
+                    <div><strong style={{color:"#fde047"}}>🏠 引っ越し方位鑑定</strong><br/>今年〜数年先の吉方位・凶方位（五黄殺等）</div>
+                    <div><strong style={{color:"#fde047"}}>🌅 大殺界・天中殺の時期</strong><br/>人生の節目で慎重になるべき期間</div>
+                  </div>
+                </div>
+
+                {/* 鑑定の根拠 */}
+                <div style={{background:"rgba(124,58,237,0.1)",border:"1px solid rgba(167,139,250,0.3)",borderRadius:10,padding:"12px 14px",marginBottom:12}}>
+                  <div style={{fontSize:10,color:"#a78bfa",fontWeight:700,letterSpacing:1,marginBottom:6}}>📚 何の占術がベース？</div>
+                  <div style={{fontSize:11,color:"#e0d8ff",lineHeight:1.7}}>
+                    <strong style={{color:"#a78bfa"}}>九星気学の年回り</strong>（生年月日から本命星を導出 → 数年先までの運勢の流れ）と、<br/>
+                    <strong style={{color:"#a78bfa"}}>西洋占星術のトランジット</strong>（現在の惑星と出生図の関係）を組み合わせて、<br/>
+                    人生の重要な決断時期を予測します。
+                  </div>
+                </div>
+
+                {/* 通常占いとの違い */}
+                <div style={{background:"rgba(0,255,136,0.06)",border:"1px solid rgba(0,255,136,0.25)",borderRadius:10,padding:"10px 12px",marginBottom:14,fontSize:10,color:"#a8efc1",lineHeight:1.7}}>
+                  💡 <strong>通常の相性占いとの違い：</strong>こちらは「2人の相性」ではなく「1人の人生の節目」を深掘り。文量も通常占いの<strong style={{color:"#fde047"}}>約5倍</strong>。
+                </div>
+
+                <button
+                  onClick={()=>{purchasePremium("lifeTurning");}}
+                  disabled={!personData.name||!personData.starName}
+                  style={{
+                    width:"100%",
+                    background:!personData.name?"#444":"linear-gradient(135deg,#fde047,#f59e0b)",
+                    color:!personData.name?"#888":"#000",
+                    border:"none",borderRadius:12,padding:"14px",fontSize:14,fontWeight:900,
+                    cursor:!personData.name?"default":"pointer",
+                    boxShadow:!personData.name?"none":"0 4px 16px rgba(245,197,24,0.4)"
+                  }}
+                >
+                  🌟 ¥500 で {personData.name||"対象者"} さんを鑑定（デモ）
+                </button>
+                <div style={{fontSize:9,color:"#888",marginTop:10,textAlign:"center",lineHeight:1.7}}>
+                  ※ デモ用。実際の決済は今後実装予定<br/>
+                  ※ 1人目・2人目それぞれ別々に購入可能（このデモでは購入で両方解放）
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+        );
+      })()}
+
+      {/* ===== Phase 2 - ステップF: PDF鑑定書モーダル ===== */}
+      {showPdfModal && (
+        <div
+          onClick={()=>setShowPdfModal(false)}
+          style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.88)",backdropFilter:"blur(8px)",zIndex:10001,display:"flex",alignItems:"center",justifyContent:"center",padding:"24px 16px",animation:"fadeIn 0.3s ease"}}
+        >
+          <div
+            onClick={e=>e.stopPropagation()}
+            style={{
+              maxWidth:440,width:"100%",
+              background:"linear-gradient(180deg,rgba(20,15,40,0.99),rgba(40,25,80,0.99))",
+              border:"2px solid rgba(245,197,24,0.5)",borderRadius:20,padding:"28px 22px",
+              boxShadow:"0 20px 80px rgba(245,197,24,0.3)",
+              fontFamily:"sans-serif",color:"#fff",position:"relative"
+            }}
+          >
+            <button onClick={()=>setShowPdfModal(false)} style={{position:"absolute",top:14,right:16,background:"none",border:"none",color:"#aaa",fontSize:24,cursor:"pointer",lineHeight:1,padding:0}}>×</button>
+
+            <div style={{textAlign:"center",marginBottom:18}}>
+              <div style={{fontSize:48,marginBottom:8}}>📄</div>
+              <div style={{fontSize:18,fontWeight:900,marginBottom:6}}>PDF鑑定書発行</div>
+              <div style={{fontSize:11,color:"#aaa",lineHeight:1.7}}>今回の鑑定結果をきれいなPDFで保存・印刷</div>
+            </div>
+
+            {hasPurchased("pdf")?(
+              <div>
+                <div style={{background:"rgba(0,255,136,0.08)",border:"1px solid rgba(0,255,136,0.3)",borderRadius:10,padding:"14px 16px",marginBottom:14,textAlign:"center"}}>
+                  <div style={{fontSize:11,color:"var(--good)",fontWeight:700,marginBottom:6}}>✓ 購入済み</div>
+                  <div style={{fontSize:11,color:"#e0d8ff",lineHeight:1.7}}>下のボタンで PDF をダウンロードできます</div>
+                </div>
+                <button
+                  onClick={()=>{window.print();}}
+                  style={{width:"100%",background:"linear-gradient(135deg,#fde047,#f59e0b)",color:"#000",border:"none",borderRadius:12,padding:"14px",fontSize:14,fontWeight:900,cursor:"pointer",marginBottom:8,boxShadow:"0 4px 16px rgba(245,197,24,0.4)"}}
+                >
+                  📥 PDFをダウンロード
+                </button>
+                <div style={{fontSize:9,color:"#888",textAlign:"center",lineHeight:1.7}}>
+                  ※ ブラウザの印刷機能を使ってPDFとして保存できます。<br/>「送信先」で「PDFに保存」を選んでください
+                </div>
+              </div>
+            ):(
+              <div>
+                <div style={{background:"rgba(0,0,0,0.4)",border:"1px dashed rgba(245,197,24,0.4)",borderRadius:10,padding:"18px 16px",marginBottom:14}}>
+                  <div style={{fontSize:11,color:"#e0d8ff",lineHeight:1.9,textAlign:"center",marginBottom:8}}>
+                    📋 鑑定結果を1枚のPDFにまとめて<br/>
+                    📂 ダウンロード・印刷可能<br/>
+                    💌 友達や恋人へのプレゼントにも<br/>
+                    🗃 思い出として保存可能
+                  </div>
+                </div>
+                <button
+                  onClick={()=>{purchasePremium("pdf");}}
+                  style={{width:"100%",background:"linear-gradient(135deg,#fde047,#f59e0b)",color:"#000",border:"none",borderRadius:12,padding:"14px",fontSize:14,fontWeight:900,cursor:"pointer",boxShadow:"0 4px 16px rgba(245,197,24,0.4)"}}
+                >
+                  📄 ¥500 でPDFを発行（デモ）
+                </button>
+                <div style={{fontSize:9,color:"#888",marginTop:10,textAlign:"center",lineHeight:1.7}}>
+                  ※ デモ用。実際の決済は今後実装予定
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* ===== Phase 2: アップグレード比較モーダル ===== */}
+      {showUpgradeModal && (
+        <div
+          onClick={()=>setShowUpgradeModal(false)}
+          style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.88)",backdropFilter:"blur(8px)",zIndex:10001,display:"flex",alignItems:"flex-start",justifyContent:"center",padding:"24px 16px",overflowY:"auto",animation:"fadeIn 0.3s ease"}}
+        >
+          <div
+            onClick={e=>e.stopPropagation()}
+            style={{
+              maxWidth:520,width:"100%",
+              background:"linear-gradient(180deg,rgba(20,15,40,0.99),rgba(40,25,80,0.99))",
+              border:"2px solid rgba(167,139,250,0.5)",borderRadius:20,padding:"24px 20px",
+              boxShadow:"0 20px 80px rgba(124,58,237,0.5)",
+              fontFamily:"sans-serif",color:"#fff",position:"relative",
+              marginTop:"auto",marginBottom:"auto"
+            }}
+          >
+            <button
+              onClick={()=>setShowUpgradeModal(false)}
+              style={{position:"absolute",top:14,right:16,background:"none",border:"none",color:"#aaa",fontSize:24,cursor:"pointer",lineHeight:1,padding:0,zIndex:1}}
+            >×</button>
+
+            <div style={{textAlign:"center",marginBottom:20}}>
+              <div style={{fontSize:11,color:"#fde047",letterSpacing:3,marginBottom:6,fontFamily:"'Orbitron',monospace"}}>✦ CHOOSE YOUR PLAN ✦</div>
+              <div style={{fontSize:20,fontWeight:900,marginBottom:6}}>プランを選ぼう</div>
+              <div style={{fontSize:11,color:"#aaa"}}>あなたにピッタリの占い体験を</div>
+            </div>
+
+            <div style={{display:"flex",flexDirection:"column",gap:12}}>
+              {/* 無料プラン */}
+              <div style={{
+                background:userPlan==="free"?"rgba(156,163,175,0.15)":"rgba(255,255,255,0.03)",
+                border:`2px solid ${userPlan==="free"?"#9ca3af":"rgba(156,163,175,0.3)"}`,
+                borderRadius:14,padding:"16px 18px",position:"relative"
+              }}>
+                {userPlan==="free" && <div style={{position:"absolute",top:-10,right:14,background:"#9ca3af",color:"#000",fontSize:9,fontWeight:900,padding:"3px 10px",borderRadius:10}}>現在のプラン</div>}
+                <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",marginBottom:10}}>
+                  <div style={{fontSize:16,fontWeight:900}}>🆓 無料</div>
+                  <div><span style={{fontSize:24,fontWeight:900,color:"#9ca3af"}}>¥0</span><span style={{fontSize:11,color:"#aaa"}}>/月</span></div>
+                </div>
+                <ul style={{listStyle:"none",padding:0,margin:"0 0 14px",fontSize:11,color:"#d8d8e8",lineHeight:1.9}}>
+                  <li>✓ 基本相性鑑定</li>
+                  <li>✓ 1日1回まで占える</li>
+                  <li style={{color:"#888"}}>✗ 詳細鑑定は姓名判断のみ</li>
+                  <li style={{color:"#888"}}>✗ 2人目の詳細分析なし</li>
+                  <li style={{color:"#888"}}>✗ 広告あり</li>
+                </ul>
+                <button
+                  onClick={()=>{changePlan("free");setShowUpgradeModal(false);}}
+                  disabled={userPlan==="free"}
+                  style={{
+                    width:"100%",
+                    background:userPlan==="free"?"transparent":"rgba(156,163,175,0.2)",
+                    color:userPlan==="free"?"#888":"#fff",
+                    border:"1px solid #9ca3af",borderRadius:10,padding:"10px",
+                    fontSize:12,fontWeight:700,cursor:userPlan==="free"?"default":"pointer"
+                  }}
+                >
+                  {userPlan==="free"?"✓ 利用中":"無料プランにする"}
+                </button>
+              </div>
+
+              {/* ベーシックプラン（おすすめ） */}
+              <div style={{
+                background:userPlan==="basic"?"rgba(167,139,250,0.18)":"rgba(167,139,250,0.08)",
+                border:`2px solid ${userPlan==="basic"?"#a78bfa":"rgba(167,139,250,0.5)"}`,
+                borderRadius:14,padding:"16px 18px",position:"relative",
+                boxShadow:"0 4px 20px rgba(124,58,237,0.2)"
+              }}>
+                <div style={{position:"absolute",top:-10,left:14,background:"linear-gradient(135deg,#fde047,#f59e0b)",color:"#000",fontSize:9,fontWeight:900,padding:"3px 10px",borderRadius:10,letterSpacing:1}}>⭐ おすすめ</div>
+                {userPlan==="basic" && <div style={{position:"absolute",top:-10,right:14,background:"#a78bfa",color:"#000",fontSize:9,fontWeight:900,padding:"3px 10px",borderRadius:10}}>現在のプラン</div>}
+                <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",marginBottom:10}}>
+                  <div style={{fontSize:16,fontWeight:900,color:"#a78bfa"}}>💎 ベーシック</div>
+                  <div><span style={{fontSize:24,fontWeight:900,color:"#fff"}}>¥200</span><span style={{fontSize:11,color:"#aaa"}}>/月</span></div>
+                </div>
+                <ul style={{listStyle:"none",padding:0,margin:"0 0 14px",fontSize:11,color:"#e0d8ff",lineHeight:1.9}}>
+                  <li>✓ 占い回数 <strong style={{color:"#fde047"}}>無制限</strong></li>
+                  <li>✓ 全占術の詳しい鑑定文</li>
+                  <li>✓ 2人目の詳細分析も全公開</li>
+                  <li>✓ 月運勢・週運勢が読める</li>
+                  <li>✓ 過去の鑑定履歴を保存</li>
+                  <li>✓ 広告なしで快適</li>
+                  <li>✓ ラッキーアイテム/カラー詳細</li>
+                </ul>
+                <button
+                  onClick={()=>{changePlan("basic");setShowUpgradeModal(false);}}
+                  disabled={userPlan==="basic"}
+                  style={{
+                    width:"100%",
+                    background:userPlan==="basic"?"transparent":"linear-gradient(135deg,#a78bfa,#7c3aed)",
+                    color:userPlan==="basic"?"#a78bfa":"#fff",
+                    border:userPlan==="basic"?"1px solid #a78bfa":"none",
+                    borderRadius:10,padding:"12px",fontSize:13,fontWeight:900,
+                    cursor:userPlan==="basic"?"default":"pointer",
+                    boxShadow:userPlan==="basic"?"none":"0 4px 12px rgba(124,58,237,0.4)"
+                  }}
+                >
+                  {userPlan==="basic"?"✓ 利用中":"💎 ベーシックを始める（デモ）"}
+                </button>
+              </div>
+
+              {/* プレミアム単発 */}
+              <div style={{
+                background:userPlan==="premium"?"rgba(245,197,24,0.15)":"rgba(245,197,24,0.05)",
+                border:`2px solid ${userPlan==="premium"?"#f5c518":"rgba(245,197,24,0.4)"}`,
+                borderRadius:14,padding:"16px 18px",position:"relative"
+              }}>
+                {userPlan==="premium" && <div style={{position:"absolute",top:-10,right:14,background:"#f5c518",color:"#000",fontSize:9,fontWeight:900,padding:"3px 10px",borderRadius:10}}>現在のプラン</div>}
+                <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",marginBottom:10}}>
+                  <div style={{fontSize:16,fontWeight:900,color:"#f5c518"}}>⭐ プレミアム単発</div>
+                  <div><span style={{fontSize:24,fontWeight:900,color:"#fff"}}>¥500</span><span style={{fontSize:11,color:"#aaa"}}>〜 /1回</span></div>
+                </div>
+                <div style={{fontSize:10,color:"#fde047",marginBottom:8,fontWeight:700}}>★ サブスクとは別枠の特別鑑定</div>
+                <ul style={{listStyle:"none",padding:0,margin:"0 0 14px",fontSize:11,color:"#fff5d8",lineHeight:1.9}}>
+                  <li>✓ 🌟 人生の転機鑑定（500円）</li>
+                  <li>✓ 📄 PDF鑑定書発行（500円）</li>
+                  <li style={{fontSize:10,color:"#aaa",marginTop:4}}>※ 必要な時だけ単発で購入</li>
+                </ul>
+                <button
+                  onClick={()=>{changePlan("premium");setShowUpgradeModal(false);}}
+                  disabled={userPlan==="premium"}
+                  style={{
+                    width:"100%",
+                    background:userPlan==="premium"?"transparent":"linear-gradient(135deg,#fde047,#f59e0b)",
+                    color:userPlan==="premium"?"#f5c518":"#000",
+                    border:userPlan==="premium"?"1px solid #f5c518":"none",
+                    borderRadius:10,padding:"10px",fontSize:12,fontWeight:900,
+                    cursor:userPlan==="premium"?"default":"pointer"
+                  }}
+                >
+                  {userPlan==="premium"?"✓ 利用中":"⭐ プレミアム鑑定を見る（デモ）"}
+                </button>
+              </div>
+            </div>
+
+            <div style={{marginTop:18,padding:"10px 12px",background:"rgba(255,255,255,0.04)",border:"1px solid rgba(255,255,255,0.1)",borderRadius:8,fontSize:9,color:"#888",lineHeight:1.7,textAlign:"center"}}>
+              ※ 現在はデモ表示。<br/>実際の決済機能は今後実装予定です。
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ===== Phase 2: 1日1回制限モーダル ===== */}
+      {showLimitModal && (
+        <div
+          onClick={()=>setShowLimitModal(false)}
+          style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.85)",backdropFilter:"blur(8px)",zIndex:10000,display:"flex",alignItems:"center",justifyContent:"center",padding:20,animation:"fadeIn 0.3s ease"}}
+        >
+          <div
+            onClick={e=>e.stopPropagation()}
+            style={{
+              maxWidth:420,width:"100%",
+              background:"linear-gradient(135deg,rgba(30,20,60,0.98),rgba(60,30,100,0.98))",
+              border:"2px solid rgba(167,139,250,0.5)",borderRadius:20,padding:"32px 24px",
+              boxShadow:"0 20px 60px rgba(124,58,237,0.4)",textAlign:"center",position:"relative",
+              fontFamily:"sans-serif",color:"#fff"
+            }}
+          >
+            <button
+              onClick={()=>setShowLimitModal(false)}
+              style={{position:"absolute",top:12,right:14,background:"none",border:"none",color:"#aaa",fontSize:22,cursor:"pointer",lineHeight:1,padding:0}}
+            >×</button>
+            <div style={{fontSize:48,marginBottom:12}}>⏰</div>
+            <div style={{fontSize:18,fontWeight:900,marginBottom:8,color:"#fff"}}>今日はもう占ったよ</div>
+            <div style={{fontSize:13,color:"#d8d0ff",lineHeight:1.8,marginBottom:20}}>
+              無料プランは <strong style={{color:"#fde047"}}>1日1回まで</strong> 占えるよ。<br/>
+              続きが気になるなら、<strong style={{color:"#a78bfa"}}>ベーシックプラン</strong>がおすすめ！
+            </div>
+            <div style={{background:"rgba(167,139,250,0.15)",border:"1px solid rgba(167,139,250,0.3)",borderRadius:12,padding:"14px 16px",marginBottom:20,textAlign:"left"}}>
+              <div style={{fontSize:11,color:"#fde047",marginBottom:8,fontWeight:700,letterSpacing:1}}>💎 ベーシック (月額200円) なら...</div>
+              <div style={{fontSize:11,color:"#e0d8ff",lineHeight:1.9}}>
+                ✓ 占い回数 <strong>無制限</strong><br/>
+                ✓ 全占術の詳しい鑑定文が読める<br/>
+                ✓ 2人目の詳細な分析も全公開<br/>
+                ✓ 過去の鑑定履歴を保存<br/>
+                ✓ 広告なしで快適に
+              </div>
+            </div>
+            <button
+              onClick={()=>{setShowLimitModal(false);setShowUpgradeModal(true);}}
+              style={{
+                width:"100%",background:"linear-gradient(135deg,#a78bfa,#7c3aed)",color:"#fff",
+                border:"none",borderRadius:12,padding:"14px 20px",fontSize:14,fontWeight:900,cursor:"pointer",
+                boxShadow:"0 4px 16px rgba(124,58,237,0.5)",marginBottom:8
+              }}
+            >
+              💎 プラン詳細を見る
+            </button>
+            <button
+              onClick={()=>setShowLimitModal(false)}
+              style={{
+                width:"100%",background:"transparent",color:"#aaa",
+                border:"1px solid rgba(255,255,255,0.2)",borderRadius:12,padding:"10px 20px",
+                fontSize:11,cursor:"pointer"
+              }}
+            >
+              また明日にする
+            </button>
+            <div style={{fontSize:9,color:"#888",marginTop:12,lineHeight:1.7}}>
+              ※ 0時を過ぎると自動でリセットされて、もう一度無料で占えます
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ===== Phase 2: 開発用デバッグパネル（プラン切替） ===== */}
+      <div style={{position:"fixed",bottom:16,right:16,zIndex:9999,fontFamily:"sans-serif"}}>
+        {!showDebugPanel ? (
+          <button
+            onClick={()=>setShowDebugPanel(true)}
+            style={{
+              background:"rgba(220,38,38,0.92)",color:"#fff",border:"2px dashed #fca5a5",
+              borderRadius:12,padding:"12px 18px",fontSize:13,cursor:"pointer",fontWeight:700,
+              boxShadow:"0 4px 16px rgba(220,38,38,0.4)",backdropFilter:"blur(4px)",
+              display:"flex",flexDirection:"column",alignItems:"flex-start",lineHeight:1.4
+            }}
+            title="プラン切替（開発者用デバッグツール）"
+          >
+            <span style={{fontSize:10,opacity:0.85,letterSpacing:1.5}}>🛠 DEV TOOL</span>
+            <span style={{fontSize:14}}>プラン切替: {userPlan==="free"?"🆓 無料":userPlan==="basic"?"💎 ベーシック":"⭐ プレミアム"}</span>
+          </button>
+        ) : (
+          <div style={{
+            background:"rgba(20,20,40,0.97)",color:"#fff",border:"2px dashed #fca5a5",
+            borderRadius:12,padding:"14px 16px",boxShadow:"0 4px 24px rgba(0,0,0,0.6)",
+            minWidth:220,fontSize:11
+          }}>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10,paddingBottom:8,borderBottom:"1px solid rgba(252,165,165,0.3)"}}>
+              <div style={{display:"flex",flexDirection:"column",gap:2}}>
+                <span style={{fontSize:9,color:"#fca5a5",letterSpacing:1,fontWeight:700}}>🛠 DEV TOOL</span>
+                <span style={{fontWeight:700,color:"#fff",fontSize:13}}>プラン切替（テスト用）</span>
+              </div>
+              <button onClick={()=>setShowDebugPanel(false)} style={{background:"none",border:"none",color:"#aaa",cursor:"pointer",fontSize:18,padding:0,lineHeight:1}}>×</button>
+            </div>
+            <div style={{fontSize:10,color:"#aaa",marginBottom:8,lineHeight:1.6}}>
+              本番リリース前に削除予定。<br/>各プランの動作テスト用です。
+            </div>
+            <div style={{display:"flex",flexDirection:"column",gap:6}}>
+              {[
+                {key:"free",label:"🆓 無料プラン",sub:"基本鑑定・1日1回",color:"#9ca3af"},
+                {key:"basic",label:"💎 ベーシック",sub:"月額200円・無制限",color:"#a78bfa"},
+                {key:"premium",label:"⭐ プレミアム",sub:"単発500円〜",color:"#f5c518"},
+              ].map(p=>(
+                <button
+                  key={p.key}
+                  onClick={()=>changePlan(p.key)}
+                  style={{
+                    background:userPlan===p.key?p.color:"transparent",
+                    color:userPlan===p.key?"#000":"#fff",
+                    border:`1.5px solid ${p.color}`,borderRadius:8,padding:"8px 10px",
+                    fontSize:11,cursor:"pointer",textAlign:"left",
+                    display:"flex",flexDirection:"column",gap:2,
+                    fontWeight:userPlan===p.key?900:500
+                  }}
+                >
+                  <span>{userPlan===p.key?"✓ ":""}{p.label}</span>
+                  <span style={{fontSize:9,opacity:userPlan===p.key?0.7:0.6}}>{p.sub}</span>
+                </button>
+              ))}
+            </div>
+            <div style={{marginTop:10,paddingTop:10,borderTop:"1px solid rgba(252,165,165,0.2)"}}>
+              <button
+                onClick={()=>{resetDailyLimit();alert("1日1回制限をリセットしました");}}
+                style={{width:"100%",background:"transparent",color:"#fbbf24",border:"1px solid #fbbf24",borderRadius:6,padding:"6px 8px",fontSize:10,cursor:"pointer"}}
+              >
+                ⏰ 1日1回制限をリセット
+              </button>
+              <div style={{fontSize:9,color:"#888",marginTop:6,lineHeight:1.6,textAlign:"center"}}>
+                {hasUsedTodayFortune()?"❌ 今日は占い済み":"✅ 今日まだ占ってない"}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </>
   );
