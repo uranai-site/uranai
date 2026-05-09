@@ -938,6 +938,97 @@ export default function App() {
   const [showPdfModal, setShowPdfModal] = useState(false);
   // 人生の転機鑑定: 誰の鑑定か (1 or 2)
   const [lifeTurningPerson, setLifeTurningPerson] = useState(1);
+  // AI 個別生成キャッシュ ({ "1_keyhash": {marriage,career,move,fate}, "2_keyhash": {...} })
+  const [premiumReadings, setPremiumReadings] = useState(() => {
+    if (typeof window === "undefined") return {};
+    try { return JSON.parse(localStorage.getItem("uranai_premium_readings") || "{}"); }
+    catch { return {}; }
+  });
+  const [premiumLoading, setPremiumLoading] = useState(false);
+  const [premiumError, setPremiumError] = useState(null);
+
+  // AI で人生の転機鑑定を生成
+  const generateLifeTurning = async (personIdx, personData) => {
+    if (!personData.name || !personData.age) {
+      setPremiumError("生年月日と名前が必要です");
+      return;
+    }
+    const cacheKey = `${personIdx}_${personData.name}_${personData.age}`;
+    // キャッシュ確認
+    if (premiumReadings[cacheKey]) return;
+
+    setPremiumLoading(true);
+    setPremiumError(null);
+    try {
+      const prompt = `あなたは「忖度なしの占い師」。曖昧な慰め禁止。各人の弱点・盲点もハッキリ指摘し、具体的な改善策まで踏み込む。
+以下の人物について「人生の転機鑑定」を行い、JSONのみで返してください。前置き不要。
+
+【鑑定対象（ここの全データを活用すること）】
+名前: ${personData.name}
+年齢: ${personData.age}歳
+太陽星座: ${personData.sign||"不明"}（西洋占星術の中核）
+本命星: ${personData.starName||"不明"}（九星気学の本質）
+四柱推命: 日柱=${personData.dayMaster||"不明"}（${personData.isYang?"陽":"陰"}干）/ 五行=${personData.element||"不明"}気
+姓名判断: 人格${personData.jinKaku||0}画「${personData.jinResult||""}」/ 総格${personData.souKaku||0}画「${personData.souResult||""}」
+今年: ${new Date().getFullYear()}年
+
+【鑑定の絶対ルール】※必ず守ること
+■ 個別化を徹底:
+  - 各セクションで ${personData.name}さん の名前を最低3回は呼びかける
+  - 「あなた」「この人」のような曖昧な呼び方より、必ず${personData.name}さんを使う
+  - 上記5データ（星座/本命星/日干/五行/姓名画数）を全セクションで具体的に引用すること
+  - 例: 「${personData.starName}は2027年に変革宮に入るから...」のように具体的な占術用語を含める
+  - 時期は「数年後」NG → 「2027年4月〜10月」のように月単位で具体化
+■ 忖度なし強化:
+  - 弱点・盲点・避けたほうがいい時期は遠回しにせず、ハッキリ指摘
+  - 例:「ぶっちゃけ${personData.name}さんは2028年は動かない方が無難。下手に動くと痛い目見るよ」
+  - 良い時期は素直に絶賛、悪い時期は冷静に警告、中間は「ここで動くべき・動かないべき」を断言
+  - 慰めの言葉だけで終わらせない。必ず「だから何をすべきか」のアクションを示す
+■ 文体: 女子中高生向け（10代女子）の友達口調。「〜だよ」「マジで」「ぶっちゃけ」「やばい」「〜しなって」OK。漢字熟語の連発・大人ビジネス調は禁止。
+■ セクションごとに文体の温度を変える:
+  - marriage: 感情的でリアル、共感系
+  - career: 戦略的で具体的、決断系
+  - move: コンパクトで実用的、指示系
+  - fate: 落ち着いた語り、警告系
+
+【返すJSON（各セクション5〜6文の充実版）】
+{
+  "marriage": "${personData.name}さんの結婚運/パートナーシップ運の深掘り 5〜6文。${personData.starName}と${personData.sign}の絡みから恋愛・縁の傾向を分析、具体的な月単位の時期、注意すべき関係性パターン、改善アクションまで。${personData.name}さんを最低3回呼びかける。",
+  "career": "${personData.name}さんの転職・キャリアの転機 5〜6文。${personData.sign}のフェーズと日干「${personData.dayMaster}」の特性を絡めて、動くべき年月・避けるべき年月、向いてる業界傾向、具体的アクションまで。${personData.name}さんを最低3回呼びかける。",
+  "move": "${personData.name}さんの引っ越し方位 3〜4文。${personData.starName}の年回りから今年と来年の吉方位・凶方位、移動距離の目安、引っ越しに最適な月を断言。",
+  "fate": "${personData.name}さんの大殺界・天中殺の時期 3〜4文。生年からの干支算出による次の天中殺期の具体年月と、その期間どう過ごすべきか・何を避けるべきかをハッキリ指摘。"
+}`;
+
+      const res = await fetch("/api/fortune", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "claude-haiku-4-5-20251001",
+          max_tokens: 2000,
+          messages: [{ role: "user", content: prompt }],
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error?.message || "AI生成に失敗");
+      const text = data.content.map(i => i.text || "").join("");
+      const match = text.match(/\{[\s\S]*\}/);
+      if (!match) throw new Error("結果の解析に失敗");
+      const parsed = JSON.parse(match[0]);
+
+      // キャッシュ保存
+      setPremiumReadings(prev => {
+        const updated = { ...prev, [cacheKey]: parsed };
+        if (typeof window !== "undefined") {
+          localStorage.setItem("uranai_premium_readings", JSON.stringify(updated));
+        }
+        return updated;
+      });
+    } catch (e) {
+      setPremiumError(e.message || "AI生成エラー");
+    } finally {
+      setPremiumLoading(false);
+    }
+  };
 
   // ===== Phase 2 - ステップE: 鑑定履歴 =====
   const [fortuneHistory, setFortuneHistory] = useState(() => {
@@ -2802,6 +2893,16 @@ export default function App() {
           : `${tenchuStartYear}年〜${tenchuStartYear+1}年は「振り返り」の時期。これまでの人生を統合する好機で、慌てて動くより内省を深めると運が開ける。`;
         const fateText = `${personData.name}さんの天中殺は ${tenchu.key}（${bY?bY+"年生まれ":""}の干支から算出）。${fateBase}`;
 
+        // ===== AI 個別生成のキャッシュ取得 =====
+        const cacheKey = `${lifeTurningPerson}_${personData.name}_${personData.age}`;
+        const aiReading = premiumReadings[cacheKey];
+        const useAi = aiReading && hasPurchased("lifeTurning");
+        // 購入済みでキャッシュ無し かつ ローディング中でもエラーでもない → 自動生成
+        if (hasPurchased("lifeTurning") && !aiReading && !premiumLoading && !premiumError && personData.name && personData.age) {
+          // 次のレンダーで生成（render中のsetStateを避ける）
+          setTimeout(()=>generateLifeTurning(lifeTurningPerson, personData), 0);
+        }
+
         // ===== 四柱推命ベース：五行と陰陽の運命 =====
         const elementProfile = {
           "木":{theme:"成長と発展",advice:"未来志向で枝葉を広げると吉。新しい学びや旅で運が開ける",conflict:"金気（剛・金属）に弱い。完璧主義の人とは距離感大事",ally:"水気（陰・流れ）と火気（陽・拡大）の人と相性◎"},
@@ -2878,10 +2979,25 @@ export default function App() {
             </div>
 
             {hasPurchased("lifeTurning")?(
-              /* 購入済み: サンプル鑑定文を表示 */
+              /* 購入済み: AI生成 or テンプレート鑑定文を表示 */
               <div style={{display:"flex",flexDirection:"column",gap:12}}>
+                {/* AI 生成中ローディング */}
+                {premiumLoading && (
+                  <div style={{background:"rgba(167,139,250,0.1)",border:"1px solid rgba(167,139,250,0.4)",borderRadius:10,padding:"24px 16px",textAlign:"center"}}>
+                    <div style={{fontSize:24,marginBottom:8}}>🔮</div>
+                    <div style={{fontSize:12,color:"#a78bfa",fontWeight:700,marginBottom:4}}>AI が個別鑑定を生成中...</div>
+                    <div style={{fontSize:10,color:"#aaa",lineHeight:1.7}}>九星・星座・四柱推命・姓名判断を組み合わせて<br/>{personData.name}さん専用の鑑定文を作成中</div>
+                  </div>
+                )}
+                {premiumError && (
+                  <div style={{background:"rgba(239,68,68,0.1)",border:"1px solid rgba(239,68,68,0.4)",borderRadius:10,padding:"12px 14px"}}>
+                    <div style={{fontSize:11,color:"#ef4444",fontWeight:700,marginBottom:4}}>⚠ AI生成エラー</div>
+                    <div style={{fontSize:10,color:"#fca5a5",lineHeight:1.7}}>{premiumError}<br/>テンプレート版で表示します</div>
+                  </div>
+                )}
+                {!premiumLoading && (<>
                 <div style={{background:"rgba(124,58,237,0.1)",border:"1px solid rgba(167,139,250,0.3)",borderRadius:10,padding:"10px 12px"}}>
-                  <div style={{fontSize:9,color:"#a78bfa",letterSpacing:1,marginBottom:4,fontWeight:700}}>📊 鑑定の根拠</div>
+                  <div style={{fontSize:9,color:"#a78bfa",letterSpacing:1,marginBottom:4,fontWeight:700}}>📊 鑑定の根拠 {useAi&&<span style={{color:"#fde047"}}>✨ AI個別生成</span>}</div>
                   <div style={{fontSize:11,color:"#e0d8ff",lineHeight:1.7}}>
                     <strong>{personData.name}</strong>さん（{personData.age?`${personData.age}歳`:""}）の生年月日から：<br/>
                     本命星: <strong style={{color:"#fde047"}}>{personData.starName}</strong> / 太陽星座: <strong style={{color:"#fde047"}}>{personData.sign}</strong><br/>
@@ -2890,15 +3006,15 @@ export default function App() {
                 </div>
                 <div style={{background:"rgba(245,197,24,0.08)",border:"1px solid rgba(245,197,24,0.3)",borderRadius:10,padding:"14px 16px"}}>
                   <div style={{fontSize:11,color:"#fde047",fontWeight:700,marginBottom:6}}>{marriageTitle}</div>
-                  <div style={{fontSize:12,color:"#e0d8ff",lineHeight:1.9}}>{marriageText}</div>
+                  <div style={{fontSize:12,color:"#e0d8ff",lineHeight:1.9}}>{useAi&&aiReading.marriage?aiReading.marriage:marriageText}</div>
                 </div>
                 <div style={{background:"rgba(245,197,24,0.08)",border:"1px solid rgba(245,197,24,0.3)",borderRadius:10,padding:"14px 16px"}}>
                   <div style={{fontSize:11,color:"#fde047",fontWeight:700,marginBottom:6}}>{careerTitle}</div>
-                  <div style={{fontSize:12,color:"#e0d8ff",lineHeight:1.9}}>{careerText}</div>
+                  <div style={{fontSize:12,color:"#e0d8ff",lineHeight:1.9}}>{useAi&&aiReading.career?aiReading.career:careerText}</div>
                 </div>
                 <div style={{background:"rgba(245,197,24,0.08)",border:"1px solid rgba(245,197,24,0.3)",borderRadius:10,padding:"14px 16px"}}>
                   <div style={{fontSize:11,color:"#fde047",fontWeight:700,marginBottom:6}}>{moveTitle}</div>
-                  <div style={{fontSize:12,color:"#e0d8ff",lineHeight:1.9}}>{moveText}</div>
+                  <div style={{fontSize:12,color:"#e0d8ff",lineHeight:1.9}}>{useAi&&aiReading.move?aiReading.move:moveText}</div>
                 </div>
                 <div style={{background:"rgba(245,197,24,0.08)",border:"1px solid rgba(245,197,24,0.3)",borderRadius:10,padding:"14px 16px"}}>
                   <div style={{fontSize:11,color:"#fde047",fontWeight:700,marginBottom:6}}>{shichuTitle}</div>
@@ -2921,8 +3037,9 @@ export default function App() {
                   ・<strong style={{color:"#fde047"}}>干支</strong>: {bY?eto[(bY-4)%12]:"-"}年生 → 天中殺
                 </div>
                 <div style={{fontSize:9,color:"#888",textAlign:"center",lineHeight:1.7,marginTop:4}}>
-                  ※ デモ表示のサンプル鑑定文。本実装ではAIが個別生成します
+                  {useAi?"✨ AI が個別生成した鑑定文":"※ デモ表示のサンプル鑑定文（本実装ではAIが個別生成）"}
                 </div>
+                </>)}
               </div>
             ):(
               /* 未購入: 詳しい説明＋購入誘導 */
@@ -2954,7 +3071,7 @@ export default function App() {
                 </div>
 
                 <button
-                  onClick={()=>{purchasePremium("lifeTurning");}}
+                  onClick={()=>{purchasePremium("lifeTurning");generateLifeTurning(lifeTurningPerson,personData);}}
                   disabled={!personData.name||!personData.starName}
                   style={{
                     width:"100%",
@@ -3249,6 +3366,8 @@ export default function App() {
       )}
 
       {/* ===== Phase 2: 開発用デバッグパネル（プラン切替） ===== */}
+      {/* import.meta.env.DEV: ローカル開発時のみ true、本番ビルドでは false → 自動非表示 */}
+      {import.meta.env.DEV && (
       <div style={{position:"fixed",bottom:16,right:16,zIndex:9999,fontFamily:"sans-serif"}}>
         {!showDebugPanel ? (
           <button
@@ -3317,6 +3436,7 @@ export default function App() {
           </div>
         )}
       </div>
+      )}
     </>
   );
 }
