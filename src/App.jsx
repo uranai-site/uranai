@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const STYLES = `
   @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@700;900&family=Orbitron:wght@400;700;900&family=Noto+Sans+JP:wght@400;700;900&display=swap');
@@ -916,6 +916,43 @@ export default function App() {
 
   // ===== Phase 2: アップグレード画面 =====
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+
+  // ===== Phase 5: Stripe Checkout =====
+  const [stripeLoading, setStripeLoading] = useState(false);
+  const startStripeCheckout = async () => {
+    setStripeLoading(true);
+    try {
+      const res = await fetch("/api/create-checkout-session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      });
+      const data = await res.json();
+      if (!res.ok || !data.url) {
+        throw new Error(data.error || "決済セッション作成に失敗しました");
+      }
+      // Stripe Checkout ページへ遷移
+      window.location.href = data.url;
+    } catch (e) {
+      setStripeLoading(false);
+      alert("エラー: " + (e.message || "決済の開始に失敗しました"));
+    }
+  };
+
+  // 戻りURLで ?upgrade=success を検出してプラン昇格
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("upgrade") === "success") {
+      changePlan("basic");
+      // クエリパラメータをURLから消す
+      window.history.replaceState({}, document.title, window.location.pathname);
+      // 成功メッセージ
+      setTimeout(()=>alert("🎉 ベーシックプランへのアップグレード完了！\n占い無制限・全機能解放されました ✨"), 100);
+    } else if (params.get("upgrade") === "canceled") {
+      window.history.replaceState({}, document.title, window.location.pathname);
+      setTimeout(()=>alert("決済がキャンセルされました"), 100);
+    }
+  }, []);
 
   // ===== Phase 2: プレミアム単発購入 =====
   const [premiumPurchases, setPremiumPurchases] = useState(() => {
@@ -3245,19 +3282,19 @@ export default function App() {
                   <li>✓ ラッキーアイテム/カラー詳細</li>
                 </ul>
                 <button
-                  onClick={()=>{changePlan("basic");setShowUpgradeModal(false);}}
-                  disabled={userPlan==="basic"}
+                  onClick={()=>{if(userPlan!=="basic")startStripeCheckout();}}
+                  disabled={userPlan==="basic" || stripeLoading}
                   style={{
                     width:"100%",
-                    background:userPlan==="basic"?"transparent":"linear-gradient(135deg,#a78bfa,#7c3aed)",
+                    background:userPlan==="basic"?"transparent":(stripeLoading?"#666":"linear-gradient(135deg,#a78bfa,#7c3aed)"),
                     color:userPlan==="basic"?"#a78bfa":"#fff",
                     border:userPlan==="basic"?"1px solid #a78bfa":"none",
                     borderRadius:10,padding:"12px",fontSize:13,fontWeight:900,
-                    cursor:userPlan==="basic"?"default":"pointer",
+                    cursor:userPlan==="basic"||stripeLoading?"default":"pointer",
                     boxShadow:userPlan==="basic"?"none":"0 4px 12px rgba(124,58,237,0.4)"
                   }}
                 >
-                  {userPlan==="basic"?"✓ 利用中":"💎 ベーシックを始める（デモ）"}
+                  {userPlan==="basic"?"✓ 利用中":stripeLoading?"⏳ 決済ページへ移動中...":"💎 ¥200/月 で始める"}
                 </button>
               </div>
 
