@@ -938,17 +938,42 @@ export default function App() {
     }
   };
 
-  // 戻りURLで ?upgrade=success を検出してプラン昇格
+  // 戻りURLで ?upgrade=success を検出 → サーバー側で session を検証してから昇格
   useEffect(() => {
     if (typeof window === "undefined") return;
     const params = new URLSearchParams(window.location.search);
-    if (params.get("upgrade") === "success") {
-      changePlan("basic");
-      // クエリパラメータをURLから消す
+    const upgrade = params.get("upgrade");
+    const sessionId = params.get("session_id");
+
+    if (upgrade === "success") {
+      // URL のクエリを先に消す（戻る/リロード時の二重実行防止）
       window.history.replaceState({}, document.title, window.location.pathname);
-      // 成功メッセージ
-      setTimeout(()=>alert("🎉 ベーシックプランへのアップグレード完了！\n占い無制限・全機能解放されました ✨"), 100);
-    } else if (params.get("upgrade") === "canceled") {
+
+      if (!sessionId) {
+        setTimeout(()=>alert("決済セッションIDが見つかりませんでした。サポートにお問い合わせください。"), 100);
+        return;
+      }
+
+      // サーバーに問い合わせて Stripe 側で本当に決済完了しているか検証
+      (async () => {
+        try {
+          const r = await fetch("/api/verify-session", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ session_id: sessionId }),
+          });
+          const data = await r.json();
+          if (r.ok && data.verified) {
+            changePlan("basic");
+            setTimeout(()=>alert("🎉 ベーシックプランへのアップグレード完了！\n占い無制限・全機能解放されました ✨"), 100);
+          } else {
+            setTimeout(()=>alert("決済の確認ができませんでした。\n反映が遅れている場合は数分後に再度アクセスしてください。"), 100);
+          }
+        } catch (e) {
+          setTimeout(()=>alert("決済確認中にエラーが発生しました: " + (e.message || "通信エラー")), 100);
+        }
+      })();
+    } else if (upgrade === "canceled") {
       window.history.replaceState({}, document.title, window.location.pathname);
       setTimeout(()=>alert("決済がキャンセルされました"), 100);
     }
