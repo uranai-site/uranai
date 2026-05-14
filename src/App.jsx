@@ -885,6 +885,59 @@ export default function App() {
       localStorage.setItem("uranai_plan", plan);
     }
   };
+
+  // Stripe Customer / Subscription ID（解約管理用に保持）
+  const [stripeCustomerId, setStripeCustomerId] = useState(() => {
+    if (typeof window === "undefined") return null;
+    return localStorage.getItem("uranai_stripe_customer_id") || null;
+  });
+  const [stripeSubscriptionId, setStripeSubscriptionId] = useState(() => {
+    if (typeof window === "undefined") return null;
+    return localStorage.getItem("uranai_stripe_subscription_id") || null;
+  });
+  const saveStripeIds = (customerId, subscriptionId) => {
+    if (typeof window === "undefined") return;
+    if (customerId) {
+      localStorage.setItem("uranai_stripe_customer_id", customerId);
+      setStripeCustomerId(customerId);
+    }
+    if (subscriptionId) {
+      localStorage.setItem("uranai_stripe_subscription_id", subscriptionId);
+      setStripeSubscriptionId(subscriptionId);
+    }
+  };
+  const clearStripeIds = () => {
+    if (typeof window === "undefined") return;
+    localStorage.removeItem("uranai_stripe_customer_id");
+    localStorage.removeItem("uranai_stripe_subscription_id");
+    setStripeCustomerId(null);
+    setStripeSubscriptionId(null);
+  };
+
+  // Stripe Customer Portal を開く
+  const [portalLoading, setPortalLoading] = useState(false);
+  const openStripePortal = async () => {
+    if (!stripeCustomerId) {
+      alert("サブスク情報が見つかりません。再ログインまたはサポートにご連絡ください。");
+      return;
+    }
+    setPortalLoading(true);
+    try {
+      const r = await fetch("/api/create-portal-session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ customer_id: stripeCustomerId }),
+      });
+      const data = await r.json();
+      if (!r.ok || !data.url) {
+        throw new Error(data.error || "ポータルセッション作成失敗");
+      }
+      window.location.href = data.url;
+    } catch (e) {
+      setPortalLoading(false);
+      alert("管理ページを開けませんでした: " + (e.message || "通信エラー"));
+    }
+  };
   // デバッグパネル開閉
   const [showDebugPanel, setShowDebugPanel] = useState(false);
 
@@ -938,15 +991,15 @@ export default function App() {
     }
   };
 
-  // 戻りURLで ?upgrade=success を検出 → サーバー側で session を検証してから昇格
+  // 戻りURLで ?upgrade=success / ?portal=return を検出して状態同期
   useEffect(() => {
     if (typeof window === "undefined") return;
     const params = new URLSearchParams(window.location.search);
     const upgrade = params.get("upgrade");
     const sessionId = params.get("session_id");
+    const portal = params.get("portal");
 
     if (upgrade === "success") {
-      // URL のクエリを先に消す（戻る/リロード時の二重実行防止）
       window.history.replaceState({}, document.title, window.location.pathname);
 
       if (!sessionId) {
@@ -954,7 +1007,6 @@ export default function App() {
         return;
       }
 
-      // サーバーに問い合わせて Stripe 側で本当に決済完了しているか検証
       (async () => {
         try {
           const r = await fetch("/api/verify-session", {
@@ -964,6 +1016,8 @@ export default function App() {
           });
           const data = await r.json();
           if (r.ok && data.verified) {
+            // 解約管理用に customer_id / subscription_id を保存
+            saveStripeIds(data.customer_id, data.subscription_id);
             changePlan("basic");
             setTimeout(()=>alert("🎉 ベーシックプランへのアップグレード完了！\n占い無制限・全機能解放されました ✨"), 100);
           } else {
@@ -976,7 +1030,66 @@ export default function App() {
     } else if (upgrade === "canceled") {
       window.history.replaceState({}, document.title, window.location.pathname);
       setTimeout(()=>alert("決済がキャンセルされました"), 100);
+    } else if (portal === "return") {
+      // Customer Portal から戻ってきた → サブスク状態を再確認
+      window.history.replaceState({}, document.title, window.location.pathname);
+      const subId = localStorage.getItem("uranai_stripe_subscription_id");
+      if (subId) {
+        (async () => {
+          try {
+            const r = await fetch("/api/check-subscription", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ subscription_id: subId }),
+            });
+            const data = await r.json();
+            if (r.ok) {
+              if (!data.active) {
+                // 解約済み・期限切れ → 無料プランに戻す
+                changePlan("free");
+                clearStripeIds();
+                setTimeout(()=>alert("サブスクが解約されました。無料プランに戻ります。"), 100);
+              } else if (data.will_cancel) {
+                // 期間終了時に解約予定（まだ使える）
+                const endDate = data.cancel_at_ts
+                  ? new Date(data.cancel_at_ts * 1000).toLocaleDateString("ja-JP")
+                  : "次回更新日";
+                setTimeout(()=>alert(`解約手続きを受け付けました。\n${endDate}まではご利用いただけます。`), 100);
+              }
+            }
+          } catch (e) {
+            console.error("subscription check error:", e);
+          }
+        })();
+      }
     }
+  }, []);
+
+  // アプリ起動時にサブスク状態を一度だけ同期（Webhook の見逃し対策）
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (userPlan !== "basic") return;
+    const subId = localStorage.getItem("uranai_stripe_subscription_id");
+    if (!subId) return;
+
+    (async () => {
+      try {
+        const r = await fetch("/api/check-subscription", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ subscription_id: subId }),
+        });
+        const data = await r.json();
+        if (r.ok && !data.active) {
+          // 解約済みなのに basic のままだった → 無料に戻す
+          changePlan("free");
+          clearStripeIds();
+        }
+      } catch (e) {
+        console.error("startup subscription check error:", e);
+      }
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // ===== Phase 2: プレミアム単発購入 =====
@@ -3321,6 +3434,23 @@ export default function App() {
                 >
                   {userPlan==="basic"?"✓ 利用中":stripeLoading?"⏳ 決済ページへ移動中...":"💎 ¥200/月 で始める"}
                 </button>
+                {/* ベーシック利用中 & Stripe顧客IDあり → 管理・解約ボタン */}
+                {userPlan==="basic" && stripeCustomerId && (
+                  <button
+                    onClick={openStripePortal}
+                    disabled={portalLoading}
+                    style={{
+                      width:"100%",marginTop:8,
+                      background:"transparent",
+                      color:"#c0a8ff",
+                      border:"1px solid rgba(167,139,250,0.4)",
+                      borderRadius:10,padding:"10px",fontSize:11,fontWeight:700,
+                      cursor:portalLoading?"default":"pointer"
+                    }}
+                  >
+                    {portalLoading?"⏳ 管理ページへ移動中...":"⚙️ サブスクを管理・解約する"}
+                  </button>
+                )}
               </div>
 
               {/* プレミアム単発 */}
