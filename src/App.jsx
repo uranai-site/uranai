@@ -970,20 +970,21 @@ export default function App() {
   // ===== Phase 2: アップグレード画面 =====
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 
-  // ===== Phase 5: Stripe Checkout =====
+  // ===== Phase 5/8: Stripe Checkout（サブスク・単発両対応） =====
   const [stripeLoading, setStripeLoading] = useState(false);
-  const startStripeCheckout = async () => {
+  // item: "basic" (サブスク) | "lifeTurning" (単発¥500) | "pdf" (単発¥500)
+  const startStripeCheckout = async (item = "basic") => {
     setStripeLoading(true);
     try {
       const res = await fetch("/api/create-checkout-session", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ item }),
       });
       const data = await res.json();
       if (!res.ok || !data.url) {
         throw new Error(data.error || "決済セッション作成に失敗しました");
       }
-      // Stripe Checkout ページへ遷移
       window.location.href = data.url;
     } catch (e) {
       setStripeLoading(false);
@@ -1016,10 +1017,20 @@ export default function App() {
           });
           const data = await r.json();
           if (r.ok && data.verified) {
-            // 解約管理用に customer_id / subscription_id を保存
-            saveStripeIds(data.customer_id, data.subscription_id);
-            changePlan("basic");
-            setTimeout(()=>alert("🎉 ベーシックプランへのアップグレード完了！\n占い無制限・全機能解放されました ✨"), 100);
+            const item = data.item || "basic";
+            if (item === "basic") {
+              // サブスク: customer_id / subscription_id を保存して昇格
+              saveStripeIds(data.customer_id, data.subscription_id);
+              changePlan("basic");
+              setTimeout(()=>alert("🎉 ベーシックプランへのアップグレード完了！\n占い無制限・全機能解放されました ✨"), 100);
+            } else if (item === "lifeTurning" || item === "pdf") {
+              // 単発購入: 該当アイテムをアンロック
+              purchasePremium(item);
+              const label = item === "lifeTurning" ? "人生の転機鑑定" : "PDF鑑定書";
+              setTimeout(()=>alert(`✨ ${label}の購入が完了しました！\nモーダルを開いてご利用ください ✨`), 100);
+            } else {
+              setTimeout(()=>alert("決済は完了しましたが、購入内容を判別できませんでした。"), 100);
+            }
           } else {
             setTimeout(()=>alert("決済の確認ができませんでした。\n反映が遅れている場合は数分後に再度アクセスしてください。"), 100);
           }
@@ -2797,7 +2808,7 @@ export default function App() {
                 </div>
 
                 <div style={{marginTop:12,fontSize:9,color:"#888",textAlign:"center",lineHeight:1.7}}>
-                  ※ 現在はデモ表示。実際の決済は今後実装予定です
+                  ※ 単発購入（解約不要）・購入後すぐ利用可能
                 </div>
               </div>
 
@@ -3246,22 +3257,22 @@ export default function App() {
                 </div>
 
                 <button
-                  onClick={()=>{purchasePremium("lifeTurning");generateLifeTurning(lifeTurningPerson,personData);}}
-                  disabled={!personData.name||!personData.starName}
+                  onClick={()=>startStripeCheckout("lifeTurning")}
+                  disabled={!personData.name||!personData.starName||stripeLoading}
                   style={{
                     width:"100%",
-                    background:!personData.name?"#444":"linear-gradient(135deg,#fde047,#f59e0b)",
-                    color:!personData.name?"#888":"#000",
+                    background:(!personData.name||stripeLoading)?"#444":"linear-gradient(135deg,#fde047,#f59e0b)",
+                    color:(!personData.name||stripeLoading)?"#888":"#000",
                     border:"none",borderRadius:12,padding:"14px",fontSize:14,fontWeight:900,
-                    cursor:!personData.name?"default":"pointer",
-                    boxShadow:!personData.name?"none":"0 4px 16px rgba(245,197,24,0.4)"
+                    cursor:(!personData.name||stripeLoading)?"default":"pointer",
+                    boxShadow:(!personData.name||stripeLoading)?"none":"0 4px 16px rgba(245,197,24,0.4)"
                   }}
                 >
-                  🌟 ¥500 で {personData.name||"対象者"} さんを鑑定（デモ）
+                  {stripeLoading?"⏳ 決済ページへ移動中...":`🌟 ¥500 で ${personData.name||"対象者"} さんを鑑定`}
                 </button>
                 <div style={{fontSize:9,color:"#888",marginTop:10,textAlign:"center",lineHeight:1.7}}>
-                  ※ デモ用。実際の決済は今後実装予定<br/>
-                  ※ 1人目・2人目それぞれ別々に購入可能（このデモでは購入で両方解放）
+                  ※ 単発購入（解約不要）<br/>
+                  ※ 決済完了後、自動でこのモーダルから鑑定結果を見られます
                 </div>
               </div>
             )}
@@ -3321,13 +3332,15 @@ export default function App() {
                   </div>
                 </div>
                 <button
-                  onClick={()=>{purchasePremium("pdf");}}
-                  style={{width:"100%",background:"linear-gradient(135deg,#fde047,#f59e0b)",color:"#000",border:"none",borderRadius:12,padding:"14px",fontSize:14,fontWeight:900,cursor:"pointer",boxShadow:"0 4px 16px rgba(245,197,24,0.4)"}}
+                  onClick={()=>startStripeCheckout("pdf")}
+                  disabled={stripeLoading}
+                  style={{width:"100%",background:stripeLoading?"#666":"linear-gradient(135deg,#fde047,#f59e0b)",color:stripeLoading?"#aaa":"#000",border:"none",borderRadius:12,padding:"14px",fontSize:14,fontWeight:900,cursor:stripeLoading?"default":"pointer",boxShadow:stripeLoading?"none":"0 4px 16px rgba(245,197,24,0.4)"}}
                 >
-                  📄 ¥500 でPDFを発行（デモ）
+                  {stripeLoading?"⏳ 決済ページへ移動中...":"📄 ¥500 でPDFを発行"}
                 </button>
                 <div style={{fontSize:9,color:"#888",marginTop:10,textAlign:"center",lineHeight:1.7}}>
-                  ※ デモ用。実際の決済は今後実装予定
+                  ※ 単発購入（解約不要）<br/>
+                  ※ 決済完了後、自動でPDFをダウンロードできます
                 </div>
               </div>
             )}
@@ -3459,7 +3472,6 @@ export default function App() {
                 border:`2px solid ${userPlan==="premium"?"#f5c518":"rgba(245,197,24,0.4)"}`,
                 borderRadius:14,padding:"16px 18px",position:"relative"
               }}>
-                {userPlan==="premium" && <div style={{position:"absolute",top:-10,right:14,background:"#f5c518",color:"#000",fontSize:9,fontWeight:900,padding:"3px 10px",borderRadius:10}}>現在のプラン</div>}
                 <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",marginBottom:10}}>
                   <div style={{fontSize:16,fontWeight:900,color:"#f5c518"}}>⭐ プレミアム単発</div>
                   <div><span style={{fontSize:24,fontWeight:900,color:"#fff"}}>¥500</span><span style={{fontSize:11,color:"#aaa"}}>〜 /1回</span></div>
@@ -3468,27 +3480,22 @@ export default function App() {
                 <ul style={{listStyle:"none",padding:0,margin:"0 0 14px",fontSize:11,color:"#fff5d8",lineHeight:1.9}}>
                   <li>✓ 🌟 人生の転機鑑定（500円）</li>
                   <li>✓ 📄 PDF鑑定書発行（500円）</li>
-                  <li style={{fontSize:10,color:"#aaa",marginTop:4}}>※ 必要な時だけ単発で購入</li>
+                  <li style={{fontSize:10,color:"#aaa",marginTop:4}}>※ 占い結果ページの下部から購入できます</li>
                 </ul>
                 <button
-                  onClick={()=>{changePlan("premium");setShowUpgradeModal(false);}}
-                  disabled={userPlan==="premium"}
+                  onClick={()=>setShowUpgradeModal(false)}
                   style={{
                     width:"100%",
-                    background:userPlan==="premium"?"transparent":"linear-gradient(135deg,#fde047,#f59e0b)",
-                    color:userPlan==="premium"?"#f5c518":"#000",
-                    border:userPlan==="premium"?"1px solid #f5c518":"none",
-                    borderRadius:10,padding:"10px",fontSize:12,fontWeight:900,
-                    cursor:userPlan==="premium"?"default":"pointer"
+                    background:"transparent",
+                    color:"#f5c518",
+                    border:"1px solid rgba(245,197,24,0.5)",
+                    borderRadius:10,padding:"10px",fontSize:12,fontWeight:700,
+                    cursor:"pointer"
                   }}
                 >
-                  {userPlan==="premium"?"✓ 利用中":"⭐ プレミアム鑑定を見る（デモ）"}
+                  占って結果ページで購入する →
                 </button>
               </div>
-            </div>
-
-            <div style={{marginTop:18,padding:"10px 12px",background:"rgba(255,255,255,0.04)",border:"1px solid rgba(255,255,255,0.1)",borderRadius:8,fontSize:9,color:"#888",lineHeight:1.7,textAlign:"center"}}>
-              ※ 現在はデモ表示。<br/>実際の決済機能は今後実装予定です。
             </div>
           </div>
         </div>

@@ -17,16 +17,19 @@ export default async function handler(req, res) {
     const session = await stripe.checkout.sessions.retrieve(session_id);
 
     // 決済状態を確認
-    // - payment_status: "paid" / "unpaid" / "no_payment_required"
-    // - status: "complete" / "open" / "expired"
     const paid = session.payment_status === "paid" || session.payment_status === "no_payment_required";
     const complete = session.status === "complete";
+
+    // 何を買ったか（metadata 優先、無ければ mode から推定）
+    const item = (session.metadata && session.metadata.item)
+      || (session.mode === "subscription" ? "basic" : null);
 
     return res.status(200).json({
       verified: paid && complete,
       payment_status: session.payment_status,
       status: session.status,
-      // 必要に応じて customer_id, subscription_id なども返せる
+      mode: session.mode,
+      item,
       customer_id: session.customer || null,
       subscription_id: session.subscription || null,
     });
