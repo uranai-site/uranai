@@ -3681,7 +3681,7 @@ export default function App() {
                   ["運営統括責任者","【契約後に記入：氏名】"],
                   ["所在地","【バーチャルオフィス契約後に記入：住所】"],
                   ["電話番号","【契約後に記入】（受付時間：平日10:00〜17:00）"],
-                  ["メールアドレス","【専用メール作成後に記入】"],
+                  ["メールアドレス","sontaku.uranai@gmail.com"],
                   ["販売価格","各サービスページに記載（ベーシックプラン 月額200円／人生の転機鑑定 500円／PDF鑑定書発行 500円、いずれも税込）"],
                   ["商品代金以外の必要料金","インターネット接続に必要な通信料はお客様のご負担となります"],
                   ["支払方法","クレジットカード決済（Stripe）"],
@@ -3712,7 +3712,7 @@ export default function App() {
                 <h3 style={{fontSize:14,fontWeight:700,color:"#a78bfa",margin:"16px 0 6px"}}>4. AI の利用</h3>
                 <p style={{marginBottom:10}}>占い文章の生成に Anthropic 社の AI を利用します。入力情報はこの目的の範囲で送信されます。</p>
                 <h3 style={{fontSize:14,fontWeight:700,color:"#a78bfa",margin:"16px 0 6px"}}>5. お問い合わせ</h3>
-                <p>本ポリシーに関するお問い合わせは【専用メール作成後に記入】までご連絡ください。</p>
+                <p>本ポリシーに関するお問い合わせは sontaku.uranai@gmail.com までご連絡ください。</p>
                 <div style={{marginTop:16,fontSize:11,color:"#888"}}>制定日：2026年5月</div>
               </div>
             )}
