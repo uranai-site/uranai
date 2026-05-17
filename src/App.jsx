@@ -970,6 +970,9 @@ export default function App() {
   // ===== Phase 2: アップグレード画面 =====
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 
+  // ===== Phase 9: 法律ページモーダル（特商法 / プライバシー / 利用規約） =====
+  const [legalModal, setLegalModal] = useState(null); // null | "tokushoho" | "privacy" | "terms"
+
   // ===== Phase 5/8: Stripe Checkout（サブスク・単発両対応） =====
   const [stripeLoading, setStripeLoading] = useState(false);
   // item: "basic" (サブスク) | "lifeTurning" (単発¥500) | "pdf" (単発¥500)
@@ -2822,6 +2825,20 @@ export default function App() {
             </>
           )}
         </div>
+
+        {/* ===== Phase 9: フッター（法律ページリンク） ===== */}
+        <footer style={{
+          maxWidth:560,margin:"32px auto 0",padding:"20px 16px 32px",
+          borderTop:"1px solid rgba(255,255,255,0.08)",
+          textAlign:"center",fontFamily:"sans-serif"
+        }}>
+          <div style={{display:"flex",gap:16,justifyContent:"center",flexWrap:"wrap",marginBottom:12}}>
+            <button onClick={()=>setLegalModal("tokushoho")} style={{background:"none",border:"none",color:"#9ca3af",fontSize:11,cursor:"pointer",textDecoration:"underline",padding:0}}>特定商取引法に基づく表記</button>
+            <button onClick={()=>setLegalModal("privacy")} style={{background:"none",border:"none",color:"#9ca3af",fontSize:11,cursor:"pointer",textDecoration:"underline",padding:0}}>プライバシーポリシー</button>
+            <button onClick={()=>setLegalModal("terms")} style={{background:"none",border:"none",color:"#9ca3af",fontSize:11,cursor:"pointer",textDecoration:"underline",padding:0}}>利用規約</button>
+          </div>
+          <div style={{fontSize:10,color:"#666"}}>© 2026 忖度なしの相性占い</div>
+        </footer>
       </div>
 
       {/* ===== Phase 2 - ステップE: 鑑定履歴モーダル ===== */}
@@ -3635,6 +3652,91 @@ export default function App() {
           </div>
         )}
       </div>
+      )}
+
+      {/* ===== Phase 9: 法律ページモーダル ===== */}
+      {legalModal && (
+        <div
+          onClick={()=>setLegalModal(null)}
+          style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.9)",backdropFilter:"blur(8px)",zIndex:10002,display:"flex",alignItems:"flex-start",justifyContent:"center",padding:"24px 16px",overflowY:"auto",animation:"fadeIn 0.3s ease"}}
+        >
+          <div
+            onClick={e=>e.stopPropagation()}
+            style={{
+              maxWidth:600,width:"100%",
+              background:"linear-gradient(180deg,rgba(20,15,40,0.99),rgba(35,22,65,0.99))",
+              border:"1px solid rgba(255,255,255,0.15)",borderRadius:16,padding:"28px 24px",
+              boxShadow:"0 20px 80px rgba(0,0,0,0.5)",
+              fontFamily:"sans-serif",color:"#e8e8f0",position:"relative",
+              marginTop:"auto",marginBottom:"auto",lineHeight:1.9,fontSize:13
+            }}
+          >
+            <button onClick={()=>setLegalModal(null)} style={{position:"absolute",top:14,right:16,background:"none",border:"none",color:"#aaa",fontSize:24,cursor:"pointer",lineHeight:1,padding:0}}>×</button>
+
+            {legalModal==="tokushoho" && (
+              <div>
+                <h2 style={{fontSize:18,fontWeight:900,marginBottom:18,color:"#fff"}}>特定商取引法に基づく表記</h2>
+                {[
+                  ["販売事業者名","【バーチャルオフィス契約後に記入：氏名または屋号】"],
+                  ["運営統括責任者","【契約後に記入：氏名】"],
+                  ["所在地","【バーチャルオフィス契約後に記入：住所】"],
+                  ["電話番号","【契約後に記入】（受付時間：平日10:00〜17:00）"],
+                  ["メールアドレス","【専用メール作成後に記入】"],
+                  ["販売価格","各サービスページに記載（ベーシックプラン 月額200円／人生の転機鑑定 500円／PDF鑑定書発行 500円、いずれも税込）"],
+                  ["商品代金以外の必要料金","インターネット接続に必要な通信料はお客様のご負担となります"],
+                  ["支払方法","クレジットカード決済（Stripe）"],
+                  ["支払時期","ベーシックプラン：お申込時および毎月の更新日に課金／単発購入：購入手続き完了時に課金"],
+                  ["サービス提供時期","決済完了後、ただちにご利用いただけます"],
+                  ["返品・キャンセル","デジタルコンテンツの性質上、決済完了後の返金は原則お受けできません。ベーシックプランはマイページの「サブスクを管理・解約する」よりいつでも解約可能で、解約後も当該請求期間の満了日までご利用いただけます。"],
+                  ["動作環境","最新版の Google Chrome / Safari / Microsoft Edge を推奨します"],
+                ].map(([k,v])=>(
+                  <div key={k} style={{display:"flex",borderBottom:"1px solid rgba(255,255,255,0.08)",padding:"10px 0",gap:12}}>
+                    <div style={{flex:"0 0 130px",color:"#a78bfa",fontWeight:700}}>{k}</div>
+                    <div style={{flex:1}}>{v}</div>
+                  </div>
+                ))}
+                <div style={{marginTop:14,fontSize:11,color:"#888"}}>※「【】」の項目はバーチャルオフィス契約後に確定・記入します。</div>
+              </div>
+            )}
+
+            {legalModal==="privacy" && (
+              <div>
+                <h2 style={{fontSize:18,fontWeight:900,marginBottom:18,color:"#fff"}}>プライバシーポリシー</h2>
+                <p style={{marginBottom:14}}>本サービス「忖度なしの相性占い」（以下「当サービス」）は、利用者のプライバシーを尊重し、個人情報を適切に取り扱います。</p>
+                <h3 style={{fontSize:14,fontWeight:700,color:"#a78bfa",margin:"16px 0 6px"}}>1. 取得する情報</h3>
+                <p style={{marginBottom:10}}>当サービスは占い結果の生成のため、利用者が入力した氏名・生年月日等を利用します。これらはお客様のブラウザ内（localStorage）に保存され、当サービスのサーバーには保存されません。決済に関する情報（カード番号等）は決済代行会社 Stripe が処理し、当サービスはカード情報を保持しません。</p>
+                <h3 style={{fontSize:14,fontWeight:700,color:"#a78bfa",margin:"16px 0 6px"}}>2. 利用目的</h3>
+                <p style={{marginBottom:10}}>取得した情報は、占いサービスの提供、決済処理、サービス改善のために利用します。</p>
+                <h3 style={{fontSize:14,fontWeight:700,color:"#a78bfa",margin:"16px 0 6px"}}>3. 第三者提供</h3>
+                <p style={{marginBottom:10}}>法令に基づく場合を除き、利用者の同意なく個人情報を第三者に提供しません。決済処理のため必要な範囲で Stripe に情報を提供します。</p>
+                <h3 style={{fontSize:14,fontWeight:700,color:"#a78bfa",margin:"16px 0 6px"}}>4. AI の利用</h3>
+                <p style={{marginBottom:10}}>占い文章の生成に Anthropic 社の AI を利用します。入力情報はこの目的の範囲で送信されます。</p>
+                <h3 style={{fontSize:14,fontWeight:700,color:"#a78bfa",margin:"16px 0 6px"}}>5. お問い合わせ</h3>
+                <p>本ポリシーに関するお問い合わせは【専用メール作成後に記入】までご連絡ください。</p>
+                <div style={{marginTop:16,fontSize:11,color:"#888"}}>制定日：2026年5月</div>
+              </div>
+            )}
+
+            {legalModal==="terms" && (
+              <div>
+                <h2 style={{fontSize:18,fontWeight:900,marginBottom:18,color:"#fff"}}>利用規約</h2>
+                <h3 style={{fontSize:14,fontWeight:700,color:"#a78bfa",margin:"4px 0 6px"}}>第1条（適用）</h3>
+                <p style={{marginBottom:10}}>本規約は、当サービスの利用に関する一切の関係に適用されます。利用者は本サービスを利用した時点で本規約に同意したものとみなします。</p>
+                <h3 style={{fontSize:14,fontWeight:700,color:"#a78bfa",margin:"16px 0 6px"}}>第2条（サービス内容）</h3>
+                <p style={{marginBottom:10}}>当サービスは、各種占術と AI を用いた相性鑑定等のエンターテインメントを提供します。鑑定結果は娯楽を目的とするものであり、その正確性・有用性を保証するものではありません。重要な意思決定はご自身の判断で行ってください。</p>
+                <h3 style={{fontSize:14,fontWeight:700,color:"#a78bfa",margin:"16px 0 6px"}}>第3条（料金・支払い）</h3>
+                <p style={{marginBottom:10}}>有料サービスの料金および支払方法は各ページおよび特定商取引法に基づく表記に従います。ベーシックプランは解約するまで毎月自動更新されます。</p>
+                <h3 style={{fontSize:14,fontWeight:700,color:"#a78bfa",margin:"16px 0 6px"}}>第4条（禁止事項）</h3>
+                <p style={{marginBottom:10}}>利用者は、法令違反、当サービスの運営妨害、不正アクセス、その他当サービスが不適切と判断する行為を行ってはなりません。</p>
+                <h3 style={{fontSize:14,fontWeight:700,color:"#a78bfa",margin:"16px 0 6px"}}>第5条（免責事項）</h3>
+                <p style={{marginBottom:10}}>当サービスは、鑑定結果の利用により生じた損害について、当サービスの故意または重過失による場合を除き、一切の責任を負いません。</p>
+                <h3 style={{fontSize:14,fontWeight:700,color:"#a78bfa",margin:"16px 0 6px"}}>第6条（規約の変更）</h3>
+                <p>当サービスは、必要に応じて本規約を変更できるものとします。変更後の規約は本ページに掲載した時点で効力を生じます。</p>
+                <div style={{marginTop:16,fontSize:11,color:"#888"}}>制定日：2026年5月</div>
+              </div>
+            )}
+          </div>
+        </div>
       )}
     </>
   );
