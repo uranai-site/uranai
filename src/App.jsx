@@ -740,9 +740,8 @@ const FORTUNE_META = {
 const starLabel = s=>s>=90?"★★★★★":s>=75?"★★★★☆":s>=60?"★★★☆☆":s>=40?"★★☆☆☆":"★☆☆☆☆";
 
 // ===== Phase 2 - ステップD: 広告バナー（無料プラン専用） =====
-function AdBanner({userPlan="free", variant="banner", onUpgrade}) {
-  // 無料プランのみ表示
-  if (userPlan !== "free") return null;
+function AdBanner({variant="banner"}) {
+  // Phase 10: 広告モデル。全ユーザーに常時表示。
   // バナー or 正方形
   const isBanner = variant === "banner";
   return (
@@ -754,15 +753,8 @@ function AdBanner({userPlan="free", variant="banner", onUpgrade}) {
       padding:"10px 14px",
       position:"relative"
     }}>
-      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:6}}>
+      <div style={{display:"flex",justifyContent:"flex-start",alignItems:"center",marginBottom:6}}>
         <span style={{fontSize:8,color:"#fbbf24",letterSpacing:1.5,fontFamily:"'Orbitron',monospace",fontWeight:700}}>SPONSORED · 広告</span>
-        <button
-          onClick={onUpgrade}
-          style={{background:"transparent",border:"1px solid rgba(167,139,250,0.4)",color:"#a78bfa",fontSize:9,padding:"2px 8px",borderRadius:6,cursor:"pointer"}}
-          title="ベーシックプランで広告非表示"
-        >
-          広告を消す 💎
-        </button>
       </div>
       <div style={{
         background:"rgba(0,0,0,0.3)",
@@ -873,12 +865,10 @@ export default function App() {
   const [error,setError]=useState(null);
   const set=(k,v)=>setForm(f=>({...f,[k]:v}));
 
-  // ===== Phase 2: プラン管理 =====
-  // ユーザーのプラン状態 (free | basic | premium)
-  const [userPlan, setUserPlan] = useState(() => {
-    if (typeof window === "undefined") return "free";
-    return localStorage.getItem("uranai_plan") || "free";
-  });
+  // ===== Phase 10: 広告モデルへ転換 =====
+  // 課金を撤廃し全機能を無料解放。プランは常に "basic"（全機能アンロック）固定。
+  // 広告は AdBanner 側で全ユーザーに常時表示する。
+  const [userPlan, setUserPlan] = useState("basic");
   const changePlan = (plan) => {
     setUserPlan(plan);
     if (typeof window !== "undefined") {
@@ -995,8 +985,10 @@ export default function App() {
     }
   };
 
-  // 戻りURLで ?upgrade=success / ?portal=return を検出して状態同期
+  // Phase 10: Stripe撤廃により決済戻りハンドラ・サブスク同期は廃止
+  // eslint-disable-next-line no-constant-condition
   useEffect(() => {
+    if (true) return; // 課金撤廃のため無効化（以下は到達しない）
     if (typeof window === "undefined") return;
     const params = new URLSearchParams(window.location.search);
     const upgrade = params.get("upgrade");
@@ -1079,8 +1071,10 @@ export default function App() {
     }
   }, []);
 
-  // アプリ起動時にサブスク状態を一度だけ同期（Webhook の見逃し対策）
+  // Phase 10: Stripe撤廃により起動時サブスク同期は廃止
+  // eslint-disable-next-line no-constant-condition
   useEffect(() => {
+    if (true) return; // 課金撤廃のため無効化（以下は到達しない）
     if (typeof window === "undefined") return;
     if (userPlan !== "basic") return;
     const subId = localStorage.getItem("uranai_stripe_subscription_id");
@@ -1119,10 +1113,8 @@ export default function App() {
       localStorage.setItem("uranai_purchases", JSON.stringify(updated));
     }
   };
-  const hasPurchased = (itemKey) => {
-    if (userPlan === "premium") return true;
-    return premiumPurchases[itemKey] === true;
-  };
+  // Phase 10: 課金撤廃。プレミアム鑑定は全員無料で閲覧可能。
+  const hasPurchased = () => true;
   const [showLifeTurningModal, setShowLifeTurningModal] = useState(false);
   const [showPdfModal, setShowPdfModal] = useState(false);
   // 人生の転機鑑定: 誰の鑑定か (1 or 2)
@@ -1143,8 +1135,19 @@ export default function App() {
       return;
     }
     const cacheKey = `${personIdx}_${personData.name}_${personData.age}`;
-    // キャッシュ確認
+    // キャッシュ確認（生成済みは無料で何度でも閲覧OK・API再呼び出ししない）
     if (premiumReadings[cacheKey]) return;
+
+    // Phase 10: AI費用管理。新規のAI生成は1日1回まで（キャッシュ閲覧は無制限）。
+    if (typeof window !== "undefined") {
+      const today = todayStr();
+      const last = localStorage.getItem("uranai_ai_reading_date");
+      if (last === today) {
+        setPremiumError("AI鑑定は1日1回までだよ🙏 また明日来てね（過去に出した鑑定結果は何度でも見れるよ）");
+        return;
+      }
+      localStorage.setItem("uranai_ai_reading_date", today);
+    }
 
     setPremiumLoading(true);
     setPremiumError(null);
@@ -2384,16 +2387,6 @@ export default function App() {
                 </button>
                 <div style={{textAlign:"center",marginTop:14,display:"flex",justifyContent:"center",gap:14,flexWrap:"wrap"}}>
                   <button
-                    onClick={()=>setShowUpgradeModal(true)}
-                    style={{
-                      background:"transparent",color:"var(--purple)",border:"none",
-                      fontSize:11,cursor:"pointer",padding:"6px 12px",
-                      textDecoration:"underline",letterSpacing:1,fontFamily:"sans-serif"
-                    }}
-                  >
-                    💎 プラン一覧を見る
-                  </button>
-                  <button
                     onClick={()=>setShowHistoryModal(true)}
                     style={{
                       background:"transparent",color:"var(--cyan)",border:"none",
@@ -2729,7 +2722,7 @@ export default function App() {
               })()}
 
               {/* 広告枠1 (中盤) */}
-              <AdBanner userPlan={userPlan} variant="banner" onUpgrade={()=>setShowUpgradeModal(true)} />
+              <AdBanner variant="banner" />
 
               {/* ===== Phase 2 - ステップF: プレミアム単発鑑定エリア ===== */}
               <div style={{
@@ -2819,7 +2812,7 @@ export default function App() {
               <ShareButtons results={results} form={form} />
 
               {/* 広告枠2 (下部) */}
-              <AdBanner userPlan={userPlan} variant="square" onUpgrade={()=>setShowUpgradeModal(true)} />
+              <AdBanner variant="square" />
 
               <button className="reset-btn" onClick={()=>setResults(null)}>🎰 もう一度占う</button>
             </>
@@ -2833,7 +2826,6 @@ export default function App() {
           textAlign:"center",fontFamily:"sans-serif"
         }}>
           <div style={{display:"flex",gap:16,justifyContent:"center",flexWrap:"wrap",marginBottom:12}}>
-            <button onClick={()=>setLegalModal("tokushoho")} style={{background:"none",border:"none",color:"#9ca3af",fontSize:11,cursor:"pointer",textDecoration:"underline",padding:0}}>特定商取引法に基づく表記</button>
             <button onClick={()=>setLegalModal("privacy")} style={{background:"none",border:"none",color:"#9ca3af",fontSize:11,cursor:"pointer",textDecoration:"underline",padding:0}}>プライバシーポリシー</button>
             <button onClick={()=>setLegalModal("terms")} style={{background:"none",border:"none",color:"#9ca3af",fontSize:11,cursor:"pointer",textDecoration:"underline",padding:0}}>利用規約</button>
           </div>
@@ -3365,8 +3357,8 @@ export default function App() {
         </div>
       )}
 
-      {/* ===== Phase 2: アップグレード比較モーダル ===== */}
-      {showUpgradeModal && (
+      {/* ===== Phase 10: 課金撤廃によりアップグレード比較モーダルは廃止 ===== */}
+      {false && (
         <div
           onClick={()=>setShowUpgradeModal(false)}
           style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.88)",backdropFilter:"blur(8px)",zIndex:10001,display:"flex",alignItems:"flex-start",justifyContent:"center",padding:"24px 16px",overflowY:"auto",animation:"fadeIn 0.3s ease"}}
@@ -3673,45 +3665,23 @@ export default function App() {
           >
             <button onClick={()=>setLegalModal(null)} style={{position:"absolute",top:14,right:16,background:"none",border:"none",color:"#aaa",fontSize:24,cursor:"pointer",lineHeight:1,padding:0}}>×</button>
 
-            {legalModal==="tokushoho" && (
-              <div>
-                <h2 style={{fontSize:18,fontWeight:900,marginBottom:18,color:"#fff"}}>特定商取引法に基づく表記</h2>
-                {[
-                  ["販売事業者名","【バーチャルオフィス契約後に記入：氏名または屋号】"],
-                  ["運営統括責任者","【契約後に記入：氏名】"],
-                  ["所在地","【バーチャルオフィス契約後に記入：住所】"],
-                  ["電話番号","【契約後に記入】（受付時間：平日10:00〜17:00）"],
-                  ["メールアドレス","sontaku.uranai@gmail.com"],
-                  ["販売価格","各サービスページに記載（ベーシックプラン 月額200円／人生の転機鑑定 500円／PDF鑑定書発行 500円、いずれも税込）"],
-                  ["商品代金以外の必要料金","インターネット接続に必要な通信料はお客様のご負担となります"],
-                  ["支払方法","クレジットカード決済（Stripe）"],
-                  ["支払時期","ベーシックプラン：お申込時および毎月の更新日に課金／単発購入：購入手続き完了時に課金"],
-                  ["サービス提供時期","決済完了後、ただちにご利用いただけます"],
-                  ["返品・キャンセル","デジタルコンテンツの性質上、決済完了後の返金は原則お受けできません。ベーシックプランはマイページの「サブスクを管理・解約する」よりいつでも解約可能で、解約後も当該請求期間の満了日までご利用いただけます。"],
-                  ["動作環境","最新版の Google Chrome / Safari / Microsoft Edge を推奨します"],
-                ].map(([k,v])=>(
-                  <div key={k} style={{display:"flex",borderBottom:"1px solid rgba(255,255,255,0.08)",padding:"10px 0",gap:12}}>
-                    <div style={{flex:"0 0 130px",color:"#a78bfa",fontWeight:700}}>{k}</div>
-                    <div style={{flex:1}}>{v}</div>
-                  </div>
-                ))}
-                <div style={{marginTop:14,fontSize:11,color:"#888"}}>※「【】」の項目はバーチャルオフィス契約後に確定・記入します。</div>
-              </div>
-            )}
-
             {legalModal==="privacy" && (
               <div>
                 <h2 style={{fontSize:18,fontWeight:900,marginBottom:18,color:"#fff"}}>プライバシーポリシー</h2>
-                <p style={{marginBottom:14}}>本サービス「忖度なしの相性占い」（以下「当サービス」）は、利用者のプライバシーを尊重し、個人情報を適切に取り扱います。</p>
+                <p style={{marginBottom:14}}>本サービス「忖度なしの相性占い」（以下「当サービス」）は、利用者のプライバシーを尊重し、個人情報を適切に取り扱います。当サービスは無料でご利用いただけ、運営は広告収益により行っています。</p>
                 <h3 style={{fontSize:14,fontWeight:700,color:"#a78bfa",margin:"16px 0 6px"}}>1. 取得する情報</h3>
-                <p style={{marginBottom:10}}>当サービスは占い結果の生成のため、利用者が入力した氏名・生年月日等を利用します。これらはお客様のブラウザ内（localStorage）に保存され、当サービスのサーバーには保存されません。決済に関する情報（カード番号等）は決済代行会社 Stripe が処理し、当サービスはカード情報を保持しません。</p>
+                <p style={{marginBottom:10}}>当サービスは占い結果の生成のため、利用者が入力した氏名・生年月日等を利用します。これらはお客様のブラウザ内（localStorage）に保存され、当サービスのサーバーには保存されません。</p>
                 <h3 style={{fontSize:14,fontWeight:700,color:"#a78bfa",margin:"16px 0 6px"}}>2. 利用目的</h3>
-                <p style={{marginBottom:10}}>取得した情報は、占いサービスの提供、決済処理、サービス改善のために利用します。</p>
-                <h3 style={{fontSize:14,fontWeight:700,color:"#a78bfa",margin:"16px 0 6px"}}>3. 第三者提供</h3>
-                <p style={{marginBottom:10}}>法令に基づく場合を除き、利用者の同意なく個人情報を第三者に提供しません。決済処理のため必要な範囲で Stripe に情報を提供します。</p>
-                <h3 style={{fontSize:14,fontWeight:700,color:"#a78bfa",margin:"16px 0 6px"}}>4. AI の利用</h3>
+                <p style={{marginBottom:10}}>取得した情報は、占いサービスの提供およびサービス改善のために利用します。</p>
+                <h3 style={{fontSize:14,fontWeight:700,color:"#a78bfa",margin:"16px 0 6px"}}>3. 広告について（Cookie の利用）</h3>
+                <p style={{marginBottom:10}}>当サービスは第三者配信の広告サービス（Google AdSense 等）を利用する場合があります。これらの広告事業者は、利用者の興味に応じた広告を表示するために Cookie を使用することがあります。Cookie を無効にする方法やパーソナライズ広告の設定については、お使いのブラウザ設定および <span style={{color:"#7cc4ff"}}>Google 広告設定（https://adssettings.google.com）</span> をご確認ください。</p>
+                <h3 style={{fontSize:14,fontWeight:700,color:"#a78bfa",margin:"16px 0 6px"}}>4. アクセス解析</h3>
+                <p style={{marginBottom:10}}>当サービスは利用状況把握のためアクセス解析ツールを利用する場合があります。これらは Cookie を使用しますが、個人を特定する情報は含みません。</p>
+                <h3 style={{fontSize:14,fontWeight:700,color:"#a78bfa",margin:"16px 0 6px"}}>5. AI の利用</h3>
                 <p style={{marginBottom:10}}>占い文章の生成に Anthropic 社の AI を利用します。入力情報はこの目的の範囲で送信されます。</p>
-                <h3 style={{fontSize:14,fontWeight:700,color:"#a78bfa",margin:"16px 0 6px"}}>5. お問い合わせ</h3>
+                <h3 style={{fontSize:14,fontWeight:700,color:"#a78bfa",margin:"16px 0 6px"}}>6. 第三者提供</h3>
+                <p style={{marginBottom:10}}>法令に基づく場合を除き、利用者の同意なく個人情報を第三者に提供しません。</p>
+                <h3 style={{fontSize:14,fontWeight:700,color:"#a78bfa",margin:"16px 0 6px"}}>7. お問い合わせ</h3>
                 <p>本ポリシーに関するお問い合わせは sontaku.uranai@gmail.com までご連絡ください。</p>
                 <div style={{marginTop:16,fontSize:11,color:"#888"}}>制定日：2026年5月</div>
               </div>
@@ -3724,8 +3694,8 @@ export default function App() {
                 <p style={{marginBottom:10}}>本規約は、当サービスの利用に関する一切の関係に適用されます。利用者は本サービスを利用した時点で本規約に同意したものとみなします。</p>
                 <h3 style={{fontSize:14,fontWeight:700,color:"#a78bfa",margin:"16px 0 6px"}}>第2条（サービス内容）</h3>
                 <p style={{marginBottom:10}}>当サービスは、各種占術と AI を用いた相性鑑定等のエンターテインメントを提供します。鑑定結果は娯楽を目的とするものであり、その正確性・有用性を保証するものではありません。重要な意思決定はご自身の判断で行ってください。</p>
-                <h3 style={{fontSize:14,fontWeight:700,color:"#a78bfa",margin:"16px 0 6px"}}>第3条（料金・支払い）</h3>
-                <p style={{marginBottom:10}}>有料サービスの料金および支払方法は各ページおよび特定商取引法に基づく表記に従います。ベーシックプランは解約するまで毎月自動更新されます。</p>
+                <h3 style={{fontSize:14,fontWeight:700,color:"#a78bfa",margin:"16px 0 6px"}}>第3条（料金・広告）</h3>
+                <p style={{marginBottom:10}}>当サービスは無料でご利用いただけます。運営は当サービス上に表示される広告の収益により行っています。AI を用いた一部の鑑定機能には、運営費用の都合により利用回数の制限を設ける場合があります。</p>
                 <h3 style={{fontSize:14,fontWeight:700,color:"#a78bfa",margin:"16px 0 6px"}}>第4条（禁止事項）</h3>
                 <p style={{marginBottom:10}}>利用者は、法令違反、当サービスの運営妨害、不正アクセス、その他当サービスが不適切と判断する行為を行ってはなりません。</p>
                 <h3 style={{fontSize:14,fontWeight:700,color:"#a78bfa",margin:"16px 0 6px"}}>第5条（免責事項）</h3>
