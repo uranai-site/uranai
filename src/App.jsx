@@ -2734,7 +2734,7 @@ export default function App() {
                 <div style={{textAlign:"center",marginBottom:14}}>
                   <div style={{fontSize:10,color:"var(--gold)",letterSpacing:3,marginBottom:4,fontFamily:"'Orbitron',monospace"}}>✦ PREMIUM READING ✦</div>
                   <div style={{fontSize:14,fontWeight:900,color:"#fde047"}}>⭐ もっと深く知りたいなら</div>
-                  <div style={{fontSize:10,color:"var(--subtext)",marginTop:4,lineHeight:1.7}}>1回限りの単発購入。サブスクとは別枠で買える特別な鑑定。</div>
+                  <div style={{fontSize:10,color:"var(--subtext)",marginTop:4,lineHeight:1.7}}>AIが一人ひとりに合わせて深掘りする特別な鑑定。無料で読めるよ。</div>
                 </div>
 
                 <div style={{display:"flex",flexDirection:"column",gap:10}}>
@@ -2751,8 +2751,8 @@ export default function App() {
                       </div>
                       <div style={{textAlign:"right",flexShrink:0}}>
                         {hasPurchased("lifeTurning")?
-                          <div style={{fontSize:9,color:"var(--good)",fontWeight:700}}>✓ 購入済み</div>:
-                          <><div style={{fontSize:16,fontWeight:900,color:"#fff"}}>¥500</div><div style={{fontSize:9,color:"#aaa"}}>1回</div></>
+                          <div style={{fontSize:9,color:"var(--good)",fontWeight:700}}>✓ 無料公開中</div>:
+                          <><div style={{fontSize:16,fontWeight:900,color:"#fff"}}>無料</div><div style={{fontSize:9,color:"#aaa"}}></div></>
                         }
                       </div>
                     </div>
@@ -2783,8 +2783,8 @@ export default function App() {
                       </div>
                       <div style={{textAlign:"right",flexShrink:0}}>
                         {hasPurchased("pdf")?
-                          <div style={{fontSize:9,color:"var(--good)",fontWeight:700}}>✓ 購入済み</div>:
-                          <><div style={{fontSize:16,fontWeight:900,color:"#fff"}}>¥500</div><div style={{fontSize:9,color:"#aaa"}}>1回</div></>
+                          <div style={{fontSize:9,color:"var(--good)",fontWeight:700}}>✓ 無料公開中</div>:
+                          <><div style={{fontSize:16,fontWeight:900,color:"#fff"}}>無料</div><div style={{fontSize:9,color:"#aaa"}}></div></>
                         }
                       </div>
                     </div>
@@ -2804,7 +2804,7 @@ export default function App() {
                 </div>
 
                 <div style={{marginTop:12,fontSize:9,color:"#888",textAlign:"center",lineHeight:1.7}}>
-                  ※ 単発購入（解約不要）・購入後すぐ利用可能
+                  ※ 無料でご利用いただけます（AI個別鑑定は1日1回まで）
                 </div>
               </div>
 
@@ -3317,7 +3317,7 @@ export default function App() {
             {hasPurchased("pdf")?(
               <div>
                 <div style={{background:"rgba(0,255,136,0.08)",border:"1px solid rgba(0,255,136,0.3)",borderRadius:10,padding:"14px 16px",marginBottom:14,textAlign:"center"}}>
-                  <div style={{fontSize:11,color:"var(--good)",fontWeight:700,marginBottom:6}}>✓ 購入済み</div>
+                  <div style={{fontSize:11,color:"var(--good)",fontWeight:700,marginBottom:6}}>✓ 無料公開中</div>
                   <div style={{fontSize:11,color:"#e0d8ff",lineHeight:1.7}}>下のボタンで PDF をダウンロードできます</div>
                 </div>
                 <button
